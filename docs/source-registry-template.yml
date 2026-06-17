@@ -1,0 +1,122 @@
+schema_version: "1.0"
+kind: company_brain_source_registry
+
+defaults:
+  raw_retention_days: 14
+  approval_required: true
+  auto_promote_allowed: false
+  personal_connectors_are_company_sources: false
+
+sources:
+  - id: company-brain-root
+    connector: filesystem
+    display_name: Company Brain Root
+    control_tier: company_owned
+    status: active
+    credential_ref: manual:none
+    owner: brain-owner
+    review_owner: brain-champion
+    capture:
+      allowed: true
+      mode: mounted_folder
+      approval_required: false
+      raw_retention_days: 0
+    scope:
+      include:
+        - curated markdown brain notes
+        - approved source documents
+      exclude:
+        - credentials
+        - private personal material
+    routing:
+      default_destination: "."
+      staging_destination: 00_README_Drive_Conventions/90_Staging
+      restricted_prefixes:
+        - 14_Owner_Vault
+    brain_artifacts:
+      allowed:
+        - curated_note
+        - source_reference
+      not_allowed:
+        - credential_value
+    dedupe:
+      external_id_field: path
+      strategy: path
+    audit:
+      last_reviewed: null
+      approved_by: brain-owner
+
+  - id: company-fireflies
+    connector: fireflies
+    display_name: Company Fireflies Workspace
+    control_tier: company_owned
+    status: proposed
+    credential_ref: env:COMPANY_FIREFLIES_API_KEY
+    owner: brain-owner
+    review_owner: brain-champion
+    capture:
+      allowed: false
+      mode: scheduled
+      approval_required: true
+      raw_retention_days: 14
+    scope:
+      include:
+        - meetings with company participants
+        - meetings tagged company-brain
+      exclude:
+        - personal meetings
+        - HR/compensation/legal unless explicitly restricted
+    routing:
+      default_destination: 12_Research_and_Industry_Intelligence/03_Customer_Research
+      staging_destination: 00_README_Drive_Conventions/90_Staging
+      restricted_prefixes:
+        - 14_Owner_Vault
+    brain_artifacts:
+      allowed:
+        - curated_summary
+        - decisions
+        - action_items
+        - reusable_facts
+        - provenance_link
+      not_allowed:
+        - raw_transcript_by_default
+    dedupe:
+      external_id_field: meeting_id
+      strategy: source_id_plus_external_id
+    audit:
+      last_reviewed: null
+      approved_by: null
+
+  - id: personal-fireflies-example
+    connector: fireflies
+    display_name: Personal Fireflies Account Example
+    control_tier: personal_private
+    status: excluded
+    credential_ref: none
+    owner: individual
+    review_owner: brain-owner
+    capture:
+      allowed: false
+      mode: none
+      approval_required: true
+      raw_retention_days: 0
+    scope:
+      include: []
+      exclude:
+        - all scheduled company-brain capture
+    routing:
+      default_destination: null
+      staging_destination: 00_README_Drive_Conventions/90_Staging
+      restricted_prefixes:
+        - 14_Owner_Vault
+    brain_artifacts:
+      allowed: []
+      not_allowed:
+        - raw_transcript
+        - meeting_summary
+    dedupe:
+      external_id_field: null
+      strategy: none
+    audit:
+      last_reviewed: null
+      approved_by: null

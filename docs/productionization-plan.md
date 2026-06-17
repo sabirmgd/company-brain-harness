@@ -30,6 +30,8 @@ Required proof:
   - Fireflies company workspace
   - GitHub org repo index
   - Slack later
+- Source registry validator/enforcer that refuses unapproved or personal source
+  instances before connector jobs run.
 - Scheduled runner that stages proposals and produces a morning review digest.
 - Clean service-account guide for Google Workspace domain-wide delegation.
 - Example brain root fixtures for CI and docs.
@@ -41,6 +43,8 @@ Required proof:
 - Keep company-specific docs in deployment config, not harness code.
 - Treat optional connectors as nudges, not failures.
 - Treat personal connectors as personal, not company engine sources.
+- Treat connector accounts/workspaces/channels as source instances. Multiple
+  accounts are fine; unregistered accounts are not.
 - Preview by default; require `--write` for side effects.
 - Never index restricted prefixes by default.
 - Prefer staged proposals over direct writes.

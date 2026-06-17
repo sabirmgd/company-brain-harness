@@ -10,6 +10,12 @@ Source-separated capture.
 The engine captures only company-controlled sources. Personal accounts are never
 treated as company data sources by default.
 
+Every connected tool must be represented as one or more explicit source
+instances in `source-registry.yml`. A connector type is not enough. For example,
+the brain does not ingest from "Fireflies"; it ingests from one approved
+Fireflies workspace or account with a source id, owner, scope, routing rule, and
+review policy.
+
 ## Allowed Sources
 
 | Source | Status | Notes |
@@ -20,6 +26,17 @@ treated as company data sources by default.
 | Company GitHub org | Allowed | Repo index and stack guardrails |
 | Personal Fireflies account | Not allowed | Can contain private/non-company meetings |
 | Personal Gmail/Calendar | Not allowed for engine capture | Teammates may use personal connectors in their own sessions |
+
+Multiple accounts per connector are allowed only when each account/workspace is
+separately registered and approved.
+
+Examples:
+
+- `company-fireflies`
+- `customer-acme-fireflies`
+- `company-google-workspace-engine`
+- `company-slack-selected-channels`
+- `personal-fireflies-sabir` with `status: excluded`
 
 ## Meeting Capture
 
@@ -67,6 +84,8 @@ brain:
 ## Approval Checklist
 
 - [ ] Owner approves this policy.
+- [ ] `source-registry.yml` exists and every source has owner, scope, status,
+      routing, and credential reference.
 - [ ] Restricted folders are permissioned correctly.
 - [ ] Company-controlled meeting source exists.
 - [ ] Engine credentials are stored outside the brain root.

@@ -148,5 +148,7 @@ and runs a smoke test against a synthetic non-HeyFlora brain root.
 
 - `docs/quickstart.md`
 - `docs/capture-policy-template.md`
+- `docs/source-registry-design.md`
+- `docs/source-registry-template.yml`
 - `docs/scott-readiness.md`
 - `docs/productionization-plan.md`
