@@ -1,0 +1,20 @@
+{
+  "name": "company-brain",
+  "interface": {
+    "displayName": "Company Brain"
+  },
+  "plugins": [
+    {
+      "name": "company-brain-harness",
+      "source": {
+        "source": "local",
+        "path": "./plugins/company-brain-harness"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

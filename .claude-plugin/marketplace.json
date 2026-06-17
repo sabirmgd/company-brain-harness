@@ -1,0 +1,24 @@
+{
+  "name": "company-brain",
+  "owner": {
+    "name": "30x"
+  },
+  "metadata": {
+    "description": "Portable plugin marketplace for Company Brain harness packages."
+  },
+  "description": "Portable plugin marketplace for Company Brain harness packages.",
+  "plugins": [
+    {
+      "name": "company-brain-harness",
+      "source": "./plugins/company-brain-harness",
+      "description": "Connect, stage, approve, and score a company brain.",
+      "version": "0.1.0",
+      "category": "Productivity",
+      "tags": [
+        "company-brain",
+        "knowledge-ops",
+        "privacy"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Meeting To Brain"
+  short_description: "Stage approved meeting knowledge."
+  default_prompt: "Use $meeting-to-brain to stage this company meeting."
+policy:
+  allow_implicit_invocation: true

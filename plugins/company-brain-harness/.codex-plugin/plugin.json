@@ -1,0 +1,26 @@
+{
+  "name": "company-brain-harness",
+  "version": "0.1.0",
+  "description": "Portable Company Brain harness skills and CLIs for filesystem-backed knowledge roots.",
+  "author": {
+    "name": "30x"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Company Brain Harness",
+    "shortDescription": "Connect, stage, approve, and score a company brain.",
+    "longDescription": "Portable workflows and helper CLIs for operating a company brain on any filesystem-backed root, with privacy-safe capture, staged promotion, health checks, onboarding, meeting intake, and repo-aware POC guardrails.",
+    "developerName": "30x",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $brain-health to check this company brain.",
+      "Use $brain-intake to stage this document.",
+      "Use $brain-onboard to interview a teammate."
+    ],
+    "brandColor": "#2F6F5E"
+  }
+}

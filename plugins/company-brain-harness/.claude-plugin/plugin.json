@@ -1,0 +1,17 @@
+{
+  "name": "company-brain-harness",
+  "version": "0.1.0",
+  "description": "Portable Company Brain harness skills and CLIs for filesystem-backed knowledge roots.",
+  "author": {
+    "name": "30x"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "company-brain",
+    "second-brain",
+    "knowledge-ops",
+    "skills",
+    "harness"
+  ],
+  "skills": "./skills/"
+}

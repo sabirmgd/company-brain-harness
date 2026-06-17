@@ -1,0 +1,6 @@
+interface:
+  display_name: "Approve Brain Notes"
+  short_description: "Review and promote staged notes."
+  default_prompt: "Use $approve-brain-notes to review staged proposals."
+policy:
+  allow_implicit_invocation: false

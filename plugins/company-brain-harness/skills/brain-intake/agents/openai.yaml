@@ -1,0 +1,6 @@
+interface:
+  display_name: "Brain Intake"
+  short_description: "Stage raw material into review."
+  default_prompt: "Use $brain-intake to stage this document into the brain."
+policy:
+  allow_implicit_invocation: true
