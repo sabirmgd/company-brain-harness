@@ -36,9 +36,9 @@ brain:
     - 14_Owner_Vault
 ```
 
-The HeyFlora dogfood brain uses the `00_README_Drive_Conventions` path. Future
-customers may rename this layer, but the staging, capture-policy, and routing
-concepts remain the same.
+Existing deployments may use the legacy `00_README_Drive_Conventions` path.
+Future customers may rename this layer, but the staging, capture-policy, and
+routing concepts remain the same.
 
 ## Capture Policy
 

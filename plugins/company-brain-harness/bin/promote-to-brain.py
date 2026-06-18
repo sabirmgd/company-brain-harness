@@ -12,8 +12,8 @@ Usage:
       --source /tmp/proposed-note.md \
       --target 02_Strategy_and_Vision/02_Category_and_Positioning/category.md \
       --tag strategy --tag positioning \
-      --source-type interview --source-ref scott-setup-2026-06-17 \
-      --author sabir
+      --source-type interview --source-ref owner-interview-2026-06-17 \
+      --author brain-operator
 
     bin/promote-to-brain.py ... --write
 

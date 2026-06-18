@@ -37,7 +37,6 @@ Decision: define the product as Company Brain Harness.
 Reasoning:
 
 - "Second brain" sounds individual and private.
-- HeyFlora is a dogfood case study, not the product boundary.
 - The reusable category is organizational memory with source governance,
   team roles, review, freshness, and agent-readable routing.
 
@@ -45,7 +44,7 @@ Consequence:
 
 - Docs and skills talk about teams, source owners, review owners, and company
   sources.
-- Landscaping assumptions do not belong in generic harness code.
+- Customer-specific industry assumptions do not belong in generic harness code.
 
 ## Layer 2: Storage Backend
 
@@ -204,7 +203,7 @@ connector: fireflies
 control_tier: company_owned
 status: approved_staging_only
 capture.allowed: true
-review_owner: Scott
+review_owner: Brain Champion
 ```
 
 Reasoning:
@@ -326,12 +325,12 @@ What it proves:
 - Python compiles.
 - Skills have required structure.
 - plugin manifests validate.
-- smoke test passes on a synthetic non-HeyFlora root.
+- smoke test passes on a synthetic generic root.
 - setup, source checks, schedule, lint, staging, approval, and restricted refusal
   work together.
 
 Reasoning:
 
-- The harness is generic only if non-HeyFlora smoke tests pass.
+- The harness is generic only if synthetic non-customer-specific smoke tests pass.
 - Installability is part of product quality.
 - Safety claims need executable proof.

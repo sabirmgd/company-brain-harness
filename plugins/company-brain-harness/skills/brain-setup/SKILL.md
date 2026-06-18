@@ -14,7 +14,7 @@ Create the reusable Company Brain structure. Do not populate strategy, customer,
 3. Preview the scaffold with `brain-setup.py` before writing.
 4. Write only when the user explicitly wants the scaffold created.
 5. Run `source-registry-check.py`, `brain-health.py`, and `brain-lint.py` after setup.
-6. End with the population checklist for Scott/team members, not with invented content.
+6. End with the population checklist for team members, not with invented content.
 
 ## Command Pattern
 

@@ -18,7 +18,7 @@ Required proof:
 - Skill folders validate.
 - Codex plugin manifest validates when the local Codex validator is available.
 - Claude plugin and marketplace validate when the Claude CLI is available.
-- Smoke test passes against a non-HeyFlora brain root.
+- Smoke test passes against a synthetic generic brain root.
 - GitHub Actions validation is green.
 
 ## Built In The Current Harness
@@ -60,7 +60,7 @@ Required proof:
 
 ## Productization Path
 
-1. Dogfood with HeyFlora.
+1. Run a first pilot with one internal or customer brain.
 2. Turn repeated setup into a new-company wizard.
 3. Turn health score into an onboarding progress metric.
 4. Turn capture policy into a customer-facing trust primitive.

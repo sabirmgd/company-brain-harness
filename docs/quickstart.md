@@ -4,7 +4,8 @@ This harness is a portable plugin plus helper CLIs. It does not assume Google
 Drive. The brain root can be a mounted Drive folder, a git repo, a shared
 volume, or a local directory.
 
-HeyFlora is the dogfood deployment. The category is Company Brain Harness.
+The category is Company Brain Harness: a reusable operating layer for
+team-owned company memory.
 
 For the reasoning behind each layer, read
 [Harness Architecture](harness-architecture.md) and
@@ -15,17 +16,17 @@ For the reasoning behind each layer, read
 From GitHub:
 
 ```bash
-claude plugin marketplace add sabirmgd/company-brain-harness
+claude plugin marketplace add <github-owner>/company-brain-harness
 claude plugin install company-brain-harness@company-brain
 
-codex plugin marketplace add sabirmgd/company-brain-harness
+codex plugin marketplace add <github-owner>/company-brain-harness
 codex plugin add company-brain-harness@company-brain
 ```
 
 From a local checkout:
 
 ```bash
-git clone git@github.com:sabirmgd/company-brain-harness.git
+git clone git@github.com:<github-owner>/company-brain-harness.git
 cd company-brain-harness
 
 claude plugin marketplace add .

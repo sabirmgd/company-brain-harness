@@ -9,8 +9,8 @@ Default staging directory:
   <brain root>/00_README_Drive_Conventions/90_Staging
 
 Usage:
-    bin/approve-staged-note.py --id 2026-06-17-example --decision approve --reviewer sabir --write
-    bin/approve-staged-note.py --id 2026-06-17-example --decision reject --reviewer sabir --note "personal"
+    bin/approve-staged-note.py --id 2026-06-17-example --decision approve --reviewer brain-champion --write
+    bin/approve-staged-note.py --id 2026-06-17-example --decision reject --reviewer brain-champion --note "personal"
 
 Exit codes:
     0 = decision recorded

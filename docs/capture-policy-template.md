@@ -38,7 +38,7 @@ Examples:
 - `company-google-workspace-engine`
 - `company-slack-selected-channels`
 - `company-shared-apollo`
-- `personal-fireflies-sabir` with `status: excluded`
+- `personal-fireflies-example` with `status: excluded`
 
 ## Team Member Source Inventory
 

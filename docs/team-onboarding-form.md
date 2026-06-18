@@ -1,7 +1,7 @@
 # Team Onboarding Form
 
 Use this interview to populate the brain later. The harness setup should create
-the structure first, then Scott/team members supply the actual knowledge.
+the structure first, then team members supply the actual knowledge.
 
 ## Person
 

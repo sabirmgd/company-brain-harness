@@ -14,8 +14,8 @@ Start here when reviewing, installing, operating, or productizing the harness.
   teammate, and source-owner responsibilities.
 - [Scheduling Guide](scheduling-guide.md): human-gated and autonomous operating
   loops.
-- [Team Onboarding Form](team-onboarding-form.md): prompts for Scott/team
-  members to populate the brain later.
+- [Team Onboarding Form](team-onboarding-form.md): prompts for team members to
+  populate the brain later.
 
 ## Governance
 
@@ -28,9 +28,9 @@ Start here when reviewing, installing, operating, or productizing the harness.
 
 ## Pilot And Productization
 
-- [Scott Readiness Checklist](scott-readiness.md): HeyFlora dogfood pilot
-  readiness.
-- [Scott Handoff Message](scott-handoff-message.md): concise handoff language.
+- [Pilot Readiness Checklist](pilot-readiness.md): new-customer pilot readiness.
+- [Customer Handoff Message](customer-handoff-message.md): concise handoff
+  language.
 - [Productionization Plan](productionization-plan.md): what remains before a
   broader product.
 

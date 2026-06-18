@@ -4,18 +4,18 @@ Portable skills and helper CLIs for operating a company brain on any filesystem-
 Google Drive for Desktop, a git repo, a shared volume, or a local folder.
 
 This plugin is intentionally generic. Set the target brain with `BRAIN_ROOT` or
-`COMPANY_BRAIN_ROOT`; HeyFlora's `Company_Master` Drive is only one configured
-deployment.
+`COMPANY_BRAIN_ROOT`; the storage backend can be Drive, git, a shared volume, or
+any filesystem-backed root.
 
 ## Install
 
 From GitHub:
 
 ```bash
-claude plugin marketplace add sabirmgd/company-brain-harness
+claude plugin marketplace add <github-owner>/company-brain-harness
 claude plugin install company-brain-harness@company-brain
 
-codex plugin marketplace add sabirmgd/company-brain-harness
+codex plugin marketplace add <github-owner>/company-brain-harness
 codex plugin add company-brain-harness@company-brain
 ```
 

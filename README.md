@@ -3,9 +3,8 @@
 Portable harness for building and operating a team-owned company brain that
 Claude, Codex, and other agents can read, maintain, and safely grow.
 
-HeyFlora's `Company_Master` is the dogfood deployment. The product category is
-not "second brain for landscaping." It is Company Brain Harness: source-governed
-organizational memory for humans and agents.
+The product category is Company Brain Harness: source-governed organizational
+memory for humans and agents.
 
 ## What This Is
 
@@ -19,7 +18,8 @@ provides:
   and scheduling
 - templates for capture policy, source registry, team onboarding, and operating
   cadence
-- a testable release gate that proves the harness works outside HeyFlora
+- a testable release gate that proves the harness works against a generic brain
+  root
 
 The brain root can be:
 
@@ -37,15 +37,15 @@ A team can install the plugin, point Claude or Codex at a brain root, scaffold a
 safe structure, register org-wide sources, stage proposed knowledge, approve
 curated notes, and keep the brain fresh over time.
 
-The harness does not populate company knowledge by itself. Scott or each
-company's team members supply the real context through onboarding, intake,
-approved source capture, and review.
+The harness does not populate company knowledge by itself. Each company's team
+members supply the real context through onboarding, intake, approved source
+capture, and review.
 
 ## Layer Decisions
 
 | Layer | Decision | Why |
 |---|---|---|
-| Product category | Company Brain Harness, not landscaping second brain | HeyFlora is dogfood; the generic product is team/company memory |
+| Product category | Company Brain Harness | The generic product is team/company memory with source governance |
 | Storage | Filesystem-backed brain root | Works with Drive, git, shared volumes, and local folders |
 | Distribution | One Claude/Codex plugin | Versioned, installable, reviewable, team-distributable |
 | Skills | Shared `SKILL.md` surfaces | Same workflows work in Claude and Codex |
@@ -78,7 +78,7 @@ Full details: [docs/harness-architecture.md](docs/harness-architecture.md) and
 └── scripts/
     ├── validate.sh                           # Release gate
     ├── validate_skills.py                    # Skill structure checks
-    └── smoke-test.sh                         # Non-HeyFlora portability smoke test
+    └── smoke-test.sh                         # Generic portability smoke test
 ```
 
 ## Install
@@ -86,17 +86,17 @@ Full details: [docs/harness-architecture.md](docs/harness-architecture.md) and
 From GitHub:
 
 ```bash
-claude plugin marketplace add sabirmgd/company-brain-harness
+claude plugin marketplace add <github-owner>/company-brain-harness
 claude plugin install company-brain-harness@company-brain
 
-codex plugin marketplace add sabirmgd/company-brain-harness
+codex plugin marketplace add <github-owner>/company-brain-harness
 codex plugin add company-brain-harness@company-brain
 ```
 
 From a local checkout:
 
 ```bash
-git clone git@github.com:sabirmgd/company-brain-harness.git
+git clone git@github.com:<github-owner>/company-brain-harness.git
 cd company-brain-harness
 
 claude plugin marketplace add .
@@ -246,7 +246,7 @@ Examples:
 - `company-google-workspace-engine`
 - `company-github-org`
 - `customer-acme-slack-selected-channels`
-- `personal-fireflies-sabir` with `status: excluded`
+- `personal-fireflies-example` with `status: excluded`
 
 Before connector capture:
 
@@ -290,7 +290,7 @@ This performs:
 - skill structure validation
 - Codex plugin manifest validation when available
 - Claude plugin and marketplace validation when available
-- non-HeyFlora smoke test
+- generic smoke test
 
 The smoke test proves:
 
@@ -316,7 +316,8 @@ The smoke test proves:
 - [Capture Policy Template](docs/capture-policy-template.md)
 - [Source Registry Design](docs/source-registry-design.md)
 - [Source Registry Template](docs/source-registry-template.yml)
-- [Scott Readiness Checklist](docs/scott-readiness.md)
+- [Pilot Readiness Checklist](docs/pilot-readiness.md)
+- [Customer Handoff Message](docs/customer-handoff-message.md)
 - [Productionization Plan](docs/productionization-plan.md)
 
 ## Release

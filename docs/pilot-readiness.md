@@ -1,7 +1,7 @@
-# Scott Readiness Checklist
+# Pilot Readiness Checklist
 
-This is the checklist before presenting the HeyFlora company brain harness to
-Scott as something the team can start using.
+Use this checklist before presenting a Company Brain Harness deployment to a
+new company, founder, or team lead.
 
 ## What Is Ready
 
@@ -32,21 +32,21 @@ Scott as something the team can start using.
   capture sources.
 - Team source registry: every org-wide app account/workspace/channel needs its
   own owner, scope, approval, and route.
-- Smoke test proving the harness works against a non-HeyFlora brain shape.
+- Smoke test proving the harness works against a synthetic generic brain shape.
 
-## What Scott Needs To Approve
+## What The Company Owner Needs To Approve
 
-- Capture policy for meetings and email.
-- Whether HeyFlora will create a company Fireflies workspace/key.
-- Whether the engine identity is a dedicated account such as
-  `flora-bot@heyflora.ai`.
-- Workspace admin approval for Google Workspace CLI/service-account access.
+- Capture policy for meetings, email, calendar, and shared business systems.
+- Whether the company has a company-controlled meeting recorder workspace/key.
+- Whether shared Apollo/CRM is an approved company source, and what it may stage.
+- Whether the engine identity is a dedicated company account.
+- Workspace admin approval for Google Workspace or equivalent service-account access.
 - Restricted folder permissions, especially owner/legal/finance/HR material.
 - Who reviews the morning staging queue for the first 2-3 weeks.
 
-## What We Should Demo
+## What To Demo
 
-1. Open `Company_Master` as the brain root.
+1. Open the configured brain root.
 2. Run connection check.
 3. Run source registry check.
 4. Run brain health and lint.
@@ -62,7 +62,7 @@ Scott as something the team can start using.
 - Broad automatic Gmail/Calendar ingestion.
 - Personal Apollo/CRM capture.
 - Raw transcript dumping into the shared brain.
-- Anything in restricted folders unless Scott explicitly grants and scopes it.
+- Anything in restricted folders unless the company owner explicitly grants and scopes it.
 
 ## First Production Pilot
 

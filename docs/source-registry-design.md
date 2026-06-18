@@ -11,7 +11,7 @@ The rule:
 Fireflies, Google Workspace, Slack, GitHub, HubSpot, Apollo, Notion, and CRM
 systems are connector types. The company brain should never ingest from
 "Fireflies" in the abstract. It ingests from an approved source instance, such as
-`heyflora-fireflies-company-workspace`.
+`company-fireflies-workspace`.
 
 ## Core Objects
 
@@ -36,11 +36,11 @@ key.
 
 Examples:
 
-- `heyflora-fireflies-company`
-- `scott-fireflies-personal`
-- `heyflora-google-workspace-engine`
-- `heyflora-slack-customer-success-channels`
-- `heyflora-github-org`
+- `company-fireflies-workspace`
+- `personal-fireflies-example`
+- `company-google-workspace-engine`
+- `company-slack-selected-channels`
+- `company-github-org`
 - `customer-acme-hubspot-production`
 - `company-shared-apollo-workspace`
 
@@ -52,7 +52,7 @@ Examples:
 
 - `env:FIREFLIES_API_KEY`
 - `gws:service-account`
-- `secret-manager:company-brain/heyflora/fireflies`
+- `secret-manager:company-brain/acme/fireflies`
 - `manual:none`
 
 ### Control Tier
@@ -88,14 +88,14 @@ Auto-promotion is a separate policy and should be rare.
 Every source instance should declare:
 
 ```yaml
-id: heyflora-fireflies-company
+id: company-fireflies-workspace
 connector: fireflies
-display_name: HeyFlora Company Fireflies
+display_name: Company Fireflies Workspace
 control_tier: company_owned
 status: approved_staging_only
-credential_ref: env:HEYFLORA_FIREFLIES_API_KEY
-owner: Scott
-review_owner: Sabir
+credential_ref: env:COMPANY_FIREFLIES_API_KEY
+owner: Company Owner
+review_owner: Brain Champion
 capture:
   allowed: true
   mode: scheduled
@@ -103,7 +103,7 @@ capture:
   raw_retention_days: 14
 scope:
   include:
-    - meetings with heyflora.ai participants
+    - meetings with company-domain participants
     - meetings tagged company-brain
   exclude:
     - personal meetings
@@ -126,7 +126,7 @@ dedupe:
   strategy: source_id_plus_external_id
 audit:
   last_reviewed: 2026-06-18
-  approved_by: Scott
+  approved_by: Company Owner
 ```
 
 ## What Goes Into The Brain
@@ -166,16 +166,16 @@ Allowed:
 
 ```text
 fireflies:
-  - heyflora company workspace
+  - company primary workspace
   - customer A company workspace
   - customer B company workspace
 
 google_workspace:
-  - heyflora service account
+  - company service account
   - customer A delegated service account
 
 slack:
-  - heyflora selected channels
+  - company selected channels
   - customer A selected channels
 
 apollo:

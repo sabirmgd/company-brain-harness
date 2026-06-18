@@ -10,19 +10,19 @@ Decision: position the generic product as Company Brain Harness.
 Accepted:
 
 - Company Brain Harness as the reusable category.
-- HeyFlora as dogfood implementation.
+- Customer-specific deployments as implementations, not product boundaries.
 
 Rejected:
 
-- "Second brain for landscaping" because it makes the generic harness sound
-  industry-specific.
+- Industry-specific "second brain" framing because it makes the generic harness
+  sound narrower than the product.
 - "Chat with docs" because it ignores governance, source ownership, freshness,
   review, and agent workflows.
 
 Implication:
 
-- Generic docs and code must avoid HeyFlora or landscaping assumptions.
-- HeyFlora-specific policy belongs in the HeyFlora brain root.
+- Generic docs and code must avoid customer-specific or industry-specific assumptions.
+- Customer-specific policy belongs in that customer's brain root.
 
 ## D002: Filesystem Root Is The Backend Contract
 
@@ -45,7 +45,7 @@ Implication:
 
 - Every CLI accepts `--root`.
 - Config is relative to the root.
-- Smoke tests must use a synthetic non-HeyFlora root.
+- Smoke tests must use a synthetic generic root.
 
 ## D003: Plugin Is The Distribution Unit
 

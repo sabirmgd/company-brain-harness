@@ -13,7 +13,7 @@ Usage:
     echo '# Note\n\nBody' | bin/stage-brain-note.py \
       --target 02_Strategy_and_Vision/02_Category_and_Positioning/category.md \
       --tag strategy --tag positioning \
-      --source-type interview --source-ref scott-setup --author sabir
+      --source-type interview --source-ref owner-interview --author brain-operator
 
 Exit codes:
     0 = valid preview / staged
