@@ -1,0 +1,6 @@
+interface:
+  display_name: "Sources Check"
+  short_description: "Validate source registry capture eligibility."
+  default_prompt: "Use $sources-check to validate this company brain source registry."
+policy:
+  allow_implicit_invocation: true

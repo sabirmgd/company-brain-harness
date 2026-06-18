@@ -1,0 +1,6 @@
+interface:
+  display_name: "Brain Lint"
+  short_description: "Check freshness, provenance, links, and contradictions."
+  default_prompt: "Use $brain-lint to inspect this company brain."
+policy:
+  allow_implicit_invocation: true

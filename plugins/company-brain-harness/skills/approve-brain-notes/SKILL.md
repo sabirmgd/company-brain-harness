@@ -12,15 +12,16 @@ Review staged proposals and record an approval decision. Shared-brain writes req
 1. Resolve the brain root.
 2. List staged proposals from the configured staging directory. Default:
    `00_README_Drive_Conventions/90_Staging/proposed/*.md`.
-3. For each proposal, inspect metadata, target path, sensitivity, author, source, and content summary.
-4. Do not inspect restricted vault contents.
-5. Recommend one decision:
+3. For each proposal, inspect metadata, target path, sensitivity, author, source id/reference, and content summary.
+4. If a proposal came from a connector, confirm the source exists in `source-registry.yml` before approving.
+5. Do not inspect restricted folder contents.
+6. Recommend one decision:
    - approve
    - reject
    - revise
-6. Preview the command first unless the user explicitly requested execution.
-7. Execute with `approve-staged-note.py --write` only after an explicit approval instruction.
-8. Report the ledger entry, target path, and any remaining queue.
+7. Preview the command first unless the user explicitly requested execution.
+8. Execute with `approve-staged-note.py --write` only after an explicit approval instruction.
+9. Report the ledger entry, target path, and any remaining queue.
 
 ## Command Pattern
 

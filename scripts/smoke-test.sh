@@ -114,7 +114,8 @@ printf '# Smoke Note\n\nThis note proves staging and approval work.\n' |
     --source-type smoke \
     --source-ref smoke-test \
     --author smoke-runner \
-    --id smoke-note >/tmp/company-brain-stage.json
+    --id smoke-note \
+    --write >/tmp/company-brain-stage.json
 
 python3 "$BIN_DIR/approve-staged-note.py" \
   --root "$TMP_ROOT" \
@@ -142,5 +143,63 @@ if [[ "$restricted_status" -eq 0 ]]; then
   echo "restricted promotion unexpectedly succeeded" >&2
   exit 1
 fi
+
+SCAFFOLD_ROOT="$TMP_ROOT/scaffolded-company"
+
+python3 "$BIN_DIR/brain-setup.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --company-name "Acme Co" \
+  --champion "Alex" \
+  --operator "Ops Bot" >/tmp/company-brain-setup-preview.txt
+
+if [[ -e "$SCAFFOLD_ROOT/CLAUDE.md" ]]; then
+  echo "brain-setup preview unexpectedly wrote files" >&2
+  exit 1
+fi
+
+python3 "$BIN_DIR/brain-setup.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --company-name "Acme Co" \
+  --champion "Alex" \
+  --operator "Ops Bot" \
+  --write >/tmp/company-brain-setup-write.txt
+
+test -f "$SCAFFOLD_ROOT/CLAUDE.md"
+test -f "$SCAFFOLD_ROOT/company-brain.yml"
+test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/source-registry.yml"
+test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/CONNECTIONS.md"
+test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/approval-ledger.jsonl"
+
+python3 "$BIN_DIR/source-registry-check.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --source-id acme-co-brain-root \
+  --for-capture >/tmp/company-brain-sources.txt
+
+set +e
+python3 "$BIN_DIR/source-registry-check.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --source-id example-shared-apollo \
+  --for-capture >/tmp/company-brain-apollo.txt
+apollo_status=$?
+set -e
+if [[ "$apollo_status" -eq 0 ]]; then
+  echo "proposed Apollo source unexpectedly allowed capture" >&2
+  exit 1
+fi
+
+python3 "$BIN_DIR/brain-schedule.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --mode human \
+  --champion "Alex" \
+  --operator "Ops Bot" >/tmp/company-brain-schedule-preview.md
+
+python3 "$BIN_DIR/brain-schedule.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --mode human \
+  --champion "Alex" \
+  --operator "Ops Bot" \
+  --write >/tmp/company-brain-schedule-write.md
+
+python3 "$BIN_DIR/brain-lint.py" --root "$SCAFFOLD_ROOT" >/tmp/company-brain-lint.txt
 
 echo "smoke test passed"

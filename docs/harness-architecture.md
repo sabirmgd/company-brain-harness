@@ -1,0 +1,337 @@
+# Harness Architecture
+
+This document explains the architecture of the Company Brain Harness and the
+responsibility of each layer.
+
+## System Shape
+
+```text
+Claude / Codex / agent
+        |
+        v
+installed Company Brain Harness plugin
+        |
+        +-- skills/       human-facing workflows
+        +-- bin/          executable policy and filesystem operations
+        +-- references/   shared contract for skills and agents
+        |
+        v
+filesystem-backed brain root
+        |
+        +-- CLAUDE.md / routing file
+        +-- company-brain.yml
+        +-- conventions/
+        +-- source-registry.yml
+        +-- staging/
+        +-- routed knowledge folders
+```
+
+The harness is deliberately small. It is not a database, a RAG service, or a
+connector platform yet. It is the portable operating contract that lets humans
+and agents safely build a company memory system from files.
+
+## Layer 1: Product Category
+
+Decision: define the product as Company Brain Harness.
+
+Reasoning:
+
+- "Second brain" sounds individual and private.
+- HeyFlora is a dogfood case study, not the product boundary.
+- The reusable category is organizational memory with source governance,
+  team roles, review, freshness, and agent-readable routing.
+
+Consequence:
+
+- Docs and skills talk about teams, source owners, review owners, and company
+  sources.
+- Landscaping assumptions do not belong in generic harness code.
+
+## Layer 2: Storage Backend
+
+Decision: use a filesystem-backed root.
+
+Supported roots:
+
+- mounted Google Drive
+- git repo
+- shared volume
+- local directory
+
+Reasoning:
+
+- Claude and Codex can already read/write files.
+- Markdown is inspectable, portable, and easy to diff.
+- Google Drive is useful for teams, but should not be hardcoded as the product.
+
+Consequence:
+
+- All CLIs accept `--root`.
+- Root resolution also supports `BRAIN_ROOT`, `COMPANY_BRAIN_ROOT`, and the
+  legacy `COMPANY_OS_ROOT`.
+- Config lives in `company-brain.yml` / `company-os.yml`.
+
+## Layer 3: Plugin Distribution
+
+Decision: ship one plugin that works in Claude and Codex.
+
+Reasoning:
+
+- Local-only skills under `~/.claude/skills` or `~/.codex/skills` are hard to
+  version, review, and distribute.
+- A plugin can carry skills, CLIs, references, and manifest metadata together.
+- Both Claude and Codex users should get the same workflows.
+
+Consequence:
+
+- `plugins/company-brain-harness/.claude-plugin/plugin.json` defines Claude
+  metadata.
+- `plugins/company-brain-harness/.codex-plugin/plugin.json` defines Codex
+  metadata.
+- `skills/` uses portable `SKILL.md` files with small OpenAI interface YAML.
+
+## Layer 4: Skills
+
+Decision: expose workflows as skills, not hidden command knowledge.
+
+Skills:
+
+- `brain-setup`
+- `brain-health`
+- `sources-check`
+- `brain-intake`
+- `brain-onboard`
+- `meeting-to-brain`
+- `approve-brain-notes`
+- `brain-schedule`
+- `brain-lint`
+- `repo-aware-poc`
+
+Reasoning:
+
+- Skills are the UX layer for humans using Claude or Codex.
+- Skill instructions keep the same workflow portable across agents.
+- Skills should reference the brain root and CLIs instead of duplicating company
+  facts inside prompt files.
+
+Consequence:
+
+- A teammate can say `$brain-onboard` or `/company-brain-harness:brain-onboard`
+  and get the same core behavior.
+- Skills stay generic and rely on the active brain root for company-specific
+  context.
+
+## Layer 5: CLIs
+
+Decision: implement executable behavior as stdlib Python CLIs.
+
+Reasoning:
+
+- Skills are instructions; CLIs are enforcement.
+- Stdlib Python avoids npm/pip setup and runs on fresh machines.
+- Shellable tools make smoke tests and future automation straightforward.
+
+CLI responsibilities:
+
+| CLI | Responsibility |
+|---|---|
+| `brain-setup.py` | Create the portable scaffold |
+| `connections-check.py` | Check root, routing, and optional connector readiness |
+| `source-registry-check.py` | Enforce source-instance capture eligibility |
+| `brain-health.py` | Score root readiness |
+| `brain-lint.py` | Detect stale, unprovenanced, duplicate, broken, or contradictory notes |
+| `brain-schedule.py` | Generate operating cadence |
+| `stage-brain-note.py` | Create staged proposals |
+| `approve-staged-note.py` | Record approve/reject/revise decisions |
+| `promote-to-brain.py` | Promote approved notes to final destinations |
+
+## Layer 6: Brain Root Contract
+
+Decision: every root needs routing, config, conventions, staging, and indexes.
+
+Generated scaffold:
+
+```text
+CLAUDE.md
+company-brain.yml
+00_Company_Brain_Conventions/
+  README.md
+  CAPTURE_POLICY.md
+  CONNECTIONS.md
+  HARNESS_FLOWS.md
+  HARNESS_STATUS.md
+  SCHEDULE.md
+  source-registry.yml
+  team.yml
+  90_Staging/
+Context/
+Daily/
+Projects/
+Departments/
+Intelligence/
+Resources/
+Team/
+Skills/
+Restricted/
+Archive/
+```
+
+Reasoning:
+
+- Agents need one root routing file.
+- Humans need a conventions folder.
+- Writes need a staging area.
+- Teams need a source registry and team map.
+- Sensitive material needs an explicit restricted route.
+
+## Layer 7: Source Registry
+
+Decision: source instance is the unit of capture.
+
+Wrong:
+
+```text
+Capture Fireflies.
+Capture Apollo.
+Capture Gmail.
+```
+
+Right:
+
+```text
+source_id: company-fireflies
+connector: fireflies
+control_tier: company_owned
+status: approved_staging_only
+capture.allowed: true
+review_owner: Scott
+```
+
+Reasoning:
+
+- One connector can have many accounts, workspaces, channels, inboxes, or API
+  keys.
+- Personal accounts can contain private material.
+- Teams need to know who owns each source and what the source may produce.
+
+Consequence:
+
+- `source-registry-check.py --for-capture` refuses personal, unknown, proposed,
+  excluded, suspended, or retired sources.
+- Connector adapters must select a specific source id before running.
+
+## Layer 8: Capture And Promotion
+
+Decision: shared knowledge is curated, not raw.
+
+Default flow:
+
+```text
+source/interview/document
+  -> staged proposal
+  -> human or owner review
+  -> approve/reject/revise
+  -> final brain note
+```
+
+Reasoning:
+
+- Raw transcripts, emails, and exports are noisy and can be sensitive.
+- A company brain should contain reusable knowledge with provenance.
+- Review is how the team builds trust in the system.
+
+Consequence:
+
+- `stage-brain-note.py` previews by default.
+- `--write` is required to create a staged proposal.
+- Final promotion goes through the approval ledger.
+
+## Layer 9: Safety
+
+Decision: default to no-surprise, no-broad-capture behavior.
+
+Safety controls:
+
+- preview by default
+- `--write` required
+- path traversal blocked
+- root-level content writes refused
+- restricted prefixes refused
+- secrets not stored in brain
+- personal connectors excluded
+- raw material not promoted by default
+- provenance required
+- two tags required for staged/promoted notes
+
+Reasoning:
+
+- Shared company memory is high trust and high leverage.
+- Mistaken writes and broad capture damage trust quickly.
+- The harness should be safe before it is automated.
+
+## Layer 10: Team Operations
+
+Decision: operate as a team system with roles and cadence.
+
+Roles:
+
+- Champion: policy, source approval, adoption
+- Operator: daily checks, schedules, staging queue
+- Teammate: knowledge contribution and corrections
+- Source owner: source scope, retention, accuracy
+
+First two-week cadence:
+
+```text
+connections -> sources -> health -> lint -> staged queue -> punch list
+```
+
+Reasoning:
+
+- Team adoption depends on visible review and correction.
+- Every teammate should be able to see what feeds the brain.
+- The brain should get better as people use it.
+
+## Layer 11: Freshness And Evolution
+
+Decision: knowledge must be maintained, not only captured.
+
+Principles:
+
+- use `last_verified`
+- keep provenance comments
+- update canonical notes instead of creating duplicates
+- mark or archive deprecated knowledge
+- route contradictions to source owners
+- lint regularly
+
+Reasoning:
+
+- Company context changes.
+- Stale docs are worse when agents rely on them confidently.
+- Freshness and provenance are part of the trust model.
+
+## Layer 12: Testing And Release
+
+Decision: release only through a reproducible validation script.
+
+Release gate:
+
+```bash
+bash scripts/validate.sh
+```
+
+What it proves:
+
+- Python compiles.
+- Skills have required structure.
+- plugin manifests validate.
+- smoke test passes on a synthetic non-HeyFlora root.
+- setup, source checks, schedule, lint, staging, approval, and restricted refusal
+  work together.
+
+Reasoning:
+
+- The harness is generic only if non-HeyFlora smoke tests pass.
+- Installability is part of product quality.
+- Safety claims need executable proof.

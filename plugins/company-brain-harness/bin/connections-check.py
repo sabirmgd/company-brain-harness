@@ -31,6 +31,7 @@ from pathlib import Path
 from typing import Optional
 
 from harness_common import conventions_dir, resolve_root, restricted_prefixes, routing_file, staging_dir
+from source_registry import is_capture_eligible, load_registry
 
 
 DEFAULT_ROOT = (
@@ -374,6 +375,46 @@ def check_fireflies(report: Report, live: bool) -> None:
     ))
 
 
+def check_source_registry(report: Report, root: Path) -> None:
+    registry = load_registry(root)
+    eligible = [source for source in registry.sources if is_capture_eligible(source)]
+    if registry.errors:
+        report.add(Check(
+            key="source_registry",
+            label="Source registry",
+            status="warn",
+            required=False,
+            detail="; ".join(registry.errors[:4]),
+            next_step="Run source-registry-check.py and fix invalid source instances before connector jobs run.",
+            unlocks="Team-safe connector capture by approved source instance, not by broad app type.",
+        ))
+        return
+    if not registry.sources:
+        report.add(Check(
+            key="source_registry",
+            label="Source registry",
+            status="missing",
+            required=False,
+            detail="No source instances are registered yet.",
+            next_step="Create source-registry.yml or run brain-setup.py for a new company brain.",
+            unlocks="Team-safe connector capture by approved source instance, not by broad app type.",
+        ))
+        return
+    warning_detail = "; ".join(registry.warnings[:3])
+    detail = f"{len(registry.sources)} source instances registered; {len(eligible)} capture-ready."
+    if warning_detail:
+        detail += " Warnings: " + warning_detail
+    report.add(Check(
+        key="source_registry",
+        label="Source registry",
+        status="ok" if not registry.warnings else "warn",
+        required=False,
+        detail=detail,
+        next_step=None if not registry.warnings else "Review registry warnings before enabling scheduled capture.",
+        unlocks="Team-safe connector capture by approved source instance, not by broad app type.",
+    ))
+
+
 def check_github(report: Report, org: str, live: bool) -> None:
     path = shutil.which("gh")
     if not path:
@@ -535,6 +576,7 @@ def main() -> int:
     )
 
     check_drive(report, root)
+    check_source_registry(report, root)
     check_google_drive_app(report)
     check_gws(report, args.live)
     check_fireflies(report, args.live)

@@ -15,16 +15,24 @@ to connect, route, stage, approve, score, and safely grow the company brain.
 - The harness is packaged as a private GitHub repo:
   `https://github.com/sabirmgd/company-brain-harness`
 - The package installs into both Claude Code and Codex.
-- The package has six reusable skills:
+- The package has ten reusable skills:
+  - brain setup
   - brain health
+  - sources check
   - brain intake
   - teammate/company onboarding interview
   - meeting-to-brain
   - staged-note approval
+  - brain schedule
+  - brain lint
   - repo-aware POC guardrails
 - The package has generic CLIs for:
+  - setup scaffolding
   - connection checks
+  - source registry validation
   - brain health scoring
+  - freshness/provenance lint
+  - schedule generation
   - staging notes
   - approving/rejecting/revising notes
   - promoting approved notes into the right folder
@@ -60,6 +68,8 @@ filled through the staged workflow.
 
 - Approve the capture policy before any scheduled meeting/email capture.
 - Decide whether HeyFlora will create a company Fireflies workspace/API key.
+- Decide whether shared Apollo/CRM is an approved company source, and what it
+  may stage.
 - Decide the company automation identity, for example `flora-bot@heyflora.ai`.
 - Approve Google Workspace access for the engine identity.
 - Lock restricted folders, especially owner/legal/finance/HR material.
@@ -81,8 +91,9 @@ People can add knowledge in three ways:
 2. Answer a guided onboarding interview.
 3. Use an approved company meeting source after the capture policy is approved.
 
-Personal Fireflies/Gmail/Calendar are not company capture sources. They can help
-an individual work in their own Claude session, but they are not the team engine.
+Personal Fireflies/Gmail/Calendar/Apollo are not company capture sources. They
+can help an individual work in their own Claude session, but they are not the
+team engine.
 
 ## First operating schedule
 
@@ -91,7 +102,9 @@ For the first two weeks, run this manually or semi-automatically:
 ```text
 Morning:
   run connection check
+  run source registry check
   run brain health
+  run brain lint
   review staged notes
   approve/reject/revise proposed notes
 

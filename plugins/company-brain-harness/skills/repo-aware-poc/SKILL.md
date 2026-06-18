@@ -10,10 +10,12 @@ Before building a prototype, ground the work in the company repo map and stack c
 ## Workflow
 
 1. Resolve the brain root.
-2. Read the repository index and stack conventions when present, commonly:
-   - `10_Engineering_and_Tech/06_Repositories_Index/`
-   - `10_Engineering_and_Tech/02_Tech_Stack_Documentation/`
-3. If those docs are stale or missing and GitHub access is configured, run `connections-check.py --live` and refresh the repo map through the company's approved GitHub process.
+2. Read the repository index and stack conventions when present. Common generic destinations are:
+   - `Departments/Engineering/`
+   - `Projects/`
+   - `Context/`
+   - a deployment-specific repo map folder named in `CLAUDE.md`
+3. If those docs are stale or missing and GitHub access is configured, validate the approved GitHub source instance before refreshing the repo map.
 4. Decide where the POC belongs:
    - existing product repo
    - site/template repo
@@ -28,3 +30,4 @@ Before building a prototype, ground the work in the company repo map and stack c
 - Do not introduce a new framework because the agent prefers it.
 - Keep skills, agents, and role bundles in the registry/control-plane repo when that is the established source of truth.
 - Keep tenant data and customer-specific runtime state out of central definitions.
+- Do not scrape personal GitHub accounts for company repo knowledge unless they are explicitly registered and approved sources.

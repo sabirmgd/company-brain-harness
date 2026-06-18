@@ -10,9 +10,13 @@ EXPECTED = {
     "approve-brain-notes",
     "brain-health",
     "brain-intake",
+    "brain-lint",
     "brain-onboard",
+    "brain-schedule",
+    "brain-setup",
     "meeting-to-brain",
     "repo-aware-poc",
+    "sources-check",
 }
 
 

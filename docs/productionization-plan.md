@@ -21,18 +21,27 @@ Required proof:
 - Smoke test passes against a non-HeyFlora brain root.
 - GitHub Actions validation is green.
 
+## Built In The Current Harness
+
+- Config scaffold that creates `company-brain.yml`, `CLAUDE.md`, conventions
+  docs, capture policy, connections inventory, source registry, schedule, folder
+  indexes, and staging folders for a new company.
+- Source registry validator/enforcer that refuses unapproved or personal source
+  instances before connector jobs run.
+- Schedule generator for human-gated or autonomous operating loops.
+- Read-only lint for stale, duplicate, broken-link, contradiction, and
+  provenance review.
+
 ## Missing Before Broad Reuse
 
-- Config wizard that creates `company-brain.yml`, `CLAUDE.md`, conventions docs,
-  capture policy, harness flows, and staging folders for a new company.
 - Connector adapters for company-controlled sources:
   - Google Workspace via `gws`
   - Fireflies company workspace
   - GitHub org repo index
+  - shared Apollo/CRM workspace
   - Slack later
-- Source registry validator/enforcer that refuses unapproved or personal source
-  instances before connector jobs run.
-- Scheduled runner that stages proposals and produces a morning review digest.
+- Scheduled runner that executes the generated schedule and produces a morning
+  review digest.
 - Clean service-account guide for Google Workspace domain-wide delegation.
 - Example brain root fixtures for CI and docs.
 - Versioned release tags and changelog.

@@ -20,6 +20,7 @@ Defaults:
 - `CLAUDE.md` or equivalent root routing instructions.
 - `00_README_Drive_Conventions/README.md` or equivalent conventions doc.
 - `00_README_Drive_Conventions/CAPTURE_POLICY.md`.
+- `00_README_Drive_Conventions/source-registry.yml`.
 - `00_README_Drive_Conventions/HARNESS_FLOWS.md`.
 - `00_README_Drive_Conventions/HARNESS_STATUS.md`.
 - `00_README_Drive_Conventions/90_Staging/`.
@@ -44,19 +45,33 @@ concepts remain the same.
 Default posture is source-separated capture:
 
 - Company-controlled sources can feed the engine.
-- Personal accounts and personal Fireflies keys are not company sources.
+- Connector capture uses registered source instances, not broad app names.
+- Personal accounts and personal Fireflies/Gmail/Calendar/Apollo keys are not company sources by default.
 - Raw material lands in private staging, not the shared brain.
 - Curated notes reach the brain only after approval.
-- Sensitive company material routes to a restricted folder; never index restricted vaults.
+- Sensitive company material routes to a restricted folder; never index restricted folders.
 
 ## Write Path
 
 All write workflows use:
 
-1. Stage: `stage-brain-note.py`.
+1. Stage: `stage-brain-note.py --write`.
 2. Review: human or owner reviews staged proposal.
 3. Approve/reject/revise: `approve-staged-note.py`.
 4. Promote: approval calls `promote-to-brain.py`.
 
 Direct writes to final knowledge folders are allowed only for explicitly approved
 administrative harness docs or local dry-run tests.
+
+`stage-brain-note.py` previews by default. A proposal file is created only when
+`--write` is present.
+
+## Maintenance
+
+Daily operating checks should include:
+
+1. `connections-check.py`.
+2. `source-registry-check.py`.
+3. `brain-health.py`.
+4. `brain-lint.py`.
+5. staged proposal review.

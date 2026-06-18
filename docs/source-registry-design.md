@@ -8,9 +8,9 @@ The rule:
 > A connector is not a source. A specific approved account/workspace/channel is
 > a source.
 
-Fireflies, Google Workspace, Slack, GitHub, HubSpot, Notion, and CRM systems are
-connector types. The company brain should never ingest from "Fireflies" in the
-abstract. It ingests from an approved source instance, such as
+Fireflies, Google Workspace, Slack, GitHub, HubSpot, Apollo, Notion, and CRM
+systems are connector types. The company brain should never ingest from
+"Fireflies" in the abstract. It ingests from an approved source instance, such as
 `heyflora-fireflies-company-workspace`.
 
 ## Core Objects
@@ -24,6 +24,7 @@ The tool family:
 - `slack`
 - `github`
 - `hubspot`
+- `apollo`
 - `notion`
 - `filesystem`
 - `manual`
@@ -41,6 +42,7 @@ Examples:
 - `heyflora-slack-customer-success-channels`
 - `heyflora-github-org`
 - `customer-acme-hubspot-production`
+- `company-shared-apollo-workspace`
 
 ### Credential Reference
 
@@ -175,6 +177,10 @@ google_workspace:
 slack:
   - heyflora selected channels
   - customer A selected channels
+
+apollo:
+  - company shared Apollo workspace
+  - customer A owned Apollo workspace
 ```
 
 Not allowed:
@@ -245,3 +251,32 @@ The customer-facing product should ask:
 7. Where should approved knowledge land?
 
 That interview produces `source-registry.yml`, not hidden magic.
+
+## Executable Enforcement
+
+The current harness includes a registry validator:
+
+```bash
+python3 plugins/company-brain-harness/bin/source-registry-check.py --root "$BRAIN_ROOT"
+```
+
+Connector jobs should gate capture on a specific source:
+
+```bash
+python3 plugins/company-brain-harness/bin/source-registry-check.py \
+  --root "$BRAIN_ROOT" \
+  --source-id "<source-id>" \
+  --for-capture
+```
+
+This enforces the core policy before connector code runs:
+
+- source exists
+- source is not personal or unknown
+- source status is `active` or `approved_staging_only`
+- `capture.allowed` is true
+- credential reference does not look like a secret value
+- required owner, review owner, status, control tier, and capture fields exist
+
+Adapter-specific enforcement is still required for scope filters, retention,
+pagination, dedupe, raw evidence storage, and connector API authorization.

@@ -1,12 +1,18 @@
 # Company Brain Harness Quickstart
 
-This harness is a portable plugin marketplace plus helper CLIs. It does not
-assume Google Drive. The brain root can be a mounted Drive folder, a git repo, a
-shared volume, or a local directory.
+This harness is a portable plugin plus helper CLIs. It does not assume Google
+Drive. The brain root can be a mounted Drive folder, a git repo, a shared
+volume, or a local directory.
 
-## 1. Install From GitHub
+HeyFlora is the dogfood deployment. The category is Company Brain Harness.
 
-After this repo is published, install the marketplace from GitHub:
+For the reasoning behind each layer, read
+[Harness Architecture](harness-architecture.md) and
+[Decision Log](decision-log.md).
+
+## 1. Install
+
+From GitHub:
 
 ```bash
 claude plugin marketplace add sabirmgd/company-brain-harness
@@ -16,9 +22,7 @@ codex plugin marketplace add sabirmgd/company-brain-harness
 codex plugin add company-brain-harness@company-brain
 ```
 
-## 2. Install From A Local Checkout
-
-For development:
+From a local checkout:
 
 ```bash
 git clone git@github.com:sabirmgd/company-brain-harness.git
@@ -31,48 +35,39 @@ codex plugin marketplace add .
 codex plugin add company-brain-harness@company-brain
 ```
 
-## 3. Point The Agent At A Brain Root
+## 2. Create Or Point At A Brain Root
 
-Set the root before running skills or CLIs:
+For an existing root:
 
 ```bash
 export BRAIN_ROOT="/path/to/company-brain-root"
 ```
 
-The root should contain:
+For a new root, preview first:
 
-- `CLAUDE.md` or the configured routing file.
-- A conventions folder with `README.md`.
-- `CAPTURE_POLICY.md`.
-- `HARNESS_FLOWS.md`.
-- `HARNESS_STATUS.md`.
-- A staging folder for proposed notes.
-
-Optional config file:
-
-```yaml
-schema_version: "1.0"
-kind: company_brain_config
-brain:
-  routing_file: CLAUDE.md
-  conventions_dir: 00_README_Drive_Conventions
-  staging_dir: 00_README_Drive_Conventions/90_Staging
-  restricted_prefixes:
-    - 14_Owner_Vault
-health:
-  priority_folders:
-    - 02_Strategy_and_Vision
-    - 03_Platform_Architecture
+```bash
+python3 plugins/company-brain-harness/bin/brain-setup.py \
+  --root "$BRAIN_ROOT" \
+  --company-name "Acme Co" \
+  --champion "Brain Champion" \
+  --operator "Brain Operator"
 ```
 
-Supported config names:
+Then write the scaffold:
 
-- `company-brain.yml`
-- `company-os.yml`
-- `<conventions_dir>/company-brain.yml`
-- `<conventions_dir>/company-os.yml`
+```bash
+python3 plugins/company-brain-harness/bin/brain-setup.py \
+  --root "$BRAIN_ROOT" \
+  --company-name "Acme Co" \
+  --champion "Brain Champion" \
+  --operator "Brain Operator" \
+  --write
+```
 
-## 4. Verify
+This creates routing, policy, source registry, staging, schedule, folder
+indexes, and team scaffolding. It does not populate company data.
+
+## 3. Verify The Harness
 
 From the harness checkout:
 
@@ -84,7 +79,31 @@ Against a real brain:
 
 ```bash
 python3 plugins/company-brain-harness/bin/connections-check.py --root "$BRAIN_ROOT" --live
+python3 plugins/company-brain-harness/bin/source-registry-check.py --root "$BRAIN_ROOT"
 python3 plugins/company-brain-harness/bin/brain-health.py --root "$BRAIN_ROOT"
+python3 plugins/company-brain-harness/bin/brain-lint.py --root "$BRAIN_ROOT" --stale-days 30
+```
+
+## 4. Register Sources Before Capture
+
+Every source must be a specific instance:
+
+- company Fireflies workspace
+- shared Apollo or CRM workspace
+- company GitHub org
+- selected Slack channels
+- Google Workspace service account
+- customer-owned workspace for that customer's brain
+
+Do not register broad app names or every teammate's personal account.
+
+Before a connector job runs:
+
+```bash
+python3 plugins/company-brain-harness/bin/source-registry-check.py \
+  --root "$BRAIN_ROOT" \
+  --source-id "<source-id>" \
+  --for-capture
 ```
 
 ## 5. Use The Skills
@@ -92,35 +111,50 @@ python3 plugins/company-brain-harness/bin/brain-health.py --root "$BRAIN_ROOT"
 Claude Code:
 
 ```text
+/company-brain-harness:brain-setup
 /company-brain-harness:brain-health
+/company-brain-harness:sources-check
 /company-brain-harness:brain-intake
 /company-brain-harness:brain-onboard
 /company-brain-harness:meeting-to-brain
 /company-brain-harness:approve-brain-notes
+/company-brain-harness:brain-schedule
+/company-brain-harness:brain-lint
 /company-brain-harness:repo-aware-poc
 ```
 
 Codex:
 
 ```text
+$brain-setup
 $brain-health
+$sources-check
 $brain-intake
 $brain-onboard
 $meeting-to-brain
 $approve-brain-notes
+$brain-schedule
+$brain-lint
 $repo-aware-poc
 ```
 
-## 6. Team Setup Model
+## 6. Team Operating Model
 
 Every teammate connects to the same brain root. Each person can use their own
 Claude/Codex session, but shared writes go through the same staged approval
 path:
 
 ```text
-raw/input -> staged proposal -> human review -> approved note -> brain folder
+source or interview -> staged proposal -> review -> approved note -> brain folder
 ```
 
-Personal connectors are not team-engine connectors. Meeting/email/calendar
-capture must come from company-controlled sources and follow the approved
-capture policy.
+The first two weeks should normally be human-gated:
+
+- checks can run daily
+- approved sources can create staged proposals
+- promotion requires explicit approve/reject/revise
+- sensitive material stays restricted or out
+
+After trust is established, scheduled checks and approved-source staging can run
+unattended. Auto-promotion should stay limited to low-risk categories with an
+explicit policy rule.

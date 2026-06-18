@@ -2,8 +2,9 @@
 """stage-brain-note - create a proposed note for later approval.
 
 Generic staging for a filesystem-backed company brain. It does not write to the
-final destination. It writes a proposed markdown note under the staging area,
-including the intended target path and provenance metadata.
+final destination. By default it previews the proposed staging write. Use
+--write to persist the proposal under the staging area, including the intended
+target path and provenance metadata.
 
 Default staging directory:
   <brain root>/00_README_Drive_Conventions/90_Staging/proposed
@@ -15,7 +16,7 @@ Usage:
       --source-type interview --source-ref scott-setup --author sabir
 
 Exit codes:
-    0 = staged
+    0 = valid preview / staged
     1 = validation failed
     2 = bad local configuration / missing root
 """
@@ -121,6 +122,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--staged-by", default="company-brain-harness")
     parser.add_argument("--id", default=None, help="explicit staged id; default generated from target")
     parser.add_argument("--overwrite", action="store_true", help="replace an existing staged proposal")
+    parser.add_argument("--write", action="store_true", help="actually stage; default is preview-only")
     args = parser.parse_args(argv)
 
     root = resolve_root(args.root)
@@ -157,7 +159,6 @@ def main(argv: list[str] | None = None) -> int:
         stage_path = staging_dir(root, args.staging_dir) / "proposed" / f"{stage_id}.md"
         if stage_path.exists() and not args.overwrite:
             raise StageError(f"staged proposal already exists: {stage_path.relative_to(root)}")
-        stage_path.parent.mkdir(parents=True, exist_ok=True)
 
         metadata: dict[str, Any] = {
             "status": "proposed",
@@ -178,13 +179,19 @@ def main(argv: list[str] | None = None) -> int:
         if "<!-- src:" not in body:
             body = f"<!-- src: {args.source_type}/{args.source_ref} @ {today} -->\n\n{body}"
 
-        stage_path.write_text(dump_frontmatter(metadata, body), encoding="utf-8")
+        rendered = dump_frontmatter(metadata, body)
+        if args.write:
+            stage_path.parent.mkdir(parents=True, exist_ok=True)
+            stage_path.write_text(rendered, encoding="utf-8")
+
         print(json.dumps({
-            "action": "staged",
+            "action": "staged" if args.write else "would-stage",
             "id": stage_id,
             "path": str(stage_path.relative_to(root)),
             "target": target.as_posix(),
             "sensitivity": args.sensitivity,
+            "bytes": len(rendered.encode("utf-8")),
+            "note": None if args.write else "preview only; rerun with --write to persist",
         }, indent=2, sort_keys=True))
         return 0
     except StageError as e:

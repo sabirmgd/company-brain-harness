@@ -9,18 +9,28 @@ Convert approved meeting material into staged knowledge. Never bulk-ingest perso
 
 ## Workflow
 
-1. Read `CAPTURE_POLICY.md` before using any meeting source.
-2. Verify the source is company-controlled or explicitly approved. If it is a personal Fireflies account/key, stop and explain the risk.
-3. Extract only useful company knowledge:
+1. Read `CAPTURE_POLICY.md` and `source-registry.yml` before using any meeting source.
+2. Verify the exact meeting source instance with `source-registry-check.py --source-id <id> --for-capture`.
+3. If it is a personal Fireflies, Calendar, Gmail, Zoom, or meeting recorder account, stop unless it is explicitly delegated, scoped, approved, and registered.
+4. Extract only useful company knowledge:
    - decisions
    - action items
    - customer facts
    - product/architecture facts
    - open questions
    - follow-up owners
-4. Split outputs by destination folder when the meeting covers multiple domains.
-5. Stage each note with `source-type=meeting` and a source reference that can be audited later.
-6. Do not place raw transcripts in the shared brain unless policy explicitly allows it. Curated notes are the default shared artifact.
+5. Split outputs by destination folder when the meeting covers multiple domains.
+6. Stage each note with `source-type=meeting` and a source reference that can be audited later.
+7. Do not place raw transcripts in the shared brain unless policy explicitly allows it. Curated notes are the default shared artifact.
+
+## Source Check
+
+```bash
+python3 <plugin-root>/bin/source-registry-check.py \
+  --root "$BRAIN_ROOT" \
+  --source-id "<meeting-source-id>" \
+  --for-capture
+```
 
 ## Output Shape
 

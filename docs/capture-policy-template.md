@@ -24,8 +24,9 @@ review policy.
 | Company Fireflies workspace | Allowed after owner approval | Shared company meeting source |
 | Company Google Workspace account or service account | Allowed after admin approval | Gmail, Calendar, Docs, Sheets automation |
 | Company GitHub org | Allowed | Repo index and stack guardrails |
+| Shared Apollo/CRM workspace | Allowed after owner approval | GTM/customer/account facts |
 | Personal Fireflies account | Not allowed | Can contain private/non-company meetings |
-| Personal Gmail/Calendar | Not allowed for engine capture | Teammates may use personal connectors in their own sessions |
+| Personal Gmail/Calendar/Apollo | Not allowed for engine capture | Teammates may use personal connectors in their own sessions |
 
 Multiple accounts per connector are allowed only when each account/workspace is
 separately registered and approved.
@@ -36,7 +37,21 @@ Examples:
 - `customer-acme-fireflies`
 - `company-google-workspace-engine`
 - `company-slack-selected-channels`
+- `company-shared-apollo`
 - `personal-fireflies-sabir` with `status: excluded`
+
+## Team Member Source Inventory
+
+Ask every teammate about sources from a team perspective:
+
+- Which company/shared tools do you use?
+- Which exact account, workspace, channel, folder, or org should be considered?
+- Which personal tools should remain excluded?
+- What source-derived notes would help the team if curated?
+- Who owns and reviews notes from that source?
+- What must never be captured?
+
+Suggestions become source registry entries only after owner approval.
 
 ## Meeting Capture
 

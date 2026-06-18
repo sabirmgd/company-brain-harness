@@ -1,6 +1,6 @@
 {
   "name": "company-brain-harness",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Portable Company Brain harness skills and CLIs for filesystem-backed knowledge roots.",
   "author": {
     "name": "30x"
@@ -17,9 +17,13 @@
       "Write"
     ],
     "defaultPrompt": [
+      "Use $brain-setup to scaffold a new company brain.",
       "Use $brain-health to check this company brain.",
+      "Use $sources-check to validate org-wide source instances.",
       "Use $brain-intake to stage this document.",
-      "Use $brain-onboard to interview a teammate."
+      "Use $brain-onboard to interview a teammate.",
+      "Use $brain-schedule to create the operating schedule.",
+      "Use $brain-lint to inspect freshness and provenance."
     ],
     "brandColor": "#2F6F5E"
   }

@@ -87,6 +87,47 @@ sources:
       last_reviewed: null
       approved_by: null
 
+  - id: company-shared-apollo
+    connector: apollo
+    display_name: Company Shared Apollo Workspace
+    control_tier: company_owned
+    status: proposed
+    credential_ref: env:COMPANY_APOLLO_API_KEY
+    owner: brain-owner
+    review_owner: brain-champion
+    capture:
+      allowed: false
+      mode: scheduled
+      approval_required: true
+      raw_retention_days: 14
+    scope:
+      include:
+        - company-approved accounts and contacts
+        - GTM notes approved for team reuse
+      exclude:
+        - personal prospecting lists
+        - private teammate notes
+        - credentials and billing data
+    routing:
+      default_destination: Intelligence/gtm
+      staging_destination: 00_README_Drive_Conventions/90_Staging
+      restricted_prefixes:
+        - 14_Owner_Vault
+    brain_artifacts:
+      allowed:
+        - account_summary
+        - customer_fact
+        - reusable_gtm_note
+      not_allowed:
+        - raw_export_by_default
+        - credential_value
+    dedupe:
+      external_id_field: apollo_id
+      strategy: source_id_plus_external_id
+    audit:
+      last_reviewed: null
+      approved_by: null
+
   - id: personal-fireflies-example
     connector: fireflies
     display_name: Personal Fireflies Account Example

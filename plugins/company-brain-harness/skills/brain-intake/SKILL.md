@@ -10,22 +10,24 @@ Turn raw material into a staged proposal. Do not write directly to final knowled
 ## Workflow
 
 1. Resolve the brain root.
-2. Read the configured routing file, folder indexes, `CAPTURE_POLICY.md`, and `HARNESS_FLOWS.md` if present.
+2. Read the configured routing file, folder indexes, `CAPTURE_POLICY.md`, `HARNESS_FLOWS.md`, and `source-registry.yml` if present.
 3. Classify the input:
    - company knowledge
    - personal/private
    - sensitive company material
+   - team-owned source material
    - unknown
 4. Refuse to stage personal/private material into a shared brain. For unknown material, stage only after marking it for review.
-5. Choose a target path under the appropriate knowledge folder. Never target the restricted vault unless the user is explicitly authorized and the policy allows it.
-6. Draft a concise markdown note with:
+5. If the material comes from a connector, identify the exact source instance. Do not accept "Fireflies", "Apollo", "Gmail", or "Slack" as a source by itself.
+6. Choose a target path under the appropriate knowledge folder. Never target the restricted folder unless the user is explicitly authorized and the policy allows it.
+7. Draft a concise markdown note with:
    - title
    - summary
    - decisions/facts
    - open questions
    - source/provenance
-7. Stage with `stage-brain-note.py`, including target path, at least two tags, `source-type`, `source-ref`, and `author`.
-8. Return the staged proposal id and what a reviewer should check.
+8. Preview with `stage-brain-note.py`. Add `--write` only when the user explicitly wants a staged proposal created.
+9. Return the staged proposal id and what a reviewer should check.
 
 ## Command Pattern
 
@@ -40,4 +42,14 @@ python3 <plugin-root>/bin/stage-brain-note.py \
   --id "<optional-id>"
 ```
 
-Pipe the proposed markdown note on stdin.
+Pipe the proposed markdown note on stdin. This previews by default. Add `--write` to persist under the staging folder.
+
+## Team Source Prompts
+
+When a teammate provides source material, ask:
+
+- Is this from a company/shared source, customer source, delegated personal source, or private personal source?
+- What exact account/workspace/channel/folder/item is the source?
+- Who owns this source?
+- Who should review the staged note?
+- Should any part route to `Restricted/` or stay out?
