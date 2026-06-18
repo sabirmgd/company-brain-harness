@@ -1,6 +1,6 @@
 ---
 name: brain-schedule
-description: Create or update the Company Brain operating schedule for human-gated or autonomous runs. Use when setting the morning review loop, scheduled checks, source registry validation, lint, staging review, or auto-capture guardrails.
+description: Create or update the Company Brain operating schedule for human-gated or autonomous runs. Use when the user says schedule the brain check, set the morning review, automate daily checks, run without a human, keep human in the loop, set cron, or define auto-capture guardrails.
 ---
 
 # Brain Schedule

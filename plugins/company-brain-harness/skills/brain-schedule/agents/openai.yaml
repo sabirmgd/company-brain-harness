@@ -1,6 +1,6 @@
 interface:
   display_name: "Brain Schedule"
-  short_description: "Create the human-gated or autonomous operating schedule."
-  default_prompt: "Use $brain-schedule to create this company brain schedule."
+  short_description: "Schedule human-gated or autonomous brain checks."
+  default_prompt: "Use $brain-schedule when I say schedule the brain check, set the morning review, automate daily checks, or keep human in the loop."
 policy:
   allow_implicit_invocation: true

@@ -1,6 +1,6 @@
 ---
 name: brain-health
-description: Check whether a filesystem-backed company brain is connected, policy-safe, healthy, and ready for teammate use. Use when the user asks for brain health, connection status, harness readiness, setup verification, missing integrations, or a morning/company-brain check.
+description: Check whether a company brain is connected, policy-safe, healthy, and ready for team use. Use when the user says is the brain ready, check health, check setup, verify connections, are integrations working, can the team use this, or show readiness status.
 ---
 
 # Brain Health

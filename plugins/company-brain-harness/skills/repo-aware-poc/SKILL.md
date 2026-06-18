@@ -1,6 +1,6 @@
 ---
 name: repo-aware-poc
-description: Keep prototypes and proof-of-concepts aligned with the company's GitHub org, repo map, stack conventions, and build patterns. Use when planning or building a POC, choosing where code should live, checking stack fit, or making an agent aware of existing repositories.
+description: Keep prototypes and proof-of-concepts aligned with the company's repo map, GitHub org, stack conventions, and build patterns. Use when the user says build a POC, prototype this, where should this code live, check existing repos, use our stack, make the agent repo-aware, or plan an MVP.
 ---
 
 # Repo Aware POC

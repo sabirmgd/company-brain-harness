@@ -17,6 +17,7 @@
       "Write"
     ],
     "defaultPrompt": [
+      "Users do not need to name skills. Route plain-English Company Brain requests by intent and role.",
       "Use $brain-start to help a new user set up or operate a company brain.",
       "Use $brain-owner to guide owner approvals and setup decisions.",
       "Use $brain-operator to run today's brain check.",
@@ -26,8 +27,11 @@
       "Use $sources-check to validate org-wide source instances.",
       "Use $brain-intake to stage this document.",
       "Use $brain-onboard to interview a teammate.",
+      "Use $meeting-to-brain to process approved meeting material.",
+      "Use $approve-brain-notes to review the staging queue.",
       "Use $brain-schedule to create the operating schedule.",
-      "Use $brain-lint to inspect freshness and provenance."
+      "Use $brain-lint to inspect freshness and provenance.",
+      "Use $repo-aware-poc to align prototypes with company repos."
     ],
     "brandColor": "#2F6F5E"
   }

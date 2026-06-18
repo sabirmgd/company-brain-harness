@@ -1,6 +1,6 @@
 ---
 name: brain-contribute
-description: Help a Team Member contribute knowledge safely through a short guided interview. Use when a teammate wants to add what they know, document their role, suggest sources, or flag stale/private material.
+description: Help a Team Member contribute knowledge safely through a short guided interview. Use when the user says I want to add what I know, document my role, share my process, add an SOP, update stale facts, suggest team sources, or tell the brain about my work.
 ---
 
 # Brain Contribute

@@ -1,6 +1,6 @@
 ---
 name: approve-brain-notes
-description: Review staged company-brain proposals and approve, reject, or request revision through the approval ledger. Use when the user asks to review staged notes, promote approved notes, clear the staging queue, or inspect pending brain proposals.
+description: Review the company brain staging queue and approve, reject, revise, or promote proposed notes. Use when the user says review pending notes, approve these notes, clear the queue, publish approved knowledge, inspect proposals, or promote staged brain updates.
 ---
 
 # Approve Brain Notes

@@ -1,6 +1,6 @@
 ---
 name: brain-lint
-description: Run read-only maintenance lint for freshness, provenance, duplicate names, dead links, and possible contradictions in a Company Brain root. Use when checking whether knowledge is stale, safe to rely on, or needs cleanup.
+description: Run read-only maintenance lint for stale knowledge, missing provenance, duplicate notes, dead links, and possible contradictions. Use when the user says what is outdated, find stale notes, check broken links, find contradictions, cleanup the brain, or can we rely on this.
 ---
 
 # Brain Lint

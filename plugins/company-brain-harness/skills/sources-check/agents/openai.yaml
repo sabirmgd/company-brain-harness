@@ -1,6 +1,6 @@
 interface:
   display_name: "Sources Check"
-  short_description: "Validate source registry capture eligibility."
-  default_prompt: "Use $sources-check to validate this company brain source registry."
+  short_description: "Validate source ownership and capture eligibility."
+  default_prompt: "Use $sources-check when I say connect a source, can Slack or Gmail or Calendar or Fireflies feed the brain, or is this personal account allowed."
 policy:
   allow_implicit_invocation: true

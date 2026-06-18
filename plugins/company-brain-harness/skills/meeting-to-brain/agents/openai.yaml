@@ -1,6 +1,6 @@
 interface:
   display_name: "Meeting To Brain"
-  short_description: "Stage approved meeting knowledge."
-  default_prompt: "Use $meeting-to-brain to stage this company meeting."
+  short_description: "Turn approved meeting material into staged notes."
+  default_prompt: "Use $meeting-to-brain when I say process this meeting, summarize a transcript, import a Fireflies recap, or extract action items."
 policy:
   allow_implicit_invocation: true

@@ -1,6 +1,6 @@
 interface:
   display_name: "Brain Onboard"
-  short_description: "Interview teammates into staged notes."
-  default_prompt: "Use $brain-onboard to interview me for this company brain."
+  short_description: "Interview a person into staged brain notes."
+  default_prompt: "Use $brain-onboard when I say interview me, onboard me, ask me questions, or help populate the brain from my answers."
 policy:
   allow_implicit_invocation: true

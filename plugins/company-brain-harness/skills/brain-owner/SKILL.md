@@ -1,6 +1,6 @@
 ---
 name: brain-owner
-description: Guide the Brain Owner through company-brain setup, policy approval, source approval, restricted access decisions, and pilot launch readiness without exposing developer-first CLIs.
+description: Guide the Brain Owner, founder, admin, or team lead through setup and approval decisions. Use when the user says I own this brain, I want to launch the company brain, approve policy, approve sources, choose the operator, invite the team, decide restricted access, or check pilot readiness.
 ---
 
 # Brain Owner

@@ -37,6 +37,10 @@ claude --plugin-dir ./plugins/company-brain-harness
 
 ## Skills
 
+Users normally speak in plain English. The skill descriptions route requests
+like "I want to set up my company brain", "run today's brain check", "I want to
+add what I know", or "can Slack feed the brain" to the right skill.
+
 - `brain-start` - main entry point for setup, operation, or contribution.
 - `brain-owner` - guide owner setup decisions and approvals.
 - `brain-operator` - run daily checks and operational punch lists.
@@ -83,6 +87,7 @@ bash scripts/validate.sh
 The published docs live at the repository root under `docs/`. Start with:
 
 - `docs/start-here.md`
+- `docs/skill-routing.md`
 - `docs/first-20-minutes.md`
 - `docs/operating-rhythm.md`
 - `docs/quickstart.md`

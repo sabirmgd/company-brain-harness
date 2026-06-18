@@ -5,6 +5,8 @@ Start here when reviewing, installing, operating, or productizing the harness.
 ## Orientation
 
 - [Start Here](start-here.md): plain-language first session flow for Claude or Codex.
+- [Plain-English Skill Routing](skill-routing.md): what customers say and which
+  skill should run.
 - [First 20 Minutes](first-20-minutes.md): starter setup with the Brain Owner.
 - [First Week](first-week.md): teammate contribution and review loop.
 - [Productized Setup Plan](productized-setup.md): how the role-based setup

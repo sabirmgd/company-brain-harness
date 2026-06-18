@@ -1,6 +1,6 @@
 ---
 name: brain-intake
-description: Stage a document, link, pasted text, transcript, or raw artifact into the company brain review flow. Use when the user wants to add knowledge, file a note, ingest a doc, sort where something belongs, or convert raw material into a staged company-brain proposal.
+description: Stage one document, link, pasted text, transcript, note, or raw artifact into the company brain review flow. Use when the user says add this to the brain, ingest this doc, file this note, where should this go, turn this into a brain note, or stage this for review.
 ---
 
 # Brain Intake

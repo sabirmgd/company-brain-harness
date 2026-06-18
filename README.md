@@ -101,6 +101,7 @@ Full details: [docs/harness-architecture.md](docs/harness-architecture.md) and
 └── scripts/
     ├── validate.sh                           # Release gate
     ├── validate_skills.py                    # Skill structure checks
+    ├── validate_skill_routing.py             # Plain-English skill trigger checks
     └── smoke-test.sh                         # Generic portability smoke test
 ```
 
@@ -155,6 +156,27 @@ $brain-start
 
 The agent will ask whether you are the Brain Owner, Brain Operator, or a Team
 Member, then guide only the relevant next steps.
+
+## Plain-English Use Cases
+
+Users do not need to call skills manually. The skill metadata is written so
+Claude and Codex can route common sentences:
+
+| User says | Expected route |
+|---|---|
+| "I want to set up my company brain." | `brain-start`, then `brain-owner` |
+| "I own this brain and want to launch it." | `brain-owner` |
+| "Run today's brain check." | `brain-operator` |
+| "What needs review?" | `brain-operator` or `approve-brain-notes` |
+| "I want to add what I know." | `brain-contribute` |
+| "Add this doc to the brain." | `brain-intake` |
+| "Process this meeting transcript." | `meeting-to-brain` |
+| "Can Slack or Gmail feed the brain?" | `sources-check` |
+| "Schedule the daily check." | `brain-schedule` |
+| "What is outdated?" | `brain-lint` |
+| "Where should this POC live?" | `repo-aware-poc` |
+
+More examples: [docs/skill-routing.md](docs/skill-routing.md).
 
 ## Developer And Automation Path
 
@@ -363,6 +385,7 @@ The smoke test proves:
 
 - [Docs Index](docs/README.md)
 - [Start Here](docs/start-here.md)
+- [Plain-English Skill Routing](docs/skill-routing.md)
 - [First 20 Minutes](docs/first-20-minutes.md)
 - [First Week](docs/first-week.md)
 - [Operating Rhythm](docs/operating-rhythm.md)

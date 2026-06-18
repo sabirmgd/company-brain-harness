@@ -1,6 +1,6 @@
 ---
 name: meeting-to-brain
-description: Convert a company-approved meeting transcript, recap, or recording export into staged company-brain notes with decisions, action items, and reusable knowledge. Use for Fireflies or meeting material only when the source is company-controlled or explicitly approved by capture policy.
+description: Convert company-approved meeting material into staged brain notes with decisions, action items, and reusable knowledge. Use when the user says process this meeting, add meeting notes, summarize a transcript, import a Fireflies recap, extract action items, or turn a Zoom, Meet, Teams, or call recording export into brain updates.
 ---
 
 # Meeting To Brain

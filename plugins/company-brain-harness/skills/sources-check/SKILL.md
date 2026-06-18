@@ -1,6 +1,6 @@
 ---
 name: sources-check
-description: Validate the Company Brain source registry and decide whether a specific source instance may feed staged capture. Use when checking org-wide connectors, shared accounts, personal connector exclusions, source ownership, approval state, or capture eligibility.
+description: Validate source registry entries and decide whether a specific account, workspace, channel, folder, inbox, calendar, repo org, or API key may feed staged capture. Use when the user says connect a source, can Slack or Gmail or Calendar or Fireflies or Apollo feed the brain, is this personal account allowed, check source ownership, or validate capture eligibility.
 ---
 
 # Sources Check

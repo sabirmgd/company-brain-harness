@@ -1,6 +1,6 @@
 ---
 name: brain-start
-description: Main entrypoint for nontechnical users starting or operating a Company Brain from Claude Code or Codex. Use when the user says they want to set up, use, start, or operate a company brain and their role or next step is unclear.
+description: Front door for plain-English Company Brain requests when the user's role or next step is unclear. Use when the user says I want to set up my company brain, help me start, I want to use the brain, what should I do next, create a company brain, operate the brain, or add knowledge but the right role is not clear.
 ---
 
 # Brain Start

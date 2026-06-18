@@ -1,6 +1,6 @@
 interface:
   display_name: "Brain Setup"
-  short_description: "Scaffold a team-first company brain."
-  default_prompt: "Use $brain-setup to scaffold this company brain."
+  short_description: "Create the starter brain scaffold and files."
+  default_prompt: "Use $brain-setup when I say create the brain files, generate the scaffold, initialize a brain root, or run the setup step."
 policy:
   allow_implicit_invocation: true

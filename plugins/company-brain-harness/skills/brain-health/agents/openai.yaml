@@ -1,6 +1,6 @@
 interface:
   display_name: "Brain Health"
-  short_description: "Check brain readiness and connector health."
-  default_prompt: "Use $brain-health to check this company brain."
+  short_description: "Check readiness, setup, connections, and health."
+  default_prompt: "Use $brain-health when I say is the brain ready, check setup, verify connections, or show readiness status."
 policy:
   allow_implicit_invocation: true

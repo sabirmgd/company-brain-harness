@@ -1,6 +1,6 @@
 interface:
   display_name: "Repo Aware POC"
-  short_description: "Align prototypes to repo conventions."
-  default_prompt: "Use $repo-aware-poc to plan this prototype."
+  short_description: "Align POCs and prototypes with existing repos."
+  default_prompt: "Use $repo-aware-poc when I say build a POC, prototype this, where should this code live, check existing repos, or use our stack."
 policy:
   allow_implicit_invocation: true

@@ -1,6 +1,6 @@
 ---
 name: brain-operator
-description: Run the simple operating loop for a Company Brain. Use when the user asks for today's brain check, morning review, staging queue, source warnings, health, lint, or operational next actions.
+description: Run the daily operator loop for a Company Brain. Use when the user says run today's brain check, do the morning review, check the queue, what needs review, show blockers, check sources, run maintenance, or give me the next actions.
 ---
 
 # Brain Operator

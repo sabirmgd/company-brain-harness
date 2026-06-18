@@ -12,6 +12,9 @@ python3 -m py_compile "$PLUGIN_DIR"/bin/*.py "$ROOT_DIR"/scripts/*.py
 echo "== skill structure =="
 python3 "$ROOT_DIR/scripts/validate_skills.py" "$ROOT_DIR"
 
+echo "== skill routing metadata =="
+python3 "$ROOT_DIR/scripts/validate_skill_routing.py" "$ROOT_DIR"
+
 if [[ "${SKIP_CLI_VALIDATORS:-0}" != "1" && -f "$CODEX_PLUGIN_VALIDATOR" ]]; then
   echo "== codex plugin manifest =="
   python3 "$CODEX_PLUGIN_VALIDATOR" "$PLUGIN_DIR"

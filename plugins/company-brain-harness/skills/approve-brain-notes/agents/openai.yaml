@@ -1,6 +1,6 @@
 interface:
   display_name: "Approve Brain Notes"
-  short_description: "Review and promote staged notes."
-  default_prompt: "Use $approve-brain-notes to review staged proposals."
+  short_description: "Review, approve, reject, or promote staged notes."
+  default_prompt: "Use $approve-brain-notes when I say review pending notes, approve these notes, clear the queue, or promote staged brain updates."
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

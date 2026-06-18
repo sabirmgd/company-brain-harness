@@ -1,6 +1,6 @@
 ---
 name: brain-onboard
-description: Run a guided interview that helps a brain owner or teammate fill the company brain safely. Use when setting up a new company brain, onboarding a teammate, collecting strategy/brand/customer/SOP context, or turning spoken answers into staged knowledge notes.
+description: Run a structured onboarding interview to collect company, role, strategy, customer, brand, SOP, or source context into staged notes. Use when the user says interview me, onboard me, ask me questions, help populate the brain, collect company context, or turn my answers into notes.
 ---
 
 # Brain Onboard

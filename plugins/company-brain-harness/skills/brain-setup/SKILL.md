@@ -1,6 +1,6 @@
 ---
 name: brain-setup
-description: Scaffold a new team-first Company Brain root without populating company data. Use when setting up a brain for a new company, creating the routing/config/policy/source-registry/staging structure, or making setup easy for Claude and Codex users.
+description: Scaffold a new team-first Company Brain root without populating company data. Use when the user asks to create the brain files, generate the scaffold, initialize a brain root, create routing, create config, create policy, create source registry, or run the setup step after owner guidance.
 ---
 
 # Brain Setup
