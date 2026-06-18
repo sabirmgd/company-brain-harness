@@ -85,6 +85,18 @@ REQUIRED_TRIGGERS = {
         "where should this code live",
         "use our stack",
     ],
+    "source-setup": [
+        "connect gmail",
+        "connect slack",
+        "connect confluence",
+        "scope a personal source",
+    ],
+    "source-sync": [
+        "sync sources",
+        "pull new emails",
+        "pull confluence pages",
+        "stage new source updates",
+    ],
     "sources-check": [
         "connect a source",
         "fireflies",

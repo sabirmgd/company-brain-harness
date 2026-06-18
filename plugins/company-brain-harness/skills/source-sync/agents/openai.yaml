@@ -1,0 +1,6 @@
+interface:
+  display_name: "Source Sync"
+  short_description: "Pull approved sources into private evidence and staged notes."
+  default_prompt: "Use $source-sync when I say sync sources, pull new emails, pull Slack updates, pull Confluence pages, sync CRM changes, or stage new source updates."
+policy:
+  allow_implicit_invocation: true

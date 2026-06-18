@@ -22,10 +22,12 @@ Daily loop:
 
 1. `connections-check.py --live`
 2. `source-registry-check.py`
-3. `brain-health.py`
-4. `brain-lint.py --stale-days 30`
-5. review staged proposals
-6. publish a short punch list
+3. `source-pull.py` for approved source instances only
+4. `source-extract.py` to create staged proposals from allowed artifacts
+5. `brain-health.py`
+6. `brain-lint.py --stale-days 30`
+7. review staged proposals
+8. publish a short punch list
 
 During this period, all promotions require human approve/reject/revise.
 
@@ -50,6 +52,8 @@ Allowed unattended work:
 - source registry validation
 - brain health scoring
 - lint
+- cursor-based source pulls into private evidence
+- extraction of allowed artifacts into staged proposals
 - staged proposals from approved source instances
 - daily digest generation
 
@@ -75,6 +79,10 @@ export BRAIN_ROOT="/path/to/company-brain-root"
 ```
 
 Then run the daily commands from the generated `SCHEDULE.md`.
+
+Connector adapters should produce normalized JSONL before calling
+`source-pull.py`; the harness owns privacy filtering, dedupe state, extraction,
+and staging.
 
 ## Promotion Rule
 

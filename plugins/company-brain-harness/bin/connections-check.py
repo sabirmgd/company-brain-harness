@@ -287,7 +287,7 @@ def check_fireflies(report: Report, live: bool) -> None:
             required=False,
             detail="FIREFLIES_API_KEY is not set in the environment.",
             next_step="After CAPTURE_POLICY.md is approved, set a company Fireflies key and COMPANY_BRAIN_FIREFLIES_SOURCE=company.",
-            unlocks="Company meeting capture into private staging.",
+            unlocks="Company meeting capture into private evidence and staged proposals.",
         ))
         return
 
@@ -308,8 +308,8 @@ def check_fireflies(report: Report, live: bool) -> None:
             status="warn",
             required=False,
             detail=" ".join(detail_parts),
-            next_step="Do not use personal Fireflies for the harness. Use a company workspace/key only after policy approval.",
-            unlocks="Company meeting capture into private staging.",
+            next_step="Use a company workspace/key after policy approval, or register a narrow delegated personal source with explicit scope and review.",
+            unlocks="Company meeting capture into private evidence and staged proposals.",
         ))
         return
 
@@ -338,7 +338,7 @@ def check_fireflies(report: Report, live: bool) -> None:
                 required=False,
                 detail=f"Key is set, but Fireflies smoke test failed with HTTP {exc.code}: {payload}",
                 next_step="Verify the company FIREFLIES_API_KEY has API access.",
-                unlocks="Company meeting capture into private staging.",
+                unlocks="Company meeting capture into private evidence and staged proposals.",
             ))
             return
         except (urllib.error.URLError, TimeoutError) as exc:
@@ -349,7 +349,7 @@ def check_fireflies(report: Report, live: bool) -> None:
                 required=False,
                 detail=f"Key is set, but Fireflies smoke test failed: {exc}",
                 next_step="Verify network access and retry later.",
-                unlocks="Company meeting capture into private staging.",
+                unlocks="Company meeting capture into private evidence and staged proposals.",
             ))
             return
         if "errors" in payload and "user" not in payload:
@@ -360,7 +360,7 @@ def check_fireflies(report: Report, live: bool) -> None:
                 required=False,
                 detail=f"Key is set, but Fireflies returned GraphQL errors: {payload}",
                 next_step="Verify the company FIREFLIES_API_KEY has workspace API access.",
-                unlocks="Company meeting capture into private staging.",
+                unlocks="Company meeting capture into private evidence and staged proposals.",
             ))
             return
         detail += " API smoke test passed."
@@ -371,7 +371,7 @@ def check_fireflies(report: Report, live: bool) -> None:
         status="ok",
         required=False,
         detail=detail,
-        unlocks="Company meeting capture into private staging.",
+        unlocks="Company meeting capture into private evidence and staged proposals.",
     ))
 
 

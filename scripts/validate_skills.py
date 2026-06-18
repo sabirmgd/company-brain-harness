@@ -20,6 +20,8 @@ EXPECTED = {
     "brain-start",
     "meeting-to-brain",
     "repo-aware-poc",
+    "source-setup",
+    "source-sync",
     "sources-check",
 }
 

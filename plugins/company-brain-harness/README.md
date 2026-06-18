@@ -47,6 +47,8 @@ add what I know", or "can Slack feed the brain" to the right skill.
 - `brain-contribute` - help a teammate contribute knowledge safely.
 - `brain-setup` - scaffold a new team-first brain root.
 - `brain-health` - connection and health check.
+- `source-setup` - safely scope and approve tool source instances.
+- `source-sync` - pull approved sources into private evidence and staged notes.
 - `sources-check` - validate source registry and capture eligibility.
 - `brain-intake` - stage a document, link, or pasted text for review.
 - `brain-onboard` - interview a person and stage structured brain notes.
@@ -63,6 +65,9 @@ The bundled `bin/` CLIs are preview-first and generic:
 - `brain-setup.py`
 - `connections-check.py`
 - `source-registry-check.py`
+- `source-pull.py`
+- `source-extract.py`
+- `source-sync-state.py`
 - `brain-health.py`
 - `brain-lint.py`
 - `brain-schedule.py`

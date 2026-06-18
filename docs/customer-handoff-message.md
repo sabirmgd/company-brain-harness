@@ -30,12 +30,14 @@ Run today's company brain check.
 - The brain root has routing, conventions, staging, source registry, schedule,
   and folder indexes.
 - The harness installs into both Claude Code and Codex.
-- The package has fourteen reusable skills: four simple role-based entry
-  points plus ten lower-level action skills.
+- The package has sixteen reusable skills: six role/source entry points plus
+  ten lower-level action skills.
   - brain start
   - brain owner
   - brain operator
   - brain contribute
+  - source setup
+  - source sync
   - brain setup
   - brain health
   - sources check
@@ -50,6 +52,9 @@ Run today's company brain check.
   - setup scaffolding
   - connection checks
   - source registry validation
+  - approved source pulling
+  - source extraction into staged proposals
+  - source cursor/dedupe state inspection
   - brain health scoring
   - freshness/provenance lint
   - schedule generation
@@ -98,7 +103,7 @@ Nothing should go straight from raw source to shared brain.
 The approved path is:
 
 ```text
-source -> private staging -> proposed note -> human review -> approved note -> brain folder
+source -> private evidence -> proposed note -> human review -> approved note -> brain folder
 ```
 
 People can add knowledge in three ways:
@@ -107,9 +112,10 @@ People can add knowledge in three ways:
 2. Answer a guided onboarding interview.
 3. Use an approved company source after the capture policy is approved.
 
-Personal Fireflies/Gmail/Calendar/Apollo are not company capture sources. They
-can help an individual work in their own Claude or Codex session, but they are
-not the team engine.
+Personal accounts are excluded by default. A teammate can delegate a narrow
+client/project scope, but the company owner must approve the scope, privacy
+exclusions, reviewer, retention, and allowed artifacts before anything is
+staged for the shared brain.
 
 ## First Operating Schedule
 
@@ -119,6 +125,8 @@ For the first two weeks, run this manually or semi-automatically:
 Morning:
   run connection check
   run source registry check
+  pull approved source changes into private evidence
+  extract allowed source artifacts into staged proposals
   run brain health
   run brain lint
   review staged notes

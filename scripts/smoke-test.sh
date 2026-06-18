@@ -174,13 +174,60 @@ test -f "$SCAFFOLD_ROOT/TODAY.md"
 test -f "$SCAFFOLD_ROOT/NEXT_ACTIONS.md"
 test -f "$SCAFFOLD_ROOT/company-brain.yml"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/source-registry.yml"
+test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/source-sync-state.json"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/CONNECTIONS.md"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/approval-ledger.jsonl"
+test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/evidence/README.md"
 
 python3 "$BIN_DIR/source-registry-check.py" \
   --root "$SCAFFOLD_ROOT" \
   --source-id acme-co-brain-root \
   --for-capture >/tmp/company-brain-sources.txt
+
+cat >/tmp/company-brain-source-records.jsonl <<'EOF'
+{"external_id":"source-doc-1","title":"Source Sync Smoke","summary":"This normalized source record should stage into the brain review queue.","target_path":"Resources/source-sync-smoke.md","tags":["source","smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"smoke-cursor-1"}
+{"external_id":"private-source-1","title":"Private Source","summary":"This private record should be skipped.","target_path":"Resources/private.md","tags":["source","private"],"artifact_type":"curated_note","visibility":"personal","author":"Smoke Source"}
+EOF
+
+python3 "$BIN_DIR/source-pull.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --source-id acme-co-brain-root \
+  --input-jsonl /tmp/company-brain-source-records.jsonl \
+  --cursor smoke-cursor-1 \
+  --write >/tmp/company-brain-source-pull.json
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+result = json.loads(Path("/tmp/company-brain-source-pull.json").read_text())
+if result["accepted"] != 1:
+    raise SystemExit(f"expected one accepted source record: {result}")
+if len(result["skipped"]) != 1:
+    raise SystemExit(f"expected one skipped private source record: {result}")
+PY
+
+python3 "$BIN_DIR/source-extract.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --source-id acme-co-brain-root \
+  --write >/tmp/company-brain-source-extract.json
+
+SCAFFOLD_ROOT="$SCAFFOLD_ROOT" python3 - <<'PY'
+import json
+import os
+from pathlib import Path
+
+result = json.loads(Path("/tmp/company-brain-source-extract.json").read_text())
+if len(result["staged"]) != 1:
+    raise SystemExit(f"expected one staged source proposal: {result}")
+state = json.loads(Path(os.environ["SCAFFOLD_ROOT"], "00_Company_Brain_Conventions", "source-sync-state.json").read_text())
+cursor = state["sources"]["acme-co-brain-root"].get("cursor")
+if cursor != "smoke-cursor-1":
+    raise SystemExit(f"expected cursor smoke-cursor-1, got {cursor!r}")
+PY
+
+test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/evidence/acme-co-brain-root.jsonl"
+test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/proposed/acme-co-brain-root-source-doc-1.md"
 
 set +e
 python3 "$BIN_DIR/source-registry-check.py" \

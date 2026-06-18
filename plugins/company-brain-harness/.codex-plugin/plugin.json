@@ -24,6 +24,8 @@
       "Use $brain-contribute to help a teammate add knowledge.",
       "Use $brain-setup to scaffold a new company brain.",
       "Use $brain-health to check this company brain.",
+      "Use $source-setup to safely scope and approve app/workspace/account sources.",
+      "Use $source-sync to pull approved sources into private evidence and staged proposals.",
       "Use $sources-check to validate org-wide source instances.",
       "Use $brain-intake to stage this document.",
       "Use $brain-onboard to interview a teammate.",

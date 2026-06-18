@@ -226,6 +226,8 @@ python3 plugins/company-brain-harness/bin/brain-lint.py --root "$BRAIN_ROOT" --s
 | `brain-contribute` | Help a teammate contribute knowledge safely |
 | `brain-setup` | Scaffold a new team-first brain root without populating data |
 | `brain-health` | Check connection, policy, and readiness |
+| `source-setup` | Safely scope and approve app/workspace/account sources |
+| `source-sync` | Pull approved source records into private evidence and staged proposals |
 | `sources-check` | Validate source registry and capture eligibility |
 | `brain-intake` | Stage documents, links, pasted text, or raw artifacts |
 | `brain-onboard` | Interview teammates into staged notes |
@@ -244,6 +246,8 @@ Claude Code:
 /company-brain-harness:brain-contribute
 /company-brain-harness:brain-setup
 /company-brain-harness:brain-health
+/company-brain-harness:source-setup
+/company-brain-harness:source-sync
 /company-brain-harness:sources-check
 /company-brain-harness:brain-intake
 /company-brain-harness:brain-onboard
@@ -263,6 +267,8 @@ $brain-operator
 $brain-contribute
 $brain-setup
 $brain-health
+$source-setup
+$source-sync
 $sources-check
 $brain-intake
 $brain-onboard

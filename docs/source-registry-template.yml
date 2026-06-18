@@ -28,12 +28,15 @@ sources:
       exclude:
         - credentials
         - private personal material
+    raw_policy:
+      store_raw: false
+      retention_days: 0
     routing:
       default_destination: "."
       staging_destination: 00_Company_Brain_Conventions/90_Staging
       restricted_prefixes:
         - Restricted
-    brain_artifacts:
+    artifact_policy:
       allowed:
         - curated_note
         - source_reference
@@ -42,6 +45,10 @@ sources:
     dedupe:
       external_id_field: path
       strategy: path
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
     audit:
       last_reviewed: null
       approved_by: brain-owner
@@ -66,12 +73,15 @@ sources:
       exclude:
         - personal meetings
         - HR/compensation/legal unless explicitly restricted
+    raw_policy:
+      store_raw: private_only
+      retention_days: 14
     routing:
       default_destination: Intelligence/meetings
       staging_destination: 00_Company_Brain_Conventions/90_Staging
       restricted_prefixes:
         - Restricted
-    brain_artifacts:
+    artifact_policy:
       allowed:
         - curated_summary
         - decisions
@@ -80,9 +90,117 @@ sources:
         - provenance_link
       not_allowed:
         - raw_transcript_by_default
+        - credential_value
     dedupe:
       external_id_field: meeting_id
       strategy: source_id_plus_external_id
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
+    audit:
+      last_reviewed: null
+      approved_by: null
+
+  - id: company-confluence-public-spaces
+    connector: confluence
+    display_name: Company Confluence Public Spaces
+    control_tier: company_owned
+    status: proposed
+    credential_ref: env:COMPANY_CONFLUENCE_TOKEN
+    owner: brain-owner
+    review_owner: brain-owner
+    capture:
+      allowed: false
+      mode: scheduled
+      approval_required: true
+      raw_retention_days: 14
+    scope:
+      include:
+        - company spaces approved for brain use
+        - published pages with company-wide visibility
+      exclude:
+        - user spaces
+        - restricted spaces
+        - drafts
+        - HR/legal/finance unless routed restricted
+    raw_policy:
+      store_raw: private_only
+      retention_days: 14
+    routing:
+      default_destination: Resources/confluence
+      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      restricted_prefixes:
+        - Restricted
+    artifact_policy:
+      allowed:
+        - canonical_summary
+        - sop_update
+        - decision
+        - source_reference
+      not_allowed:
+        - raw_page_dump
+        - credential_value
+    dedupe:
+      external_id_field: page_id
+      strategy: source_id_plus_external_id
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
+    audit:
+      last_reviewed: null
+      approved_by: null
+
+  - id: delegated-email-client-example
+    connector: email
+    display_name: Delegated client-scoped email example
+    control_tier: delegated_personal
+    status: proposed
+    credential_ref: keychain:delegated-client-email
+    owner: account-owner
+    review_owner: account-owner
+    capture:
+      allowed: false
+      mode: scheduled
+      approval_required: true
+      raw_retention_days: 7
+    scope:
+      include:
+        - client:example-client
+        - label:company-brain
+        - from_domain:example-client.com
+      exclude:
+        - personal
+        - family
+        - HR
+        - legal
+        - finance
+    raw_policy:
+      store_raw: private_only
+      retention_days: 7
+    routing:
+      default_destination: Intelligence/accounts
+      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      restricted_prefixes:
+        - Restricted
+    artifact_policy:
+      allowed:
+        - customer_fact
+        - commitment
+        - action_item
+        - account_update
+      not_allowed:
+        - raw_email
+        - private_message
+        - credential_value
+    dedupe:
+      external_id_field: thread_id
+      strategy: source_id_plus_external_id
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
     audit:
       last_reviewed: null
       approved_by: null
@@ -108,12 +226,15 @@ sources:
         - personal prospecting lists
         - private teammate notes
         - credentials and billing data
+    raw_policy:
+      store_raw: private_only
+      retention_days: 14
     routing:
       default_destination: Intelligence/gtm
       staging_destination: 00_Company_Brain_Conventions/90_Staging
       restricted_prefixes:
         - Restricted
-    brain_artifacts:
+    artifact_policy:
       allowed:
         - account_summary
         - customer_fact
@@ -124,6 +245,10 @@ sources:
     dedupe:
       external_id_field: apollo_id
       strategy: source_id_plus_external_id
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
     audit:
       last_reviewed: null
       approved_by: null
@@ -145,12 +270,15 @@ sources:
       include: []
       exclude:
         - all scheduled company-brain capture
+    raw_policy:
+      store_raw: false
+      retention_days: 0
     routing:
       default_destination: null
       staging_destination: 00_Company_Brain_Conventions/90_Staging
       restricted_prefixes:
         - Restricted
-    brain_artifacts:
+    artifact_policy:
       allowed: []
       not_allowed:
         - raw_transcript
@@ -158,6 +286,10 @@ sources:
     dedupe:
       external_id_field: null
       strategy: none
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
     audit:
       last_reviewed: null
       approved_by: null

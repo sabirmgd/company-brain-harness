@@ -21,9 +21,11 @@ Defaults:
 - `00_Company_Brain_Conventions/README.md` or equivalent conventions doc.
 - `00_Company_Brain_Conventions/CAPTURE_POLICY.md`.
 - `00_Company_Brain_Conventions/source-registry.yml`.
+- `00_Company_Brain_Conventions/source-sync-state.json`.
 - `00_Company_Brain_Conventions/HARNESS_FLOWS.md`.
 - `00_Company_Brain_Conventions/HARNESS_STATUS.md`.
 - `00_Company_Brain_Conventions/90_Staging/`.
+- `00_Company_Brain_Conventions/90_Staging/evidence/`.
 
 The defaults can be overridden by `company-brain.yml` or `company-os.yml`:
 
@@ -46,8 +48,9 @@ Default posture is source-separated capture:
 
 - Company-controlled sources can feed the engine.
 - Connector capture uses registered source instances, not broad app names.
-- Personal accounts and personal Fireflies/Gmail/Calendar/Apollo keys are not company sources by default.
-- Raw material lands in private staging, not the shared brain.
+- Personal accounts are excluded by default unless a narrow delegated scope is
+  explicitly approved with privacy exclusions.
+- Raw material lands in private evidence staging, not the shared brain.
 - Curated notes reach the brain only after approval.
 - Sensitive company material routes to a restricted folder; never index restricted folders.
 
@@ -66,12 +69,26 @@ administrative harness docs or local dry-run tests.
 `stage-brain-note.py` previews by default. A proposal file is created only when
 `--write` is present.
 
+## Source Sync Path
+
+Approved source workflows use:
+
+1. Check: `source-registry-check.py --for-capture`.
+2. Pull: `source-pull.py` stores scoped, non-private evidence.
+3. Extract: `source-extract.py` creates staged proposals from allowed artifacts.
+4. Review: approved proposals follow the standard write path.
+
+Connector adapters must normalize app data before `source-pull.py`. The harness
+owns privacy filtering, dedupe hashes, source cursors, staging, and promotion.
+
 ## Maintenance
 
 Daily operating checks should include:
 
 1. `connections-check.py`.
 2. `source-registry-check.py`.
-3. `brain-health.py`.
-4. `brain-lint.py`.
-5. staged proposal review.
+3. `source-pull.py` for approved source instances.
+4. `source-extract.py`.
+5. `brain-health.py`.
+6. `brain-lint.py`.
+7. staged proposal review.

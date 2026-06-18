@@ -1,0 +1,6 @@
+interface:
+  display_name: "Source Setup"
+  short_description: "Safely scope and approve company source instances."
+  default_prompt: "Use $source-setup when I say connect Gmail, connect email, connect Slack, connect Confluence, connect CRM, approve a workspace, or scope a personal source."
+policy:
+  allow_implicit_invocation: true

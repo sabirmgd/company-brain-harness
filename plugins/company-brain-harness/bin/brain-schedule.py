@@ -51,10 +51,12 @@ Operator identity: `{operator}`
 
 1. Run connection check.
 2. Validate source registry.
-3. Run brain health.
-4. Run brain lint for stale, duplicate, broken, or unprovenanced notes.
-5. Review staged proposals.
-6. Publish one short punch list: blockers, warnings, next three fixes.
+3. Pull approved source records into private evidence.
+4. Extract allowed artifacts into staged proposals.
+5. Run brain health.
+6. Run brain lint for stale, duplicate, broken, or unprovenanced notes.
+7. Review staged proposals.
+8. Publish one short punch list: blockers, warnings, next three fixes.
 
 ## Commands
 
@@ -62,6 +64,9 @@ Operator identity: `{operator}`
 export BRAIN_ROOT="/path/to/company-brain-root"
 python3 <plugin-root>/bin/connections-check.py --root "$BRAIN_ROOT" --live
 python3 <plugin-root>/bin/source-registry-check.py --root "$BRAIN_ROOT"
+# For each approved source, connector adapters produce normalized JSONL first.
+python3 <plugin-root>/bin/source-pull.py --root "$BRAIN_ROOT" --source-id "<source-id>" --input-jsonl "<records.jsonl>" --write
+python3 <plugin-root>/bin/source-extract.py --root "$BRAIN_ROOT" --source-id "<source-id>" --write
 python3 <plugin-root>/bin/brain-health.py --root "$BRAIN_ROOT"
 python3 <plugin-root>/bin/brain-lint.py --root "$BRAIN_ROOT" --stale-days 30
 ```

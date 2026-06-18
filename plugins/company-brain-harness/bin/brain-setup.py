@@ -77,7 +77,7 @@ Claude Code, Claude Cowork, Codex, and other agents should treat this file as th
 ## Rules
 
 1. Shared writes go through staging unless the Brain Owner explicitly approves direct admin edits.
-2. Personal connectors are not company sources.
+2. Personal connectors are excluded by default unless narrowly delegated, scoped, approved, and registered.
 3. Every org-wide source instance must exist in `{CONVENTIONS_DIR}/source-registry.yml`.
 4. Source-derived notes need provenance: `<!-- src: <source-id>/<item-id> @ YYYY-MM-DD -->`.
 5. Every content note needs frontmatter with `status`, `tags`, and `last_verified`.
@@ -166,12 +166,15 @@ sources:
         - credential values
         - private personal material
         - restricted material
+    raw_policy:
+      store_raw: false
+      retention_days: 0
     routing:
       default_destination: "."
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
         - Restricted
-    brain_artifacts:
+    artifact_policy:
       allowed:
         - curated_note
         - source_reference
@@ -180,6 +183,10 @@ sources:
     dedupe:
       external_id_field: path
       strategy: path
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
     audit:
       last_reviewed: {date.today().isoformat()}
       approved_by: {champion}
@@ -204,12 +211,15 @@ sources:
       exclude:
         - personal meetings
         - HR/legal/finance unless routed restricted
+    raw_policy:
+      store_raw: private_only
+      retention_days: 14
     routing:
       default_destination: Intelligence/meetings
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
         - Restricted
-    brain_artifacts:
+    artifact_policy:
       allowed:
         - curated_summary
         - decisions
@@ -221,6 +231,10 @@ sources:
     dedupe:
       external_id_field: meeting_id
       strategy: source_id_plus_external_id
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
     audit:
       last_reviewed: null
       approved_by: null
@@ -246,12 +260,15 @@ sources:
         - personal prospecting lists
         - private notes owned by an individual teammate
         - credentials or billing data
+    raw_policy:
+      store_raw: private_only
+      retention_days: 14
     routing:
       default_destination: Intelligence/gtm
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
         - Restricted
-    brain_artifacts:
+    artifact_policy:
       allowed:
         - account_summary
         - customer_fact
@@ -262,6 +279,113 @@ sources:
     dedupe:
       external_id_field: apollo_id
       strategy: source_id_plus_external_id
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
+    audit:
+      last_reviewed: null
+      approved_by: null
+
+  - id: example-company-confluence
+    connector: confluence
+    display_name: Company Confluence spaces
+    control_tier: company_owned
+    status: proposed
+    credential_ref: env:COMPANY_CONFLUENCE_TOKEN
+    owner: {champion}
+    review_owner: {champion}
+    capture:
+      allowed: false
+      mode: scheduled
+      approval_required: true
+      raw_retention_days: 14
+    scope:
+      include:
+        - company spaces approved for brain use
+        - published pages with company-wide visibility
+      exclude:
+        - user spaces
+        - drafts
+        - restricted spaces unless routed restricted
+        - HR/legal/finance unless routed restricted
+    raw_policy:
+      store_raw: private_only
+      retention_days: 14
+    routing:
+      default_destination: Resources/confluence
+      staging_destination: {STAGING_DIR}
+      restricted_prefixes:
+        - Restricted
+    artifact_policy:
+      allowed:
+        - canonical_summary
+        - sop_update
+        - decision
+        - source_reference
+      not_allowed:
+        - raw_page_dump
+        - credential_value
+    dedupe:
+      external_id_field: page_id
+      strategy: source_id_plus_external_id
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
+    audit:
+      last_reviewed: null
+      approved_by: null
+
+  - id: example-delegated-client-email
+    connector: email
+    display_name: Delegated client-scoped email example
+    control_tier: delegated_personal
+    status: proposed
+    credential_ref: keychain:delegated-client-email
+    owner: account-owner
+    review_owner: account-owner
+    capture:
+      allowed: false
+      mode: scheduled
+      approval_required: true
+      raw_retention_days: 7
+    scope:
+      include:
+        - client:example-client
+        - label:company-brain
+        - from_domain:example-client.com
+      exclude:
+        - personal
+        - family
+        - HR
+        - legal
+        - finance
+    raw_policy:
+      store_raw: private_only
+      retention_days: 7
+    routing:
+      default_destination: Intelligence/accounts
+      staging_destination: {STAGING_DIR}
+      restricted_prefixes:
+        - Restricted
+    artifact_policy:
+      allowed:
+        - customer_fact
+        - commitment
+        - action_item
+        - account_update
+      not_allowed:
+        - raw_email
+        - private_message
+        - credential_value
+    dedupe:
+      external_id_field: thread_id
+      strategy: source_id_plus_external_id
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
     audit:
       last_reviewed: null
       approved_by: null
@@ -283,12 +407,15 @@ sources:
       include: []
       exclude:
         - all scheduled company-brain capture
+    raw_policy:
+      store_raw: false
+      retention_days: 0
     routing:
       default_destination: null
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
         - Restricted
-    brain_artifacts:
+    artifact_policy:
       allowed: []
       not_allowed:
         - raw_transcript
@@ -296,6 +423,10 @@ sources:
     dedupe:
       external_id_field: null
       strategy: none
+    sync:
+      enabled: false
+      cursor: null
+      last_successful_pull: null
     audit:
       last_reviewed: null
       approved_by: null
@@ -326,6 +457,9 @@ Connection inventory for this company brain. This is a human-readable companion 
 |---|---|---|
 | Brain root | Active | Curated markdown and approved source documents |
 | Company meeting workspace | Proposed | Can stage curated meeting notes after approval |
+| Company Google Workspace | Proposed | Scope Drive/Docs/Calendar/Gmail before any sync |
+| Company Confluence spaces | Proposed | Company spaces only; user spaces excluded by default |
+| Delegated client email | Proposed | Narrow, revocable, client-scoped, staging-only |
 | Shared Apollo/CRM workspace | Proposed | Can stage GTM/account facts after approval |
 | Company GitHub org | Proposed | Can refresh repo maps after approval |
 | Personal Gmail/Calendar/Fireflies/Apollo | Excluded | Not a company engine source by default |
@@ -335,7 +469,7 @@ Connection inventory for this company brain. This is a human-readable companion 
 1. Add or update the exact source instance in `source-registry.yml`.
 2. Run `source-registry-check.py --for-capture --source-id <id>`.
 3. Confirm owner, review owner, routing, retention, and exclusions.
-4. Run one staged preview before scheduling.
+4. Run `source-pull.py` and `source-extract.py` once in preview or staging before scheduling.
 """
 
 
@@ -349,7 +483,7 @@ This policy controls what may enter the {company} company brain.
 - Company-owned sources can feed the shared brain after approval.
 - Customer-owned sources can feed only that customer's brain after approval.
 - Personal sources are excluded by default.
-- Raw material is private staging or evidence, not shared knowledge.
+- Raw material is private evidence staging, not shared knowledge.
 - Curated notes enter the brain only after review or an explicitly approved automation rule.
 
 ## Team Source Rule
@@ -405,9 +539,21 @@ Interview each teammate for:
 
 Every tool account/workspace/channel becomes a source instance. A shared Apollo account is one company-owned source. A teammate's personal Apollo login is not a company source unless delegated, scoped, approved, and registered.
 
+## Source Sync
+
+Approved sources follow this path:
+
+```text
+approved source -> scoped pull -> private evidence -> extraction -> staged proposal -> review -> approved brain note
+```
+
+Use `source-pull.py` for normalized connector records, then `source-extract.py`
+to create staged proposals. Cursor and dedupe state lives in
+`source-sync-state.json`.
+
 ## Maintenance
 
-Daily: connection check, source registry check, health, lint, staged queue review.
+Daily: connection check, source registry check, approved source pull/extract, health, lint, staged queue review.
 Weekly: stale-note review, source ownership review, routing cleanup.
 Monthly: permissions, retention, auto-promotion, and adoption review.
 """
@@ -477,6 +623,8 @@ Brain Operator: {operator}
 ## First Two Weeks
 
 - Run checks manually each morning.
+- Pull approved source records into private evidence.
+- Extract allowed artifacts into staged proposals.
 - Stage every proposed note.
 - Require human approval before promotion.
 - Keep meeting-derived and sensitive material human-approved.
@@ -485,6 +633,7 @@ Brain Operator: {operator}
 
 - Schedule daily checks.
 - Allow approved sources to create staged proposals.
+- Track source cursors and hashes in `source-sync-state.json`.
 - Consider autonomous promotion only for explicitly low-risk categories.
 - Keep source registry, lint, and restricted permissions in the daily report.
 """
@@ -521,7 +670,8 @@ Run today's company brain check.
 Nothing from raw sources becomes shared knowledge automatically. The default path is:
 
 ```text
-source or interview -> staged proposal -> review -> approved note
+source -> private evidence -> staged proposal -> review -> approved note
+interview -> staged proposal -> review -> approved note
 ```
 
 ## Next Files
@@ -723,9 +873,17 @@ Human approval buffer between raw material and shared knowledge.
 | `approved/` | Reviewed notes that were promoted |
 | `rejected/` | Notes rejected as personal, irrelevant, unsafe, or wrong |
 | `revise/` | Notes that need edits before approval |
+| `evidence/` | Normalized private source evidence before extraction |
 
 No proposed note becomes shared knowledge until approved.
 """
+
+
+def source_sync_state() -> str:
+    return json.dumps({
+        "schema_version": "1.0",
+        "sources": {},
+    }, indent=2, sort_keys=True) + "\n"
 
 
 def planned_files(company: str, champion: str, operator: str) -> dict[str, str]:
@@ -745,6 +903,7 @@ def planned_files(company: str, champion: str, operator: str) -> dict[str, str]:
         f"{CONVENTIONS_DIR}/HARNESS_FLOWS.md": harness_flows(),
         f"{CONVENTIONS_DIR}/HARNESS_STATUS.md": harness_status(),
         f"{CONVENTIONS_DIR}/source-registry.yml": source_registry(company, champion),
+        f"{CONVENTIONS_DIR}/source-sync-state.json": source_sync_state(),
         f"{CONVENTIONS_DIR}/team.yml": team_yml(champion, operator),
         f"{CONVENTIONS_DIR}/SCHEDULE.md": schedule_md(champion, operator),
         f"{STAGING_DIR}/README.md": staging_readme(),
@@ -758,6 +917,10 @@ def planned_files(company: str, champion: str, operator: str) -> dict[str, str]:
         files[f"{folder}/00_INDEX.md"] = index_md(folder, description)
     for sub in ("proposed", "approved", "rejected", "revise"):
         files[f"{STAGING_DIR}/{sub}/README.md"] = index_md(sub, f"Staging queue folder for {sub} notes.")
+    files[f"{STAGING_DIR}/evidence/README.md"] = index_md(
+        "evidence",
+        "Private normalized source evidence. This is not final brain knowledge.",
+    )
     return files
 
 

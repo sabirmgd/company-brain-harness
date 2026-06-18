@@ -7,8 +7,9 @@ approved by the brain owner before scheduled capture runs.
 
 Source-separated capture.
 
-The engine captures only company-controlled sources. Personal accounts are never
-treated as company data sources by default.
+The engine captures only company-controlled sources by default. Personal
+accounts are excluded unless a teammate explicitly delegates a narrow scope and
+the brain owner approves the privacy rules.
 
 Every connected tool must be represented as one or more explicit source
 instances in `source-registry.yml`. A connector type is not enough. For example,
@@ -25,8 +26,8 @@ review policy.
 | Company Google Workspace account or service account | Allowed after admin approval | Gmail, Calendar, Docs, Sheets automation |
 | Company GitHub org | Allowed | Repo index and stack guardrails |
 | Shared Apollo/CRM workspace | Allowed after owner approval | GTM/customer/account facts |
-| Personal Fireflies account | Not allowed | Can contain private/non-company meetings |
-| Personal Gmail/Calendar/Apollo | Not allowed for engine capture | Teammates may use personal connectors in their own sessions |
+| Personal Fireflies account | Excluded by default | Can contain private/non-company meetings; narrow delegation requires owner approval |
+| Personal Gmail/Calendar/Apollo | Excluded by default | Client/project scopes can be delegated only with explicit include/exclude rules |
 
 Multiple accounts per connector are allowed only when each account/workspace is
 separately registered and approved.
@@ -60,7 +61,7 @@ Meeting capture is allowed only when all conditions are true:
 - The source is company-controlled.
 - The meeting has company or customer relevance.
 - The capture policy has been approved.
-- Raw transcript material stays in private staging.
+- Raw transcript material stays in private evidence staging.
 - Only curated notes enter the shared brain.
 
 Default meeting artifact:
@@ -77,7 +78,7 @@ explicitly approves that behavior.
 All automatic capture uses this path:
 
 ```text
-source -> private staging -> proposal -> human review -> approved note
+source -> private evidence -> proposal -> human review -> approved note
 ```
 
 Rejected or personal material is not promoted to the shared brain.

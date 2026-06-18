@@ -6,11 +6,13 @@ new company, founder, or team lead.
 ## What Is Ready
 
 - Portable plugin package for Claude Code and Codex.
-- Four role-based entry skills:
+- Six role/source entry skills:
   - `brain-start`
   - `brain-owner`
   - `brain-operator`
   - `brain-contribute`
+  - `source-setup`
+  - `source-sync`
 - Ten lower-level action skills:
   - `brain-setup`
   - `brain-health`
@@ -26,6 +28,9 @@ new company, founder, or team lead.
   - `brain-setup.py`
   - `connections-check.py`
   - `source-registry-check.py`
+  - `source-pull.py`
+  - `source-extract.py`
+  - `source-sync-state.py`
   - `brain-health.py`
   - `brain-lint.py`
   - `brain-schedule.py`
@@ -33,8 +38,8 @@ new company, founder, or team lead.
   - `approve-staged-note.py`
   - `promote-to-brain.py`
 - Config-driven brain root support via `company-brain.yml` / `company-os.yml`.
-- Policy guardrail: personal Fireflies/Gmail/Calendar/Apollo are not company
-  capture sources.
+- Policy guardrail: personal accounts are excluded by default. Narrow delegated
+  scopes can be staged only after owner approval and privacy exclusions.
 - Team source registry: every org-wide app account/workspace/channel needs its
   own owner, scope, approval, and route.
 - Smoke test proving the harness works against a synthetic generic brain shape.
@@ -55,11 +60,12 @@ new company, founder, or team lead.
 2. Say: "I want to set up my company brain."
 3. Show the role choice: Brain Owner, Brain Operator, Team Member.
 4. Run the Brain Operator daily check.
-5. Stage a small safe contribution with `brain-contribute`.
-6. Approve it with `approve-brain-notes`.
-7. Show the final note in the correct folder with provenance.
-8. Show that a restricted-folder write is refused by default.
-9. Show `repo-aware-poc` reading repo/stack guardrails before a prototype.
+5. Configure one safe source in preview with `source-setup`.
+6. Stage a small safe contribution with `brain-contribute`.
+7. Approve it with `approve-brain-notes`.
+8. Show the final note in the correct folder with provenance.
+9. Show that a restricted-folder write is refused by default.
+10. Show `repo-aware-poc` reading repo/stack guardrails before a prototype.
 
 ## What Not To Demo Yet
 

@@ -100,6 +100,8 @@ Public entry skills:
 - `brain-owner`
 - `brain-operator`
 - `brain-contribute`
+- `source-setup`
+- `source-sync`
 
 Lower-level action skills:
 
@@ -148,6 +150,9 @@ CLI responsibilities:
 | `brain-setup.py` | Create the portable scaffold |
 | `connections-check.py` | Check root, routing, and optional connector readiness |
 | `source-registry-check.py` | Enforce source-instance capture eligibility |
+| `source-pull.py` | Pull normalized connector records into private evidence |
+| `source-extract.py` | Extract allowed artifacts from evidence into staged proposals |
+| `source-sync-state.py` | Inspect or update source cursors and dedupe state |
 | `brain-health.py` | Score root readiness |
 | `brain-lint.py` | Detect stale, unprovenanced, duplicate, broken, or contradictory notes |
 | `brain-schedule.py` | Generate operating cadence |
@@ -179,8 +184,10 @@ company-brain.yml
   HARNESS_STATUS.md
   SCHEDULE.md
   source-registry.yml
+  source-sync-state.json
   team.yml
   90_Staging/
+    evidence/
 Context/
 Daily/
 Projects/
@@ -200,6 +207,7 @@ Reasoning:
 - Humans need a conventions folder.
 - Writes need a staging area.
 - Teams need a source registry and team map.
+- Source pulls need cursor/dedupe state and private evidence staging.
 - Sensitive material needs an explicit restricted route.
 
 ## Layer 7: Source Registry
@@ -237,15 +245,24 @@ Consequence:
 - `source-registry-check.py --for-capture` refuses personal, unknown, proposed,
   excluded, suspended, or retired sources.
 - Connector adapters must select a specific source id before running.
+- Legacy `brain_artifacts` registry entries are still accepted, but new
+  registries should use `artifact_policy`.
 
 ## Layer 8: Capture And Promotion
 
-Decision: shared knowledge is curated, not raw.
+Decision: raw source access is not brain access.
 
 Default flow:
 
 ```text
-source/interview/document
+approved source
+  -> private evidence
+  -> extracted staged proposal
+  -> human or owner review
+  -> approve/reject/revise
+  -> final brain note
+
+interview/document
   -> staged proposal
   -> human or owner review
   -> approve/reject/revise
@@ -260,6 +277,8 @@ Reasoning:
 
 Consequence:
 
+- `source-pull.py` stores only scoped, non-private evidence.
+- `source-extract.py` stages only allowed artifact types.
 - `stage-brain-note.py` previews by default.
 - `--write` is required to create a staged proposal.
 - Final promotion goes through the approval ledger.
@@ -300,7 +319,7 @@ Public roles:
 First two-week cadence:
 
 ```text
-connections -> sources -> health -> lint -> staged queue -> punch list
+connections -> sources -> pull/extract -> health -> lint -> staged queue -> punch list
 ```
 
 Reasoning:

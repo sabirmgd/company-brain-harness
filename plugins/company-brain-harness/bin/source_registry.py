@@ -25,6 +25,7 @@ ALLOWED_CONNECTORS = {
     "crm",
     "calendar",
     "email",
+    "confluence",
 }
 ALLOWED_CONTROL_TIERS = {
     "company_owned",
@@ -45,6 +46,17 @@ ALLOWED_STATUSES = {
 CAPTURE_ELIGIBLE_STATUSES = {"active", "approved_staging_only"}
 PERSONAL_CONTROL_TIERS = {"personal_private", "unknown"}
 SECRET_MARKERS = ("sk-", "Bearer ", "BEGIN ", "PRIVATE KEY", "password=", "token=")
+POLICY_SECTIONS = {
+    "capture",
+    "routing",
+    "audit",
+    "scope",
+    "raw_policy",
+    "artifact_policy",
+    "brain_artifacts",
+    "sync",
+    "dedupe",
+}
 
 
 @dataclass
@@ -58,7 +70,13 @@ class Source:
     owner: str | None = None
     review_owner: str | None = None
     capture: dict[str, Any] = field(default_factory=dict)
+    scope: dict[str, Any] = field(default_factory=dict)
     routing: dict[str, Any] = field(default_factory=dict)
+    raw_policy: dict[str, Any] = field(default_factory=dict)
+    artifact_policy: dict[str, Any] = field(default_factory=dict)
+    brain_artifacts: dict[str, Any] = field(default_factory=dict)
+    sync: dict[str, Any] = field(default_factory=dict)
+    dedupe: dict[str, Any] = field(default_factory=dict)
     audit: dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -102,6 +120,12 @@ class RegistryReport:
                     "approval_required": source.approval_required,
                     "approved_by": source.approved_by,
                     "eligible_for_capture": is_capture_eligible(source),
+                    "scope": source.scope,
+                    "raw_policy": source.raw_policy,
+                    "artifact_policy": source.artifact_policy,
+                    "brain_artifacts": source.brain_artifacts,
+                    "sync": source.sync,
+                    "routing": source.routing,
                 }
                 for source in self.sources
             ],
@@ -159,6 +183,8 @@ def parse_sources(text: str) -> list[Source]:
     sources: list[Source] = []
     current: Source | None = None
     section: str | None = None
+    list_section: str | None = None
+    list_key: str | None = None
     in_sources = False
 
     for raw in text.splitlines():
@@ -180,6 +206,8 @@ def parse_sources(text: str) -> list[Source]:
             current = Source(id=str(parsed[1]))
             sources.append(current)
             section = None
+            list_section = None
+            list_key = None
             continue
 
         if current is None:
@@ -188,17 +216,37 @@ def parse_sources(text: str) -> list[Source]:
         stripped = line.strip()
         if indent == 4 and stripped.endswith(":"):
             section = stripped[:-1]
+            list_section = None
+            list_key = None
+            continue
+        if (
+            indent == 8
+            and section in POLICY_SECTIONS
+            and list_section == section
+            and list_key
+            and stripped.startswith("- ")
+        ):
+            value = _parse_scalar(stripped[2:].strip())
+            bucket = getattr(current, section).setdefault(list_key, [])
+            if isinstance(bucket, list):
+                bucket.append(value)
             continue
         parsed = _split_key_value(stripped)
         if not parsed:
             continue
         key, value = parsed
+        raw_value = stripped.split(":", 1)[1].strip()
+        starts_list = value is None and raw_value == ""
         if indent == 4:
             section = None
+            list_section = None
+            list_key = None
             if hasattr(current, key):
                 setattr(current, key, None if value is None else str(value))
-        elif indent == 6 and section in {"capture", "routing", "audit"}:
-            getattr(current, section)[key] = value
+        elif indent == 6 and section in POLICY_SECTIONS:
+            getattr(current, section)[key] = [] if starts_list else value
+            list_section = section if starts_list else None
+            list_key = key if starts_list else None
 
     return sources
 
@@ -242,12 +290,26 @@ def validate_sources(sources: list[Source]) -> tuple[list[str], list[str]]:
             errors.append(prefix + "missing capture.approval_required")
         if not source.routing.get("staging_destination"):
             warnings.append(prefix + "missing routing.staging_destination")
+        if source.status in CAPTURE_ELIGIBLE_STATUSES:
+            if not source.scope.get("include"):
+                warnings.append(prefix + "eligible source should declare scope.include")
+            if not source.scope.get("exclude"):
+                warnings.append(prefix + "eligible source should declare scope.exclude")
+            allowed_artifacts = source.artifact_policy.get("allowed") or source.brain_artifacts.get("allowed")
+            if not allowed_artifacts and not source.raw_policy.get("store_raw"):
+                warnings.append(prefix + "eligible source should declare artifact_policy.allowed or raw_policy.store_raw")
+            if source.raw_policy.get("store_raw") not in {None, False, "false", "private_only", "temporary"}:
+                errors.append(prefix + "raw_policy.store_raw must be false, private_only, or temporary")
+            if source.sync.get("enabled") not in {None, True, False}:
+                errors.append(prefix + "sync.enabled must be true or false")
 
         if source.control_tier in PERSONAL_CONTROL_TIERS:
             if source.capture_allowed:
                 errors.append(prefix + "personal/unknown source cannot have capture.allowed=true")
             if source.status not in {"excluded", "suspended", "retired"}:
                 errors.append(prefix + "personal/unknown source should be excluded, suspended, or retired")
+            if source.raw_policy.get("store_raw") not in {None, False, "false"}:
+                errors.append(prefix + "personal/unknown source cannot store raw material")
 
         if source.status in {"proposed", "future", "excluded", "suspended", "retired"} and source.capture_allowed:
             errors.append(prefix + f"status {source.status!r} cannot capture while capture.allowed=true")
@@ -287,6 +349,11 @@ def is_capture_eligible(source: Source) -> bool:
     if source.control_tier in PERSONAL_CONTROL_TIERS:
         return False
     return True
+
+
+def errors_for_source(report: RegistryReport, source_id: str) -> list[str]:
+    prefix = f"{source_id}: "
+    return [error for error in report.errors if error.startswith(prefix)]
 
 
 def find_source(

@@ -34,6 +34,8 @@ Start here when reviewing, installing, operating, or productizing the harness.
   source capture, raw material, and sensitive routing.
 - [Source Registry Design](source-registry-design.md): many accounts per tool,
   source ownership, approval, routing, and enforcement.
+- [Source-Governed Capture](source-governed-capture.md): privacy-first pull,
+  evidence, extraction, cursor, and staging flow.
 - [Source Registry Template](source-registry-template.yml): starter
   `source-registry.yml`.
 

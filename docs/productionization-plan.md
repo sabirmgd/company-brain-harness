@@ -28,6 +28,8 @@ Required proof:
   indexes, and staging folders for a new company.
 - Source registry validator/enforcer that refuses unapproved or personal source
   instances before connector jobs run.
+- Generic source-governed capture scripts for normalized connector output:
+  `source-pull.py`, `source-extract.py`, and `source-sync-state.py`.
 - Schedule generator for human-gated or autonomous operating loops.
 - Read-only lint for stale, duplicate, broken-link, contradiction, and
   provenance review.
@@ -40,6 +42,7 @@ Required proof:
   - GitHub org repo index
   - shared Apollo/CRM workspace
   - Slack later
+- Connector-specific normalizers that produce the generic JSONL record format.
 - Scheduled runner that executes the generated schedule and produces a morning
   review digest.
 - Clean service-account guide for Google Workspace domain-wide delegation.

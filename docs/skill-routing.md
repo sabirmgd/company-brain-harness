@@ -76,7 +76,12 @@ or CLI flags. The agent handles those mechanics.
 |---|---|---|
 | "Connect Slack." | `sources-check` | Ask which workspace/channel and who owns it. |
 | "Can Gmail feed the brain?" | `sources-check` | Require org-wide scope and exclude personal inboxes by default. |
+| "Connect Gmail for this client only." | `source-setup` | Define delegated scope, exclusions, reviewer, and revocation path. |
+| "Connect Confluence." | `source-setup` | Separate company spaces from user spaces and restricted spaces. |
+| "Connect our CRM." | `source-setup` | Scope company account records and private account-manager notes. |
 | "Use our Fireflies meetings." | `sources-check` and `meeting-to-brain` | Validate the company-controlled source before staging meeting notes. |
+| "Sync approved sources." | `source-sync` | Pull new/changed scoped records into private evidence and staged proposals. |
+| "Pull new emails for this client." | `source-sync` | Use the approved source cursor and stage allowed artifacts only. |
 | "Add this meeting transcript." | `meeting-to-brain` | Convert approved meeting material into staged notes. |
 | "Process this call recording." | `meeting-to-brain` | Extract decisions, action items, and reusable facts. |
 | "Use our Apollo account." | `sources-check` | Validate exact workspace/account, scope, approval, and route. |
@@ -105,7 +110,8 @@ reference.
 - A provided artifact, doc, pasted text, or link: `brain-intake`.
 - A meeting transcript, recap, or recording export: `meeting-to-brain`.
 - A source account, workspace, channel, inbox, calendar, repo org, or API key:
-  `sources-check`.
+  `source-setup` for setup decisions, then `sources-check` for eligibility.
+- Approved source pull, cursor, evidence, and extraction work: `source-sync`.
 - Staged proposal decisions: `approve-brain-notes`.
 - Schedule or automation policy: `brain-schedule`.
 - Staleness, contradictions, broken links, or provenance cleanup: `brain-lint`.

@@ -102,9 +102,14 @@ Every source must be a specific instance:
 - company GitHub org
 - selected Slack channels
 - Google Workspace service account
+- approved Confluence spaces
+- delegated client/project email scope
 - customer-owned workspace for that customer's brain
 
-Do not register broad app names or every teammate's personal account.
+Do not register broad app names or every teammate's personal account. A
+teammate can delegate a narrow email/calendar scope, but the registry must say
+what is included, what is excluded, who owns it, who reviews it, and what raw
+material may be stored.
 
 Before a connector job runs:
 
@@ -127,6 +132,8 @@ Claude Code:
 /company-brain-harness:brain-setup
 /company-brain-harness:brain-health
 /company-brain-harness:sources-check
+/company-brain-harness:source-setup
+/company-brain-harness:source-sync
 /company-brain-harness:brain-intake
 /company-brain-harness:brain-onboard
 /company-brain-harness:meeting-to-brain
@@ -146,6 +153,8 @@ $brain-contribute
 $brain-setup
 $brain-health
 $sources-check
+$source-setup
+$source-sync
 $brain-intake
 $brain-onboard
 $meeting-to-brain

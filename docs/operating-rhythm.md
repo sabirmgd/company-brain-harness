@@ -14,10 +14,12 @@ The agent should run:
 
 1. connection check
 2. source registry check
-3. health check
-4. lint
-5. staged queue review
-6. punch list
+3. approved source pull into private evidence
+4. extraction into staged proposals
+5. health check
+6. lint
+7. staged queue review
+8. punch list
 
 Output:
 

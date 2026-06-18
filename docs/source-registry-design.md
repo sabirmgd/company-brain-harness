@@ -108,12 +108,15 @@ scope:
   exclude:
     - personal meetings
     - HR/compensation/legal unless routed restricted
+raw_policy:
+  store_raw: private_only
+  retention_days: 14
 routing:
   default_destination: Intelligence/meetings
   staging_destination: 00_Company_Brain_Conventions/90_Staging
   restricted_prefixes:
     - Restricted
-brain_artifacts:
+artifact_policy:
   allowed:
     - curated_summary
     - decisions
@@ -121,13 +124,86 @@ brain_artifacts:
     - reusable_facts
   not_allowed:
     - raw_transcript_by_default
+    - credential_value
 dedupe:
   external_id_field: meeting_id
   strategy: source_id_plus_external_id
+sync:
+  enabled: false
+  cursor: null
+  last_successful_pull: null
 audit:
   last_reviewed: 2026-06-18
   approved_by: Company Owner
 ```
+
+## Source-Governed Capture Pipeline
+
+Raw access is not brain access.
+
+```text
+approved source -> scoped pull -> private evidence -> extraction -> staged proposal -> review -> approved brain note
+```
+
+The harness stores sync state separately from source policy:
+
+```text
+00_Company_Brain_Conventions/source-sync-state.json
+```
+
+Each source keeps:
+
+- cursor or page token
+- last successful pull time
+- per-item content hashes
+- last staged hash
+- last pull/extract counts
+
+This lets operators pull only new or changed items without reprocessing the
+same email thread, Slack message, Confluence page, CRM record, or meeting recap.
+
+## Connector-Specific Privacy Rules
+
+### Email
+
+- Shared inboxes and aliases can be company-owned sources.
+- Personal inboxes are excluded by default.
+- Delegated personal email must be scoped by client, label, sender/domain,
+  thread, or date range.
+- Raw email bodies stay private/temporary evidence unless explicitly approved.
+- Brain artifacts should be commitments, customer facts, decisions, account
+  updates, and action items, not raw emails.
+
+### Slack
+
+- Public/company channels can be source instances.
+- Private channels require explicit approval and reviewer assignment.
+- DMs are excluded by default.
+- Brain artifacts should be decisions, blockers, incidents, account facts, and
+  reusable SOP updates.
+
+### Confluence
+
+- Company spaces can be source instances.
+- User/personal spaces are excluded by default.
+- Restricted spaces route to restricted staging or stay out.
+- Brain artifacts should be canonical summaries, source references, and changed
+  decisions, not page dumps.
+
+### CRM
+
+- Company account records can be source instances.
+- Account-manager private notes require explicit scope and reviewer.
+- Brain artifacts should be account summaries, risks, lifecycle changes, next
+  steps, and customer facts.
+
+### Meetings
+
+- Company recorder workspaces can be source instances.
+- Personal recorder accounts are excluded unless delegated and scoped.
+- Raw transcripts are not shared brain notes.
+- Brain artifacts should be decisions, action items, objections, customer facts,
+  and reusable context.
 
 ## What Goes Into The Brain
 
@@ -154,7 +230,7 @@ Default not allowed:
 - personal notes
 - unreviewed sensitive material
 
-Raw material can live in private staging or a separate evidence store. The
+Raw material can live in private evidence staging or a separate evidence store. The
 shared brain gets the approved, useful version.
 
 ## Multi-Account Rules
@@ -195,6 +271,63 @@ gmail:
 
 Personal connectors may help an individual in their own agent session, but they
 are not shared engine sources unless explicitly delegated, scoped, and approved.
+
+## Delegated Personal Sources
+
+Delegated personal sources are allowed only when all of these are true:
+
+- the teammate opts in
+- the scope is narrow and written down
+- the reviewer is named
+- raw evidence is private or temporary
+- the teammate can revoke access
+- only curated artifacts can become shared brain notes
+
+Example:
+
+```yaml
+id: delegated-email-owner-silz
+connector: email
+display_name: Owner email threads for SILZ only
+control_tier: delegated_personal
+status: approved_staging_only
+credential_ref: keychain:owner-email-delegated
+owner: Account Owner
+review_owner: Account Owner
+capture:
+  allowed: true
+  mode: scheduled
+  approval_required: true
+  raw_retention_days: 7
+scope:
+  include:
+    - client:SILZ
+    - label:company-brain
+    - from_domain:silz.example
+  exclude:
+    - personal
+    - HR
+    - legal
+    - finance
+    - family
+raw_policy:
+  store_raw: private_only
+  retention_days: 7
+artifact_policy:
+  allowed:
+    - customer_fact
+    - commitment
+    - action_item
+    - account_update
+  not_allowed:
+    - raw_email
+    - private_message
+    - credential_value
+sync:
+  enabled: false
+  cursor: null
+  last_successful_pull: null
+```
 
 ## Angles To Protect
 
