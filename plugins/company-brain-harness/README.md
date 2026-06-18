@@ -12,10 +12,10 @@ any filesystem-backed root.
 From GitHub:
 
 ```bash
-claude plugin marketplace add <github-owner>/company-brain-harness
+claude plugin marketplace add sabirmgd/company-brain-harness
 claude plugin install company-brain-harness@company-brain
 
-codex plugin marketplace add <github-owner>/company-brain-harness
+codex plugin marketplace add sabirmgd/company-brain-harness
 codex plugin add company-brain-harness@company-brain
 ```
 

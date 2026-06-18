@@ -86,17 +86,17 @@ Full details: [docs/harness-architecture.md](docs/harness-architecture.md) and
 From GitHub:
 
 ```bash
-claude plugin marketplace add <github-owner>/company-brain-harness
+claude plugin marketplace add sabirmgd/company-brain-harness
 claude plugin install company-brain-harness@company-brain
 
-codex plugin marketplace add <github-owner>/company-brain-harness
+codex plugin marketplace add sabirmgd/company-brain-harness
 codex plugin add company-brain-harness@company-brain
 ```
 
 From a local checkout:
 
 ```bash
-git clone git@github.com:<github-owner>/company-brain-harness.git
+git clone git@github.com:sabirmgd/company-brain-harness.git
 cd company-brain-harness
 
 claude plugin marketplace add .
