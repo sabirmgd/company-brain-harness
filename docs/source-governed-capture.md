@@ -81,6 +81,20 @@ Disallowed by default:
 - drafts
 - restricted spaces unless routed restricted
 
+Adapter:
+
+```bash
+python3 plugins/company-brain-harness/bin/confluence-export.py \
+  --base-url "https://example.atlassian.net/wiki" \
+  --space-key "TEAM" \
+  --output-jsonl records.jsonl
+```
+
+`confluence-export.py` reads Atlassian credentials from
+`ATLASSIAN_EMAIL` and `ATLASSIAN_API_TOKEN` by default. It writes normalized
+JSONL only; `source-pull.py` and `source-extract.py` still own evidence,
+dedupe, privacy checks, and staging.
+
 ### CRM
 
 Allowed patterns:

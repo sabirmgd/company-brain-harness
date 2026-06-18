@@ -65,6 +65,7 @@ The bundled `bin/` CLIs are preview-first and generic:
 - `brain-setup.py`
 - `connections-check.py`
 - `source-registry-check.py`
+- `confluence-export.py`
 - `source-pull.py`
 - `source-extract.py`
 - `source-sync-state.py`

@@ -184,6 +184,41 @@ python3 "$BIN_DIR/source-registry-check.py" \
   --source-id acme-co-brain-root \
   --for-capture >/tmp/company-brain-sources.txt
 
+cat >/tmp/company-brain-confluence-fixture.json <<'EOF'
+{
+  "results": [
+    {
+      "id": "12345",
+      "title": "Confluence Smoke Page",
+      "space": {"key": "DOCS", "name": "Docs"},
+      "version": {"when": "2026-06-18T06:00:00.000Z", "by": {"displayName": "Docs Owner"}},
+      "body": {"storage": {"value": "<h1>Confluence Smoke Page</h1><p>This page should normalize into a staged source record.</p>"}},
+      "_links": {"base": "https://example.atlassian.net/wiki", "webui": "/spaces/DOCS/pages/12345/Confluence+Smoke+Page"}
+    }
+  ]
+}
+EOF
+
+python3 "$BIN_DIR/confluence-export.py" \
+  --input-json /tmp/company-brain-confluence-fixture.json \
+  --space-key DOCS \
+  --output-jsonl /tmp/company-brain-confluence-records.jsonl >/tmp/company-brain-confluence-export.json
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+summary = json.loads(Path("/tmp/company-brain-confluence-export.json").read_text())
+records = [json.loads(line) for line in Path("/tmp/company-brain-confluence-records.jsonl").read_text().splitlines()]
+if summary["count"] != 1 or len(records) != 1:
+    raise SystemExit(f"unexpected Confluence export output: {summary}, {records}")
+record = records[0]
+if record["external_id"] != "12345" or record["artifact_type"] != "curated_note":
+    raise SystemExit(f"unexpected normalized Confluence record: {record}")
+if "This page should normalize" not in record["summary"]:
+    raise SystemExit(f"Confluence body text was not normalized: {record}")
+PY
+
 cat >/tmp/company-brain-source-records.jsonl <<'EOF'
 {"external_id":"source-doc-1","title":"Source Sync Smoke","summary":"This normalized source record should stage into the brain review queue.","target_path":"Resources/source-sync-smoke.md","tags":["source","smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"smoke-cursor-1"}
 {"external_id":"private-source-1","title":"Private Source","summary":"This private record should be skipped.","target_path":"Resources/private.md","tags":["source","private"],"artifact_type":"curated_note","visibility":"personal","author":"Smoke Source"}

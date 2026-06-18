@@ -150,6 +150,7 @@ CLI responsibilities:
 | `brain-setup.py` | Create the portable scaffold |
 | `connections-check.py` | Check root, routing, and optional connector readiness |
 | `source-registry-check.py` | Enforce source-instance capture eligibility |
+| `confluence-export.py` | Export scoped Confluence pages into normalized JSONL |
 | `source-pull.py` | Pull normalized connector records into private evidence |
 | `source-extract.py` | Extract allowed artifacts from evidence into staged proposals |
 | `source-sync-state.py` | Inspect or update source cursors and dedupe state |
