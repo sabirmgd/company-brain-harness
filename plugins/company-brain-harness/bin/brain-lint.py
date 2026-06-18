@@ -90,6 +90,24 @@ def parse_date(value: str | None) -> date | None:
         return None
 
 
+def has_contradiction_marker(text: str, frontmatter: dict[str, str]) -> bool:
+    status = frontmatter.get("status", "").strip().lower()
+    if status in {"stale", "superseded", "deprecated"}:
+        return True
+
+    lowered = text.lower()
+    explicit_markers = (
+        "contradiction:",
+        "contradicts:",
+        "superseded by",
+        "superseded:",
+        "stale claim:",
+        "outdated claim:",
+        "deprecated:",
+    )
+    return any(marker in lowered for marker in explicit_markers)
+
+
 def is_content_note(rel: Path) -> bool:
     return rel.name not in META_FILES and not rel.parts[-2:-1] == ("90_Staging",)
 
@@ -125,9 +143,7 @@ def lint(root: Path, *, stale_days: int) -> dict:
             if "<!-- src:" not in text:
                 missing_provenance.append(rel_s)
 
-        if is_content_note(rel) and (
-            "contradict" in text.lower() or "superseded" in text.lower() or "stale" in text.lower()
-        ):
+        if is_content_note(rel) and has_contradiction_marker(text, frontmatter):
             possible_contradictions.append(rel_s)
 
         for target in MD_LINK_RE.findall(text):

@@ -105,7 +105,7 @@ if health["stats"]["index_files_present"] != 2:
     raise SystemExit(f"unexpected index count: {health['stats']['index_files_present']}")
 PY
 
-printf '# Smoke Note\n\nThis note proves staging and approval work.\n' |
+printf '# Smoke Note\n\nThis note proves staging and approval work. It may mention stale source handling without becoming a contradiction marker.\n' |
   python3 "$BIN_DIR/stage-brain-note.py" \
     --root "$TMP_ROOT" \
     --target Strategy/smoke-note.md \
