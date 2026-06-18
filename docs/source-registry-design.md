@@ -95,7 +95,7 @@ control_tier: company_owned
 status: approved_staging_only
 credential_ref: env:COMPANY_FIREFLIES_API_KEY
 owner: Company Owner
-review_owner: Brain Champion
+review_owner: Brain Owner
 capture:
   allowed: true
   mode: scheduled
@@ -109,10 +109,10 @@ scope:
     - personal meetings
     - HR/compensation/legal unless routed restricted
 routing:
-  default_destination: 12_Research_and_Industry_Intelligence/03_Customer_Research
-  staging_destination: 00_README_Drive_Conventions/90_Staging
+  default_destination: Intelligence/meetings
+  staging_destination: 00_Company_Brain_Conventions/90_Staging
   restricted_prefixes:
-    - 14_Owner_Vault
+    - Restricted
 brain_artifacts:
   allowed:
     - curated_summary

@@ -133,10 +133,9 @@ Decision: model team roles explicitly.
 
 Accepted:
 
-- Champion.
-- Operator.
-- Teammate.
-- Source owner.
+- Brain Owner.
+- Brain Operator.
+- Team Member.
 
 Rejected:
 
@@ -179,8 +178,8 @@ Decision: restricted prefixes are never broad-scanned or written by default.
 Accepted:
 
 - Configurable `restricted_prefixes`.
-- Default legacy prefix `14_Owner_Vault`.
-- Scaffolded generic prefix `Restricted`.
+- Default scaffolded prefix `Restricted`.
+- Legacy prefix `14_Owner_Vault` remains recognized for existing deployments.
 
 Rejected:
 
@@ -256,3 +255,28 @@ Implication:
 - The current harness is usable for pilots.
 - The next product layer should automate setup, source approval, scheduling, and
   review without weakening safety.
+
+## D013: Role-Based Front Door Is The Default UX
+
+Decision: make `brain-start` the default entry point and expose Brain Owner,
+Brain Operator, and Team Member as the public roles.
+
+Accepted:
+
+- `brain-start` routes ambiguous setup/use requests.
+- `brain-owner` guides setup and approvals.
+- `brain-operator` runs the daily operating loop.
+- `brain-contribute` guides teammate contributions.
+- `brain-setup.py` generates root-level role guides and next-action files.
+
+Rejected:
+
+- Making nontechnical users choose between low-level CLIs.
+- Leading with internal terms like source registry, promotion CLI, or lint.
+- Treating setup as a one-shot scaffold instead of a guided first-session flow.
+
+Implication:
+
+- Docs should start with what users say to Claude/Codex.
+- CLIs remain the engine and verification surface.
+- The website should mirror the same roles and progressive setup stages.

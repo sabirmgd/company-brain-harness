@@ -7,10 +7,9 @@ founder's personal connectors or one local machine.
 
 | Role | Owns |
 |---|---|
-| Champion | Policy, source approval, review standards, restricted access |
-| Operator | Daily checks, lint, staging queue, schedule execution |
-| Teammate | Role knowledge, source suggestions, corrections, review feedback |
-| Source owner | Scope, credentials, retention, and source-specific accuracy |
+| Brain Owner | Policy, source approval, review standards, restricted access |
+| Brain Operator | Daily checks, lint, staging queue, schedule execution |
+| Team Member | Role knowledge, source suggestions, corrections, review feedback |
 
 One person can hold multiple roles during a pilot. Before broad rollout, make
 the roles explicit.
@@ -45,7 +44,7 @@ Ask each teammate:
 
 ## Source Promotion
 
-Source suggestions become source registry entries only after the Champion
+Source suggestions become source registry entries only after the Brain Owner
 decides:
 
 - exact source instance
@@ -68,7 +67,7 @@ The brain should evolve in place:
 - add provenance comments for source-backed claims
 - use `last_verified` to make freshness visible
 - archive deprecated notes when they are no longer useful
-- route contradictions to the source owner or Champion
+- route contradictions to the source owner or Brain Owner
 
 ## Pilot Readiness
 
@@ -78,6 +77,6 @@ A team pilot is ready when:
 - source registry validates
 - restricted folder permissions are checked
 - first two-week schedule is chosen
-- Champion and Operator are named
+- Brain Owner and Brain Operator are named
 - every teammate understands staging before promotion
 - no personal connector is treated as a company source

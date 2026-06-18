@@ -1,0 +1,6 @@
+interface:
+  display_name: "Brain Contribute"
+  short_description: "Guide a teammate contribution interview."
+  default_prompt: "Use $brain-contribute to help me add my knowledge to the company brain."
+policy:
+  allow_implicit_invocation: true

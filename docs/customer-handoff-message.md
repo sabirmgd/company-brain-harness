@@ -12,13 +12,30 @@ generic chat-over-docs setup. The storage folder is the backend. The harness is
 the operating layer that tells Claude, Codex, and other agents how to connect,
 route, stage, approve, score, and safely grow the company brain.
 
+To start, open Claude Code or Codex in the brain folder and say:
+
+```text
+I want to set up my company brain.
+```
+
+For daily operations, say:
+
+```text
+Run today's company brain check.
+```
+
 ## What Is Ready
 
 - The brain root is mounted or available as a local working folder.
 - The brain root has routing, conventions, staging, source registry, schedule,
   and folder indexes.
 - The harness installs into both Claude Code and Codex.
-- The package has ten reusable skills:
+- The package has fourteen reusable skills: four simple role-based entry
+  points plus ten lower-level action skills.
+  - brain start
+  - brain owner
+  - brain operator
+  - brain contribute
   - brain setup
   - brain health
   - sources check

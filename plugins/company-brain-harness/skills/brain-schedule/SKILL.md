@@ -26,8 +26,8 @@ python3 <plugin-root>/bin/brain-schedule.py \
   --mode human \
   --time 08:30 \
   --timezone local \
-  --champion "<Champion>" \
-  --operator "<Operator>"
+  --champion "<Brain Owner>" \
+  --operator "<Brain Operator>"
 ```
 
 Write:
@@ -38,8 +38,8 @@ python3 <plugin-root>/bin/brain-schedule.py \
   --mode human \
   --time 08:30 \
   --timezone local \
-  --champion "<Champion>" \
-  --operator "<Operator>" \
+  --champion "<Brain Owner>" \
+  --operator "<Brain Operator>" \
   --write
 ```
 
@@ -53,4 +53,4 @@ python3 <plugin-root>/bin/brain-schedule.py \
 - Meeting-derived, HR, legal, finance, customer-confidential, and strategy-changing notes stay human-approved.
 - Personal connectors never run as scheduled company-brain sources.
 - Source registry and lint must run before scheduled capture is trusted.
-- The schedule should name a Champion and an Operator, not depend on one hidden local machine.
+- The schedule should name a Brain Owner and a Brain Operator, not depend on one hidden local machine.

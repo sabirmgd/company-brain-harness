@@ -10,16 +10,19 @@ import os
 from pathlib import Path
 
 
-DEFAULT_CONVENTIONS_DIR = "00_README_Drive_Conventions"
+DEFAULT_CONVENTIONS_DIR = "00_Company_Brain_Conventions"
+LEGACY_CONVENTIONS_DIR = "00_README_Drive_Conventions"
 DEFAULT_STAGING_DIR = f"{DEFAULT_CONVENTIONS_DIR}/90_Staging"
 DEFAULT_ROUTING_FILE = "CLAUDE.md"
-DEFAULT_RESTRICTED_PREFIXES = ("14_Owner_Vault",)
+DEFAULT_RESTRICTED_PREFIXES = ("Restricted", "14_Owner_Vault")
 
 CONFIG_CANDIDATES = (
     "company-brain.yml",
     "company-os.yml",
     f"{DEFAULT_CONVENTIONS_DIR}/company-brain.yml",
     f"{DEFAULT_CONVENTIONS_DIR}/company-os.yml",
+    f"{LEGACY_CONVENTIONS_DIR}/company-brain.yml",
+    f"{LEGACY_CONVENTIONS_DIR}/company-os.yml",
 )
 
 
@@ -130,17 +133,21 @@ def routing_file(root: Path) -> Path:
 
 
 def conventions_dir(root: Path) -> Path:
+    default = DEFAULT_CONVENTIONS_DIR
+    if not (root / DEFAULT_CONVENTIONS_DIR).exists() and (root / LEGACY_CONVENTIONS_DIR).exists():
+        default = LEGACY_CONVENTIONS_DIR
     rel = os.environ.get("BRAIN_CONVENTIONS_DIR") or config_scalar(
-        root, "brain", "conventions_dir", DEFAULT_CONVENTIONS_DIR
+        root, "brain", "conventions_dir", default
     )
     return root / safe_relative_path(rel, name="conventions dir")
 
 
 def staging_dir(root: Path, override: str | None = None) -> Path:
+    default_staging = f"{conventions_dir(root).relative_to(root).as_posix()}/90_Staging"
     rel = (
         override
         or os.environ.get("BRAIN_STAGING_DIR")
-        or config_scalar(root, "brain", "staging_dir", DEFAULT_STAGING_DIR)
+        or config_scalar(root, "brain", "staging_dir", default_staging)
     )
     return root / safe_relative_path(rel, name="staging dir")
 

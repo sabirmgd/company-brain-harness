@@ -1,6 +1,6 @@
 {
   "name": "company-brain-harness",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Portable Company Brain harness skills and CLIs for filesystem-backed knowledge roots.",
   "author": {
     "name": "30x"

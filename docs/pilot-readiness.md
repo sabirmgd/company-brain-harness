@@ -6,7 +6,12 @@ new company, founder, or team lead.
 ## What Is Ready
 
 - Portable plugin package for Claude Code and Codex.
-- Ten installable skills:
+- Four role-based entry skills:
+  - `brain-start`
+  - `brain-owner`
+  - `brain-operator`
+  - `brain-contribute`
+- Ten lower-level action skills:
   - `brain-setup`
   - `brain-health`
   - `sources-check`
@@ -46,11 +51,11 @@ new company, founder, or team lead.
 
 ## What To Demo
 
-1. Open the configured brain root.
-2. Run connection check.
-3. Run source registry check.
-4. Run brain health and lint.
-5. Stage a small safe note with `brain-intake`.
+1. Open Claude Code or Codex in the configured brain root.
+2. Say: "I want to set up my company brain."
+3. Show the role choice: Brain Owner, Brain Operator, Team Member.
+4. Run the Brain Operator daily check.
+5. Stage a small safe contribution with `brain-contribute`.
 6. Approve it with `approve-brain-notes`.
 7. Show the final note in the correct folder with provenance.
 8. Show that a restricted-folder write is refused by default.

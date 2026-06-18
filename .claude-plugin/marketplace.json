@@ -12,7 +12,7 @@
       "name": "company-brain-harness",
       "source": "./plugins/company-brain-harness",
       "description": "Connect, stage, approve, and score a company brain.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "category": "Productivity",
       "tags": [
         "company-brain",

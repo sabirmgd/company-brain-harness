@@ -76,21 +76,21 @@ Claude Code, Claude Cowork, Codex, and other agents should treat this file as th
 
 ## Rules
 
-1. Shared writes go through staging unless the Champion explicitly approves direct admin edits.
+1. Shared writes go through staging unless the Brain Owner explicitly approves direct admin edits.
 2. Personal connectors are not company sources.
 3. Every org-wide source instance must exist in `{CONVENTIONS_DIR}/source-registry.yml`.
 4. Source-derived notes need provenance: `<!-- src: <source-id>/<item-id> @ YYYY-MM-DD -->`.
 5. Every content note needs frontmatter with `status`, `tags`, and `last_verified`.
-6. Never create files at the root except routing/config files.
+6. Never create files at the root except routing, config, and setup guide files.
 7. Never read, index, summarize, or write `Restricted/` unless the owner explicitly grants access.
 8. Prefer updating existing notes over creating duplicate versions.
 9. If a newer source contradicts an older claim, edit the old claim in place with a dated warning.
-10. If unsure where something belongs, suggest two destinations and ask the Champion.
+10. If unsure where something belongs, suggest two destinations and ask the Brain Owner.
 
 ## Operating Roles
 
-- Champion: {champion}. Owns policy, review, adoption, and source approval.
-- Operator: configured in `{CONVENTIONS_DIR}/team.yml`. Runs checks, lint, staging, and schedules.
+- Brain Owner: {champion}. Owns policy, review, adoption, and source approval.
+- Brain Operator: configured in `{CONVENTIONS_DIR}/team.yml`. Runs checks, lint, staging, and schedules.
 
 ## Anti-Patterns
 
@@ -241,7 +241,7 @@ sources:
     scope:
       include:
         - company-owned Apollo accounts and contacts approved for GTM use
-        - enrichment fields approved by the Champion
+        - enrichment fields approved by the Brain Owner
       exclude:
         - personal prospecting lists
         - private notes owned by an individual teammate
@@ -372,7 +372,7 @@ HR, legal, finance, fundraising, compensation, private customer data, and owner-
 
 ## Approval Checklist
 
-- [ ] Champion approves this policy.
+- [ ] Brain Owner approves this policy.
 - [ ] Source registry is valid.
 - [ ] Restricted folder permissions are correct.
 - [ ] Review owner is named.
@@ -438,7 +438,7 @@ The company owner and teammates still need to add real strategy, customer, proje
 - source registry valid
 - restricted permissions checked
 - schedule chosen
-- champion assigned
+- Brain Owner assigned
 - first teammate onboarded
 - no personal connector used as a company source
 """
@@ -449,11 +449,11 @@ def team_yml(champion: str, operator: str) -> str:
 kind: company_brain_team_map
 roles:
   champion:
-    description: "Human owner of policy, review, source approval, and adoption."
+    description: "Brain Owner: human owner of policy, review, source approval, and adoption."
   operator:
-    description: "Agent or teammate that runs checks, lint, staging, and schedules."
+    description: "Brain Operator: agent or teammate that runs checks, lint, staging, and schedules."
   teammate:
-    description: "Contributes knowledge and approved source context from their role."
+    description: "Team Member: contributes knowledge and approved source context from their role."
 known_people:
   {slugify(champion)}:
     role: champion
@@ -464,15 +464,15 @@ known_people:
 rules:
   - "Role routing is a starting point; CLAUDE.md and folder indexes decide final destination."
   - "No role grants restricted access unless permissions and owner approval allow it."
-  - "Each teammate may suggest sources; the Champion approves org-wide source instances."
+  - "Each teammate may suggest sources; the Brain Owner approves org-wide source instances."
 """
 
 
 def schedule_md(champion: str, operator: str) -> str:
     return frontmatter(["schedule", "operator"]) + f"""# Operating Schedule
 
-Champion: {champion}
-Operator: {operator}
+Brain Owner: {champion}
+Brain Operator: {operator}
 
 ## First Two Weeks
 
@@ -487,6 +487,209 @@ Operator: {operator}
 - Allow approved sources to create staged proposals.
 - Consider autonomous promotion only for explicitly low-risk categories.
 - Keep source registry, lint, and restricted permissions in the daily report.
+"""
+
+
+def start_here_md(company: str) -> str:
+    return frontmatter(["start-here", "roles", "setup"]) + f"""# Start Here
+
+Welcome to the {company} company brain.
+
+You do not need to know the harness commands. Open Claude Code or Codex in this
+folder and say:
+
+```text
+I want to set up my company brain.
+```
+
+or:
+
+```text
+Run today's company brain check.
+```
+
+## Choose Your Role
+
+| Role | Use this when |
+|---|---|
+| Brain Owner | You approve policy, sources, restricted access, and launch |
+| Brain Operator | You run checks, review the queue, and keep the brain healthy |
+| Team Member | You contribute what you know |
+
+## First Safe Rule
+
+Nothing from raw sources becomes shared knowledge automatically. The default path is:
+
+```text
+source or interview -> staged proposal -> review -> approved note
+```
+
+## Next Files
+
+- `OWNER_GUIDE.md`
+- `OPERATOR_GUIDE.md`
+- `TEAM_MEMBER_GUIDE.md`
+- `INVITE_TEAM.md`
+- `TODAY.md`
+- `NEXT_ACTIONS.md`
+"""
+
+
+def owner_guide_md(champion: str) -> str:
+    return frontmatter(["owner-guide", "approval"]) + f"""# Owner Guide
+
+Brain Owner: {champion}
+
+You are accountable for trust.
+
+## First Decisions
+
+1. Confirm this brain root is in the right shared location.
+2. Confirm restricted folder permissions.
+3. Approve or edit `00_Company_Brain_Conventions/CAPTURE_POLICY.md`.
+4. Review `00_Company_Brain_Conventions/source-registry.yml`.
+5. Choose the first Brain Operator.
+6. Keep the first two weeks human-gated unless you have a reason not to.
+
+## Say This
+
+```text
+I am the Brain Owner. Help me review the setup.
+```
+
+## Do Not Do Yet
+
+- Do not connect personal accounts as company sources.
+- Do not auto-promote meeting, legal, HR, finance, or strategy-changing notes.
+- Do not treat the `Restricted/` folder as secure until permissions are checked.
+"""
+
+
+def operator_guide_md(operator: str) -> str:
+    return frontmatter(["operator-guide", "daily-check"]) + f"""# Operator Guide
+
+Brain Operator: {operator}
+
+You keep the brain useful and safe.
+
+## Say This
+
+```text
+Run today's company brain check.
+```
+
+## Daily Loop
+
+1. Connection check.
+2. Source registry check.
+3. Brain health.
+4. Brain lint.
+5. Staged proposal review.
+6. Next three actions.
+
+## Output The Team Needs
+
+```text
+Today's brain check: Ready / Needs review / Blocked
+
+Needs review:
+- staged notes
+- proposed sources
+- stale notes
+- broken links
+
+Next three actions:
+1.
+2.
+3.
+```
+"""
+
+
+def team_member_guide_md() -> str:
+    return frontmatter(["team-member-guide", "contribution"]) + """# Team Member Guide
+
+You contribute what you know. You do not need to understand the harness.
+
+## Say This
+
+```text
+I want to add what I know to the company brain.
+```
+
+## The Agent Will Ask
+
+- What is your role?
+- What decisions or workflows do you own?
+- What should the company brain know about your area?
+- What is stale or wrong today?
+- Which tools do you use?
+- Which tools are company/shared and which are personal?
+- Who should review notes from your area?
+- What should stay private or restricted?
+
+## Safety
+
+Your answers become staged proposals first. A reviewer approves, rejects, or
+asks for revisions before anything becomes shared knowledge.
+"""
+
+
+def invite_team_md(company: str) -> str:
+    return frontmatter(["invite", "team"]) + f"""# Invite Team
+
+Use this message to invite teammates into the {company} company brain.
+
+```text
+We are setting up a shared company brain so Claude, Codex, and teammates can
+reuse trusted company context.
+
+Please open Claude Code or Codex in the brain folder and say:
+
+I want to add what I know to the company brain.
+
+The agent will ask a few questions and stage a proposal for review. Nothing goes
+directly into shared knowledge without approval. Personal accounts and private
+material are excluded by default.
+```
+"""
+
+
+def today_md() -> str:
+    return frontmatter(["today", "operator"]) + """# Today
+
+Use this as the daily operator scratchpad.
+
+## Morning Check
+
+- [ ] connection check
+- [ ] source registry check
+- [ ] brain health
+- [ ] brain lint
+- [ ] staged queue
+
+## Needs Review
+
+- staged notes:
+- proposed sources:
+- stale notes:
+- blocked setup:
+
+## End Of Day
+
+- [ ] next actions copied to `NEXT_ACTIONS.md`
+- [ ] owner decisions flagged
+"""
+
+
+def next_actions_md() -> str:
+    return frontmatter(["next-actions", "operator"]) + """# Next Actions
+
+Keep this list short. The operator should update it after each daily check.
+
+1. Review capture policy.
+2. Confirm restricted folder permissions.
+3. Invite the first teammate to contribute.
 """
 
 
@@ -528,6 +731,13 @@ No proposed note becomes shared knowledge until approved.
 def planned_files(company: str, champion: str, operator: str) -> dict[str, str]:
     files: dict[str, str] = {
         "CLAUDE.md": root_claude(company, champion),
+        "START_HERE.md": start_here_md(company),
+        "OWNER_GUIDE.md": owner_guide_md(champion),
+        "OPERATOR_GUIDE.md": operator_guide_md(operator),
+        "TEAM_MEMBER_GUIDE.md": team_member_guide_md(),
+        "INVITE_TEAM.md": invite_team_md(company),
+        "TODAY.md": today_md(),
+        "NEXT_ACTIONS.md": next_actions_md(),
         "company-brain.yml": company_brain_yml(company),
         f"{CONVENTIONS_DIR}/README.md": index_md(CONVENTIONS_DIR, "Operating manual for this company brain."),
         f"{CONVENTIONS_DIR}/CAPTURE_POLICY.md": capture_policy(company),
@@ -555,8 +765,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Scaffold a portable Company Brain root.")
     parser.add_argument("--root", default=DEFAULT_ROOT, help="target brain root")
     parser.add_argument("--company-name", required=True)
-    parser.add_argument("--champion", default="brain-champion")
-    parser.add_argument("--operator", default="company-brain-operator")
+    parser.add_argument("--champion", default="brain-owner", help="Brain Owner name")
+    parser.add_argument("--operator", default="brain-operator", help="Brain Operator name")
     parser.add_argument("--write", action="store_true", help="actually create files; default is preview-only")
     parser.add_argument("--force", action="store_true", help="overwrite existing generated files")
     parser.add_argument("--json", action="store_true")

@@ -8,12 +8,16 @@ from pathlib import Path
 
 EXPECTED = {
     "approve-brain-notes",
+    "brain-contribute",
     "brain-health",
     "brain-intake",
     "brain-lint",
     "brain-onboard",
+    "brain-operator",
+    "brain-owner",
     "brain-schedule",
     "brain-setup",
+    "brain-start",
     "meeting-to-brain",
     "repo-aware-poc",
     "sources-check",

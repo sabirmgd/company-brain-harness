@@ -191,12 +191,12 @@ def check_drive(report: Report, root: Path) -> None:
 def check_google_drive_app(report: Report) -> None:
     report.add(Check(
         key="google_drive_desktop",
-        label="Google Drive for Desktop",
+        label="Google Drive for Desktop optional backend",
         status="ok" if GOOGLE_DRIVE_APP.exists() else "missing",
         required=False,
         detail="Installed at /Applications/Google Drive.app" if GOOGLE_DRIVE_APP.exists() else "Not found in /Applications.",
-        next_step=None if GOOGLE_DRIVE_APP.exists() else "Install Google Drive for Desktop and sign in.",
-        unlocks="Local folder access when the brain backend is Google Drive.",
+        next_step=None if GOOGLE_DRIVE_APP.exists() else "Install only if this brain root lives in Google Drive.",
+        unlocks="Local folder access for teams that choose Google Drive as the filesystem backend.",
     ))
 
 

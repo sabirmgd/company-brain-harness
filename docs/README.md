@@ -4,14 +4,23 @@ Start here when reviewing, installing, operating, or productizing the harness.
 
 ## Orientation
 
+- [Start Here](start-here.md): plain-language first session flow for Claude or Codex.
+- [First 20 Minutes](first-20-minutes.md): starter setup with the Brain Owner.
+- [First Week](first-week.md): teammate contribution and review loop.
+- [Productized Setup Plan](productized-setup.md): how the role-based setup
+  becomes a customer-facing product.
 - [Quickstart](quickstart.md): install, scaffold, verify, and use skills.
 - [Harness Architecture](harness-architecture.md): how the layers fit together.
 - [Decision Log](decision-log.md): why each major layer exists.
 
 ## Operating The Brain
 
-- [Team Operating Model](team-operating-model.md): Champion, Operator,
-  teammate, and source-owner responsibilities.
+- [Team Operating Model](team-operating-model.md): Brain Owner, Brain Operator,
+  and Team Member responsibilities.
+- [Operating Rhythm](operating-rhythm.md): daily, weekly, and monthly operating loops.
+- [Brain Owner Role](roles/brain-owner.md): owner decisions and approval path.
+- [Brain Operator Role](roles/brain-operator.md): daily operations and review queue.
+- [Team Member Role](roles/team-member.md): contribution flow and source questions.
 - [Scheduling Guide](scheduling-guide.md): human-gated and autonomous operating
   loops.
 - [Team Onboarding Form](team-onboarding-form.md): prompts for team members to

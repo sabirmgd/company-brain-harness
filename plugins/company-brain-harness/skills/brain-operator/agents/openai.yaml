@@ -1,0 +1,6 @@
+interface:
+  display_name: "Brain Operator"
+  short_description: "Run daily checks and review queue."
+  default_prompt: "Use $brain-operator to run today's company brain check."
+policy:
+  allow_implicit_invocation: true

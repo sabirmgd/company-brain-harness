@@ -93,7 +93,7 @@ Restricted folders must be declared in `company-brain.yml`:
 ```yaml
 brain:
   restricted_prefixes:
-    - 14_Owner_Vault
+    - Restricted
 ```
 
 ## Approval Checklist

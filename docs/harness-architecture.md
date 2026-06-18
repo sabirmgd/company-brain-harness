@@ -11,7 +11,7 @@ Claude / Codex / agent
         v
 installed Company Brain Harness plugin
         |
-        +-- skills/       human-facing workflows
+        +-- skills/       role-based workflows and lower-level actions
         +-- bin/          executable policy and filesystem operations
         +-- references/   shared contract for skills and agents
         |
@@ -91,9 +91,17 @@ Consequence:
 
 ## Layer 4: Skills
 
-Decision: expose workflows as skills, not hidden command knowledge.
+Decision: expose role-based workflows as the public front door, with lower-level
+action skills underneath.
 
-Skills:
+Public entry skills:
+
+- `brain-start`
+- `brain-owner`
+- `brain-operator`
+- `brain-contribute`
+
+Lower-level action skills:
 
 - `brain-setup`
 - `brain-health`
@@ -112,11 +120,14 @@ Reasoning:
 - Skill instructions keep the same workflow portable across agents.
 - Skills should reference the brain root and CLIs instead of duplicating company
   facts inside prompt files.
+- Most users should not need to know which CLI or lower-level skill exists.
 
 Consequence:
 
-- A teammate can say `$brain-onboard` or `/company-brain-harness:brain-onboard`
-  and get the same core behavior.
+- A new user can say "I want to set up my company brain" and be routed through
+  `brain-start`.
+- A teammate can say `$brain-contribute` or `/company-brain-harness:brain-contribute`
+  and get a guided contribution flow.
 - Skills stay generic and rely on the active brain root for company-specific
   context.
 
@@ -152,6 +163,13 @@ Generated scaffold:
 
 ```text
 CLAUDE.md
+START_HERE.md
+OWNER_GUIDE.md
+OPERATOR_GUIDE.md
+TEAM_MEMBER_GUIDE.md
+INVITE_TEAM.md
+TODAY.md
+NEXT_ACTIONS.md
 company-brain.yml
 00_Company_Brain_Conventions/
   README.md
@@ -178,6 +196,7 @@ Archive/
 Reasoning:
 
 - Agents need one root routing file.
+- Humans need role guides at the root.
 - Humans need a conventions folder.
 - Writes need a staging area.
 - Teams need a source registry and team map.
@@ -203,7 +222,7 @@ connector: fireflies
 control_tier: company_owned
 status: approved_staging_only
 capture.allowed: true
-review_owner: Brain Champion
+review_owner: Brain Owner
 ```
 
 Reasoning:
@@ -272,12 +291,11 @@ Reasoning:
 
 Decision: operate as a team system with roles and cadence.
 
-Roles:
+Public roles:
 
-- Champion: policy, source approval, adoption
-- Operator: daily checks, schedules, staging queue
-- Teammate: knowledge contribution and corrections
-- Source owner: source scope, retention, accuracy
+- Brain Owner: policy, source approval, adoption
+- Brain Operator: daily checks, schedules, staging queue
+- Team Member: knowledge contribution and corrections
 
 First two-week cadence:
 

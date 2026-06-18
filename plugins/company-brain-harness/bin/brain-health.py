@@ -3,7 +3,7 @@
 
 Scores a filesystem-backed knowledge root 0-100 across five dimensions and
 prints a punch-list of what to populate next. Read-only: never writes to the
-brain root, never descends into `14_Owner_Vault` (off-limits by policy).
+brain root, never descends into configured restricted folders.
 
 Dimensions (20 each):
   Coverage    - % of leaf knowledge folders that contain real content

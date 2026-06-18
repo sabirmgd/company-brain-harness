@@ -10,7 +10,7 @@ Default behavior is preview-only. Use --write for side effects.
 Usage:
     bin/promote-to-brain.py \
       --source /tmp/proposed-note.md \
-      --target 02_Strategy_and_Vision/02_Category_and_Positioning/category.md \
+      --target Context/category-and-positioning.md \
       --tag strategy --tag positioning \
       --source-type interview --source-ref owner-interview-2026-06-17 \
       --author brain-operator

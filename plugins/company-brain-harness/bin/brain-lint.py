@@ -23,7 +23,19 @@ DEFAULT_ROOT = (
 FM_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 MD_LINK_RE = re.compile(r"\[[^\]]+\]\((?!https?:|mailto:|#)([^)]+)\)")
 WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)")
-META_FILES = {"CLAUDE.md", "README.md", "00_INDEX.md", "index.md"}
+META_FILES = {
+    "CLAUDE.md",
+    "README.md",
+    "00_INDEX.md",
+    "index.md",
+    "START_HERE.md",
+    "OWNER_GUIDE.md",
+    "OPERATOR_GUIDE.md",
+    "TEAM_MEMBER_GUIDE.md",
+    "INVITE_TEAM.md",
+    "TODAY.md",
+    "NEXT_ACTIONS.md",
+}
 
 
 def _excluded_tops(root: Path) -> set[str]:

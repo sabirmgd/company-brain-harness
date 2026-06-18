@@ -7,11 +7,11 @@ final destination. By default it previews the proposed staging write. Use
 target path and provenance metadata.
 
 Default staging directory:
-  <brain root>/00_README_Drive_Conventions/90_Staging/proposed
+  <brain root>/00_Company_Brain_Conventions/90_Staging/proposed
 
 Usage:
     echo '# Note\n\nBody' | bin/stage-brain-note.py \
-      --target 02_Strategy_and_Vision/02_Category_and_Positioning/category.md \
+      --target Context/category-and-positioning.md \
       --tag strategy --tag positioning \
       --source-type interview --source-ref owner-interview --author brain-operator
 

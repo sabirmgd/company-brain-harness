@@ -13,8 +13,8 @@ python3 plugins/company-brain-harness/bin/brain-schedule.py \
   --mode human \
   --time 08:30 \
   --timezone local \
-  --champion "<Champion>" \
-  --operator "<Operator>" \
+  --champion "<Brain Owner>" \
+  --operator "<Brain Operator>" \
   --write
 ```
 
@@ -39,8 +39,8 @@ python3 plugins/company-brain-harness/bin/brain-schedule.py \
   --mode autonomous \
   --time 08:30 \
   --timezone local \
-  --champion "<Champion>" \
-  --operator "<Operator>" \
+  --champion "<Brain Owner>" \
+  --operator "<Brain Operator>" \
   --write
 ```
 

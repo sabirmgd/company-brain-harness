@@ -18,22 +18,22 @@ Google Drive is a backend, not the product. Resolve the root in this order:
 Defaults:
 
 - `CLAUDE.md` or equivalent root routing instructions.
-- `00_README_Drive_Conventions/README.md` or equivalent conventions doc.
-- `00_README_Drive_Conventions/CAPTURE_POLICY.md`.
-- `00_README_Drive_Conventions/source-registry.yml`.
-- `00_README_Drive_Conventions/HARNESS_FLOWS.md`.
-- `00_README_Drive_Conventions/HARNESS_STATUS.md`.
-- `00_README_Drive_Conventions/90_Staging/`.
+- `00_Company_Brain_Conventions/README.md` or equivalent conventions doc.
+- `00_Company_Brain_Conventions/CAPTURE_POLICY.md`.
+- `00_Company_Brain_Conventions/source-registry.yml`.
+- `00_Company_Brain_Conventions/HARNESS_FLOWS.md`.
+- `00_Company_Brain_Conventions/HARNESS_STATUS.md`.
+- `00_Company_Brain_Conventions/90_Staging/`.
 
 The defaults can be overridden by `company-brain.yml` or `company-os.yml`:
 
 ```yaml
 brain:
   routing_file: CLAUDE.md
-  conventions_dir: 00_README_Drive_Conventions
-  staging_dir: 00_README_Drive_Conventions/90_Staging
+  conventions_dir: 00_Company_Brain_Conventions
+  staging_dir: 00_Company_Brain_Conventions/90_Staging
   restricted_prefixes:
-    - 14_Owner_Vault
+    - Restricted
 ```
 
 Existing deployments may use the legacy `00_README_Drive_Conventions` path.

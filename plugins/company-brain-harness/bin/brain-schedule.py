@@ -44,7 +44,7 @@ last_verified: {date.today().isoformat()}
 
 Mode: `{mode}`
 Local run time: `{time}` `{timezone}`
-Champion: `{champion}`
+Brain Owner: `{champion}`
 Operator identity: `{operator}`
 
 ## Daily Morning Loop
@@ -80,7 +80,7 @@ python3 <plugin-root>/bin/brain-lint.py --root "$BRAIN_ROOT" --stale-days 30
 
 ## Escalation
 
-Escalate to the Champion when:
+Escalate to the Brain Owner when:
 
 - a source registry entry is invalid or newly proposed
 - a connector fails auth or scope checks
@@ -103,8 +103,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--mode", choices=["human", "autonomous"], default="human")
     parser.add_argument("--time", default="08:30", help="local time for daily loop")
     parser.add_argument("--timezone", default="local")
-    parser.add_argument("--champion", default="brain-champion")
-    parser.add_argument("--operator", default="company-brain-operator")
+    parser.add_argument("--champion", default="brain-owner", help="Brain Owner name")
+    parser.add_argument("--operator", default="brain-operator", help="Brain Operator name")
     parser.add_argument("--write", action="store_true", help="write SCHEDULE.md under conventions dir")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)

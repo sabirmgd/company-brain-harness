@@ -165,6 +165,13 @@ python3 "$BIN_DIR/brain-setup.py" \
   --write >/tmp/company-brain-setup-write.txt
 
 test -f "$SCAFFOLD_ROOT/CLAUDE.md"
+test -f "$SCAFFOLD_ROOT/START_HERE.md"
+test -f "$SCAFFOLD_ROOT/OWNER_GUIDE.md"
+test -f "$SCAFFOLD_ROOT/OPERATOR_GUIDE.md"
+test -f "$SCAFFOLD_ROOT/TEAM_MEMBER_GUIDE.md"
+test -f "$SCAFFOLD_ROOT/INVITE_TEAM.md"
+test -f "$SCAFFOLD_ROOT/TODAY.md"
+test -f "$SCAFFOLD_ROOT/NEXT_ACTIONS.md"
 test -f "$SCAFFOLD_ROOT/company-brain.yml"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/source-registry.yml"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/CONNECTIONS.md"

@@ -10,7 +10,7 @@ Create the reusable Company Brain structure. Do not populate strategy, customer,
 ## Workflow
 
 1. Choose the filesystem-backed root: Google Drive, git repo, shared volume, or local folder.
-2. Identify the Champion and Operator.
+2. Identify the Brain Owner and Brain Operator.
 3. Preview the scaffold with `brain-setup.py` before writing.
 4. Write only when the user explicitly wants the scaffold created.
 5. Run `source-registry-check.py`, `brain-health.py`, and `brain-lint.py` after setup.
@@ -24,8 +24,8 @@ Preview:
 python3 <plugin-root>/bin/brain-setup.py \
   --root "$BRAIN_ROOT" \
   --company-name "<Company Name>" \
-  --champion "<Champion Name>" \
-  --operator "<Operator Name>"
+  --champion "<Brain Owner Name>" \
+  --operator "<Brain Operator Name>"
 ```
 
 Write:
@@ -34,8 +34,8 @@ Write:
 python3 <plugin-root>/bin/brain-setup.py \
   --root "$BRAIN_ROOT" \
   --company-name "<Company Name>" \
-  --champion "<Champion Name>" \
-  --operator "<Operator Name>" \
+  --champion "<Brain Owner Name>" \
+  --operator "<Brain Operator Name>" \
   --write
 ```
 
@@ -45,8 +45,8 @@ Ask only what is needed to scaffold safely:
 
 - company name
 - brain root location
-- Champion for policy and approvals
-- Operator for daily checks
+- Brain Owner for policy and approvals
+- Brain Operator for daily checks
 - first teammates to onboard
 - which shared source systems exist
 - which systems are personal and excluded

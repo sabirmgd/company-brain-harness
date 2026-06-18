@@ -37,6 +37,10 @@ claude --plugin-dir ./plugins/company-brain-harness
 
 ## Skills
 
+- `brain-start` - main entry point for setup, operation, or contribution.
+- `brain-owner` - guide owner setup decisions and approvals.
+- `brain-operator` - run daily checks and operational punch lists.
+- `brain-contribute` - help a teammate contribute knowledge safely.
 - `brain-setup` - scaffold a new team-first brain root.
 - `brain-health` - connection and health check.
 - `sources-check` - validate source registry and capture eligibility.
@@ -78,6 +82,9 @@ bash scripts/validate.sh
 
 The published docs live at the repository root under `docs/`. Start with:
 
+- `docs/start-here.md`
+- `docs/first-20-minutes.md`
+- `docs/operating-rhythm.md`
 - `docs/quickstart.md`
 - `docs/harness-architecture.md`
 - `docs/decision-log.md`

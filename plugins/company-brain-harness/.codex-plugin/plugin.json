@@ -1,6 +1,6 @@
 {
   "name": "company-brain-harness",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Portable Company Brain harness skills and CLIs for filesystem-backed knowledge roots.",
   "author": {
     "name": "30x"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Company Brain Harness",
     "shortDescription": "Connect, stage, approve, and score a company brain.",
-    "longDescription": "Portable workflows and helper CLIs for operating a company brain on any filesystem-backed root, with privacy-safe capture, staged promotion, health checks, onboarding, meeting intake, and repo-aware POC guardrails.",
+    "longDescription": "Portable role-based workflows and helper CLIs for starting, operating, and maintaining a company brain on any filesystem-backed root, with privacy-safe capture, staged promotion, health checks, onboarding, meeting intake, and repo-aware POC guardrails.",
     "developerName": "30x",
     "category": "Productivity",
     "capabilities": [
@@ -17,6 +17,10 @@
       "Write"
     ],
     "defaultPrompt": [
+      "Use $brain-start to help a new user set up or operate a company brain.",
+      "Use $brain-owner to guide owner approvals and setup decisions.",
+      "Use $brain-operator to run today's brain check.",
+      "Use $brain-contribute to help a teammate add knowledge.",
       "Use $brain-setup to scaffold a new company brain.",
       "Use $brain-health to check this company brain.",
       "Use $sources-check to validate org-wide source instances.",

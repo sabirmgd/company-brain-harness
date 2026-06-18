@@ -38,6 +38,14 @@ codex plugin add company-brain-harness@company-brain
 
 ## 2. Create Or Point At A Brain Root
 
+For the simplest path, open Claude Code or Codex and say:
+
+```text
+I want to set up my company brain.
+```
+
+The agent should route you through `brain-start`.
+
 For an existing root:
 
 ```bash
@@ -50,7 +58,7 @@ For a new root, preview first:
 python3 plugins/company-brain-harness/bin/brain-setup.py \
   --root "$BRAIN_ROOT" \
   --company-name "Acme Co" \
-  --champion "Brain Champion" \
+  --champion "Brain Owner" \
   --operator "Brain Operator"
 ```
 
@@ -60,7 +68,7 @@ Then write the scaffold:
 python3 plugins/company-brain-harness/bin/brain-setup.py \
   --root "$BRAIN_ROOT" \
   --company-name "Acme Co" \
-  --champion "Brain Champion" \
+  --champion "Brain Owner" \
   --operator "Brain Operator" \
   --write
 ```
@@ -112,6 +120,10 @@ python3 plugins/company-brain-harness/bin/source-registry-check.py \
 Claude Code:
 
 ```text
+/company-brain-harness:brain-start
+/company-brain-harness:brain-owner
+/company-brain-harness:brain-operator
+/company-brain-harness:brain-contribute
 /company-brain-harness:brain-setup
 /company-brain-harness:brain-health
 /company-brain-harness:sources-check
@@ -127,6 +139,10 @@ Claude Code:
 Codex:
 
 ```text
+$brain-start
+$brain-owner
+$brain-operator
+$brain-contribute
 $brain-setup
 $brain-health
 $sources-check

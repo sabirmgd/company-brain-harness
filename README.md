@@ -41,6 +41,28 @@ The harness does not populate company knowledge by itself. Each company's team
 members supply the real context through onboarding, intake, approved source
 capture, and review.
 
+## Simple User Experience
+
+The intended first interaction is not a command. It is a sentence:
+
+```text
+I want to set up my company brain.
+```
+
+Claude or Codex should route that to `brain-start`, ask which role the user is
+playing, and run the lower-level harness tools in the background.
+
+Public roles:
+
+| Role | What they do |
+|---|---|
+| Brain Owner | Approves setup, policy, restricted access, sources, and pilot launch |
+| Brain Operator | Runs daily checks, reviews queue, and keeps the brain healthy |
+| Team Member | Contributes role knowledge and flags stale/private material |
+
+The CLIs remain available for developers and automation, but the normal user
+flow should be role-based and guided.
+
 ## Layer Decisions
 
 | Layer | Decision | Why |
@@ -53,11 +75,12 @@ capture, and review.
 | Writes | `--write` required for side effects | Prevents accidental shared-brain mutation |
 | Knowledge flow | source/interview -> staging -> approval -> brain | Raw material is not automatically shared knowledge |
 | Source model | Source instance, not connector type | "Fireflies" or "Apollo" is too broad; exact workspace/account must be approved |
-| Team model | Champion, Operator, teammate, source owner | A company brain is not one person's private second brain |
+| Team model | Brain Owner, Brain Operator, Team Member | A company brain is not one person's private second brain |
 | Safety | Restricted prefixes skipped and refused by default | Sensitive HR/legal/finance/owner material must not be broadly indexed |
 | Freshness | `last_verified`, provenance, lint | Company knowledge decays unless checked |
 | Scheduling | Human-gated first, autonomous later | Trust the staging/review loop before automation |
 | Productization | Policy and source registry are customer-facing primitives | Trust and governance must be part of onboarding |
+| User experience | Role-based front door | Users say what they want; agents run the harness internally |
 
 Full details: [docs/harness-architecture.md](docs/harness-architecture.md) and
 [docs/decision-log.md](docs/decision-log.md).
@@ -112,7 +135,28 @@ Claude Code can also test the plugin directly:
 claude --plugin-dir ./plugins/company-brain-harness
 ```
 
-## Fast Start
+## Fast Start For Users
+
+After install, open Claude Code or Codex and say:
+
+```text
+I want to set up my company brain.
+```
+
+Or invoke the entry skill directly:
+
+```text
+/company-brain-harness:brain-start
+```
+
+```text
+$brain-start
+```
+
+The agent will ask whether you are the Brain Owner, Brain Operator, or a Team
+Member, then guide only the relevant next steps.
+
+## Developer And Automation Path
 
 Set the brain root:
 
@@ -126,7 +170,7 @@ Preview a new scaffold:
 python3 plugins/company-brain-harness/bin/brain-setup.py \
   --root "$BRAIN_ROOT" \
   --company-name "Acme Co" \
-  --champion "Brain Champion" \
+  --champion "Brain Owner" \
   --operator "Brain Operator"
 ```
 
@@ -136,7 +180,7 @@ Write the scaffold:
 python3 plugins/company-brain-harness/bin/brain-setup.py \
   --root "$BRAIN_ROOT" \
   --company-name "Acme Co" \
-  --champion "Brain Champion" \
+  --champion "Brain Owner" \
   --operator "Brain Operator" \
   --write
 ```
@@ -154,6 +198,10 @@ python3 plugins/company-brain-harness/bin/brain-lint.py --root "$BRAIN_ROOT" --s
 
 | Skill | Purpose |
 |---|---|
+| `brain-start` | Main entry point for setup, operation, or contribution |
+| `brain-owner` | Guide owner setup decisions and approvals |
+| `brain-operator` | Run daily checks and operational punch lists |
+| `brain-contribute` | Help a teammate contribute knowledge safely |
 | `brain-setup` | Scaffold a new team-first brain root without populating data |
 | `brain-health` | Check connection, policy, and readiness |
 | `sources-check` | Validate source registry and capture eligibility |
@@ -168,6 +216,10 @@ python3 plugins/company-brain-harness/bin/brain-lint.py --root "$BRAIN_ROOT" --s
 Claude Code:
 
 ```text
+/company-brain-harness:brain-start
+/company-brain-harness:brain-owner
+/company-brain-harness:brain-operator
+/company-brain-harness:brain-contribute
 /company-brain-harness:brain-setup
 /company-brain-harness:brain-health
 /company-brain-harness:sources-check
@@ -183,6 +235,10 @@ Claude Code:
 Codex:
 
 ```text
+$brain-start
+$brain-owner
+$brain-operator
+$brain-contribute
 $brain-setup
 $brain-health
 $sources-check
@@ -261,10 +317,9 @@ python3 plugins/company-brain-harness/bin/source-registry-check.py \
 
 The default roles are:
 
-- Champion: owns policy, source approval, review standards, and adoption
-- Operator: runs checks, lint, staging queue, and schedule
-- Teammate: contributes role knowledge and source suggestions
-- Source owner: owns source scope, credentials, retention, and accuracy
+- Brain Owner: owns policy, source approval, review standards, and adoption
+- Brain Operator: runs checks, lint, staging queue, and schedule
+- Team Member: contributes role knowledge and source suggestions
 
 First two weeks:
 
@@ -307,6 +362,11 @@ The smoke test proves:
 ## Documentation
 
 - [Docs Index](docs/README.md)
+- [Start Here](docs/start-here.md)
+- [First 20 Minutes](docs/first-20-minutes.md)
+- [First Week](docs/first-week.md)
+- [Operating Rhythm](docs/operating-rhythm.md)
+- [Productized Setup Plan](docs/productized-setup.md)
 - [Quickstart](docs/quickstart.md)
 - [Harness Architecture](docs/harness-architecture.md)
 - [Decision Log](docs/decision-log.md)
@@ -322,13 +382,13 @@ The smoke test proves:
 
 ## Release
 
-Current plugin metadata version: `0.2.0`.
+Current plugin metadata version: `0.3.0`.
 
 Before publishing a release:
 
 ```bash
 bash scripts/validate.sh
-git tag v0.2.0
+git tag v0.3.0
 git push origin main --tags
 ```
 

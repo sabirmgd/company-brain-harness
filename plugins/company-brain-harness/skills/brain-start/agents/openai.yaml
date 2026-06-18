@@ -1,0 +1,6 @@
+interface:
+  display_name: "Brain Start"
+  short_description: "Start setup or route users by role."
+  default_prompt: "Use $brain-start to start or operate this company brain."
+policy:
+  allow_implicit_invocation: true

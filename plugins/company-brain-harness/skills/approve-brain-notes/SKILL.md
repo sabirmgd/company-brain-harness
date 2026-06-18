@@ -11,7 +11,7 @@ Review staged proposals and record an approval decision. Shared-brain writes req
 
 1. Resolve the brain root.
 2. List staged proposals from the configured staging directory. Default:
-   `00_README_Drive_Conventions/90_Staging/proposed/*.md`.
+   `00_Company_Brain_Conventions/90_Staging/proposed/*.md`.
 3. For each proposal, inspect metadata, target path, sensitivity, author, source id/reference, and content summary.
 4. If a proposal came from a connector, confirm the source exists in `source-registry.yml` before approving.
 5. Do not inspect restricted folder contents.
