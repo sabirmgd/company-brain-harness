@@ -114,11 +114,55 @@ Allowed patterns:
 
 - company meeting recorder workspace
 - customer-owned meeting source for that customer brain
+- delegated personal recorder scoped by project/client/search term
 
 Disallowed by default:
 
 - personal recorder accounts
 - raw transcript dumps into shared knowledge
+
+Adapter:
+
+```bash
+python3 plugins/company-brain-harness/bin/fireflies-export.py \
+  --search "Project Name" \
+  --output-jsonl records.jsonl
+```
+
+`fireflies-export.py` exports Fireflies summary fields by default. It does not
+store raw transcript sentences unless a future adapter mode explicitly adds that
+behavior and the source policy allows it.
+
+### Code Repositories
+
+Code is a source of operating truth. It should feed the brain as repo maps and
+architecture references, while detailed implementation discovery can remain
+on-demand through GitHub, GitLab, or local git.
+
+Allowed patterns:
+
+- company-owned repos
+- local checked-out repos used by the team
+- GitHub/GitLab repos with approved org/project scope
+
+Disallowed by default:
+
+- private personal forks
+- credential files, local `.env`, logs, and generated dependency folders
+- broad scans of every repo on a developer machine
+
+Adapter:
+
+```bash
+python3 plugins/company-brain-harness/bin/repo-map-export.py \
+  --repo /path/to/api \
+  --repo /path/to/frontend \
+  --output-jsonl records.jsonl
+```
+
+The brain should store repo maps, stack markers, key docs, recent commits, and
+source links. Agents can then decide when to inspect live code directly rather
+than copying large code bodies into the brain.
 
 ## Executable Contract
 
@@ -164,6 +208,7 @@ python3 plugins/company-brain-harness/bin/source-extract.py \
 
 `source-extract.py`:
 
+- collapses repeated evidence to the latest record per external item
 - respects `artifact_policy.allowed`
 - refuses blocked artifact types
 - creates staged proposals only

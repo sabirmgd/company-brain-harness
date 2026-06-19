@@ -61,6 +61,21 @@ def note_body(record: dict) -> str:
     return "\n".join(parts).strip() + "\n"
 
 
+def latest_records_by_external_id(records: list[dict]) -> list[dict]:
+    latest: dict[str, dict] = {}
+    order: list[str] = []
+    missing_id_records: list[dict] = []
+    for record in records:
+        external_id = str(record.get("external_id") or "").strip()
+        if not external_id:
+            missing_id_records.append(record)
+            continue
+        if external_id not in latest:
+            order.append(external_id)
+        latest[external_id] = record
+    return missing_id_records + [latest[external_id] for external_id in order]
+
+
 def stage_record(root: Path, source, record: dict, *, write: bool, overwrite: bool) -> dict:
     stage_script = Path(__file__).resolve().parent / "stage-brain-note.py"
     tags = normalize_tags(record.get("tags"), [str(source.connector or "source"), "source-sync"])
@@ -138,7 +153,7 @@ def main(argv: list[str] | None = None) -> int:
     staged_count = 0
 
     try:
-        records = list(iter_jsonl(path))
+        records = latest_records_by_external_id(list(iter_jsonl(path)))
     except ValueError as exc:
         print(json.dumps({"error": str(exc)}), file=sys.stderr)
         return 1

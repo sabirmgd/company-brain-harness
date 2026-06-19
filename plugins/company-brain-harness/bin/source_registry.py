@@ -18,6 +18,8 @@ ALLOWED_CONNECTORS = {
     "fireflies",
     "google_workspace",
     "github",
+    "gitlab",
+    "local_git",
     "slack",
     "hubspot",
     "apollo",

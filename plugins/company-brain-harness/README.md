@@ -66,6 +66,8 @@ The bundled `bin/` CLIs are preview-first and generic:
 - `connections-check.py`
 - `source-registry-check.py`
 - `confluence-export.py`
+- `fireflies-export.py`
+- `repo-map-export.py`
 - `source-pull.py`
 - `source-extract.py`
 - `source-sync-state.py`
@@ -75,6 +77,10 @@ The bundled `bin/` CLIs are preview-first and generic:
 - `stage-brain-note.py`
 - `approve-staged-note.py`
 - `promote-to-brain.py`
+
+`source-pull.py` keeps an append-only evidence log. `source-extract.py` stages
+the latest eligible record per external item so updated pulls do not create
+stale duplicate proposals.
 
 No CLI should ingest personal connectors into a shared company brain. Company capture
 requires an approved `CAPTURE_POLICY.md` and a registered source instance in

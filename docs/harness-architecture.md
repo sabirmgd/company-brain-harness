@@ -151,8 +151,10 @@ CLI responsibilities:
 | `connections-check.py` | Check root, routing, and optional connector readiness |
 | `source-registry-check.py` | Enforce source-instance capture eligibility |
 | `confluence-export.py` | Export scoped Confluence pages into normalized JSONL |
+| `fireflies-export.py` | Export scoped Fireflies meeting summaries into normalized JSONL |
+| `repo-map-export.py` | Export local git repo maps into normalized JSONL |
 | `source-pull.py` | Pull normalized connector records into private evidence |
-| `source-extract.py` | Extract allowed artifacts from evidence into staged proposals |
+| `source-extract.py` | Extract latest allowed artifacts from evidence into staged proposals |
 | `source-sync-state.py` | Inspect or update source cursors and dedupe state |
 | `brain-health.py` | Score root readiness |
 | `brain-lint.py` | Detect stale, unprovenanced, duplicate, broken, or contradictory notes |

@@ -297,8 +297,10 @@ They also read `company-brain.yml` / `company-os.yml` when present.
 | `connections-check.py` | Check root, routing, optional connectors | No |
 | `source-registry-check.py` | Validate source instances and capture eligibility | No |
 | `confluence-export.py` | Export scoped Confluence pages to normalized JSONL | No brain writes |
+| `fireflies-export.py` | Export scoped Fireflies meeting summaries to normalized JSONL | No brain writes |
+| `repo-map-export.py` | Export local git repo maps to normalized JSONL | No brain writes |
 | `source-pull.py` | Pull normalized source records into private evidence | Only with `--write` |
-| `source-extract.py` | Extract allowed source artifacts into staged proposals | Only with `--write` |
+| `source-extract.py` | Extract latest allowed source artifacts into staged proposals | Only with `--write` |
 | `source-sync-state.py` | Inspect or update source cursor/dedupe state | Only with `--write` for cursor updates |
 | `brain-health.py` | Score readiness and folder health | No |
 | `brain-lint.py` | Check stale notes, provenance, links, duplicates | No |

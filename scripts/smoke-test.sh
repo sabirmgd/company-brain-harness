@@ -219,6 +219,80 @@ if "This page should normalize" not in record["summary"]:
     raise SystemExit(f"Confluence body text was not normalized: {record}")
 PY
 
+cat >/tmp/company-brain-fireflies-fixture.json <<'EOF'
+{
+  "data": {
+    "transcripts": [
+      {
+        "id": "meeting-123",
+        "title": "Project Weekly Sync",
+        "dateString": "2026-06-18T07:00:00.000Z",
+        "duration": 42,
+        "organizer_email": "operator@example.com",
+        "participants": ["operator@example.com", "teammate@example.com"],
+        "privacy": "link",
+        "transcript_url": "https://app.fireflies.ai/view/meeting-123",
+        "summary": {
+          "short_summary": "The team agreed on the launch checklist.",
+          "topics_discussed": ["Launch", "Risks"],
+          "action_items": "- Prepare checklist\\n- Confirm owner",
+          "keywords": ["launch", "checklist"]
+        }
+      }
+    ]
+  }
+}
+EOF
+
+python3 "$BIN_DIR/fireflies-export.py" \
+  --input-json /tmp/company-brain-fireflies-fixture.json \
+  --search Project \
+  --output-jsonl /tmp/company-brain-fireflies-records.jsonl >/tmp/company-brain-fireflies-export.json
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+summary = json.loads(Path("/tmp/company-brain-fireflies-export.json").read_text())
+records = [json.loads(line) for line in Path("/tmp/company-brain-fireflies-records.jsonl").read_text().splitlines()]
+if summary["count"] != 1 or len(records) != 1:
+    raise SystemExit(f"unexpected Fireflies export output: {summary}, {records}")
+record = records[0]
+if record["external_id"] != "meeting-123" or record["artifact_type"] != "meeting_summary":
+    raise SystemExit(f"unexpected normalized Fireflies record: {record}")
+if "Prepare checklist" not in record["summary"]:
+    raise SystemExit(f"Fireflies summary fields were not normalized: {record}")
+PY
+
+REPO_FIXTURE="$TMP_ROOT/repo-fixture"
+mkdir -p "$REPO_FIXTURE/src"
+git -C "$REPO_FIXTURE" init >/tmp/company-brain-repo-fixture-git.txt
+cat >"$REPO_FIXTURE/README.md" <<'EOF'
+# Repo Fixture
+EOF
+cat >"$REPO_FIXTURE/package.json" <<'EOF'
+{"dependencies":{"@nestjs/core":"latest","react":"latest"}}
+EOF
+
+python3 "$BIN_DIR/repo-map-export.py" \
+  --repo "$REPO_FIXTURE" \
+  --output-jsonl /tmp/company-brain-repo-map-records.jsonl >/tmp/company-brain-repo-map-export.json
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+summary = json.loads(Path("/tmp/company-brain-repo-map-export.json").read_text())
+records = [json.loads(line) for line in Path("/tmp/company-brain-repo-map-records.jsonl").read_text().splitlines()]
+if summary["count"] != 1 or len(records) != 1:
+    raise SystemExit(f"unexpected repo map export output: {summary}, {records}")
+record = records[0]
+if record["artifact_type"] != "repo_map":
+    raise SystemExit(f"unexpected normalized repo map record: {record}")
+if "nestjs" not in record["tags"] or "react" not in record["tags"]:
+    raise SystemExit(f"repo stack markers were not normalized: {record}")
+PY
+
 cat >/tmp/company-brain-source-records.jsonl <<'EOF'
 {"external_id":"source-doc-1","title":"Source Sync Smoke","summary":"This normalized source record should stage into the brain review queue.","target_path":"Resources/source-sync-smoke.md","tags":["source","smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"smoke-cursor-1"}
 {"external_id":"private-source-1","title":"Private Source","summary":"This private record should be skipped.","target_path":"Resources/private.md","tags":["source","private"],"artifact_type":"curated_note","visibility":"personal","author":"Smoke Source"}
@@ -263,6 +337,46 @@ PY
 
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/evidence/acme-co-brain-root.jsonl"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/proposed/acme-co-brain-root-source-doc-1.md"
+
+cat >/tmp/company-brain-source-records-update.jsonl <<'EOF'
+{"external_id":"source-doc-1","title":"Source Sync Smoke","summary":"This is the latest normalized source record and should replace the older staged proposal.","target_path":"Resources/source-sync-smoke.md","tags":["source","smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"smoke-cursor-2"}
+EOF
+
+python3 "$BIN_DIR/source-pull.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --source-id acme-co-brain-root \
+  --input-jsonl /tmp/company-brain-source-records-update.jsonl \
+  --cursor smoke-cursor-2 \
+  --write >/tmp/company-brain-source-pull-update.json
+
+python3 "$BIN_DIR/source-extract.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --source-id acme-co-brain-root \
+  --overwrite \
+  --write >/tmp/company-brain-source-extract-update.json
+
+SCAFFOLD_ROOT="$SCAFFOLD_ROOT" python3 - <<'PY'
+import json
+import os
+from pathlib import Path
+
+result = json.loads(Path("/tmp/company-brain-source-extract-update.json").read_text())
+if len(result["staged"]) != 1:
+    raise SystemExit(f"expected latest evidence to stage once: {result}")
+proposal = Path(
+    os.environ["SCAFFOLD_ROOT"],
+    "00_Company_Brain_Conventions",
+    "90_Staging",
+    "proposed",
+    "acme-co-brain-root-source-doc-1.md",
+).read_text()
+if "latest normalized source record" not in proposal:
+    raise SystemExit("latest source evidence did not replace the staged proposal")
+state = json.loads(Path(os.environ["SCAFFOLD_ROOT"], "00_Company_Brain_Conventions", "source-sync-state.json").read_text())
+cursor = state["sources"]["acme-co-brain-root"].get("cursor")
+if cursor != "smoke-cursor-2":
+    raise SystemExit(f"expected cursor smoke-cursor-2, got {cursor!r}")
+PY
 
 set +e
 python3 "$BIN_DIR/source-registry-check.py" \
