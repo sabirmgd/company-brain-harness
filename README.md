@@ -108,6 +108,16 @@ Full details: [docs/harness-architecture.md](docs/harness-architecture.md),
 
 ## Install
 
+Install the plugin bundle, not individual skills. One plugin install brings:
+
+- `skills/` for Claude/Codex routing and role workflows
+- `bin/` helper CLIs for setup, checks, source sync, staging, approval, and lint
+- `references/` shared harness contract used by the skills
+
+The installed plugin is the harness. The brain root is separate customer data.
+Installing the plugin does not create or populate a brain until the user chooses
+a root and approves writes.
+
 From GitHub:
 
 ```bash
@@ -136,6 +146,8 @@ Claude Code can also test the plugin directly:
 ```bash
 claude --plugin-dir ./plugins/company-brain-harness
 ```
+
+Full install/runtime details: [docs/install-and-runtime-flow.md](docs/install-and-runtime-flow.md).
 
 ## Fast Start For Users
 
@@ -419,13 +431,13 @@ The smoke test proves:
 
 ## Release
 
-Current plugin metadata version: `0.3.0`.
+Current plugin metadata version: `0.3.1`.
 
 Before publishing a release:
 
 ```bash
 bash scripts/validate.sh
-git tag v0.3.0
+git tag v0.3.1
 git push origin main --tags
 ```
 

@@ -19,6 +19,10 @@ I want to set up my company brain.
 Claude or Codex routes the request through `brain-start`, identifies the user's
 role, and runs the lower-level harness tools internally.
 
+The customer installs one plugin bundle. The bundle contains the plain-English
+skills plus the helper scripts. The customer's brain folder stores only company
+knowledge and system state; it should not duplicate the harness code.
+
 ## Public Roles
 
 | Role | Primary job | Skill |
@@ -31,6 +35,9 @@ Internal concepts like source owner, registry status, and promotion rules still
 exist, but they should not be the first thing a nontechnical user sees.
 
 ## Claude/Codex First Session
+
+Before this session, the plugin is installed in Claude Code or Codex. The user
+does not install each skill manually.
 
 User says:
 

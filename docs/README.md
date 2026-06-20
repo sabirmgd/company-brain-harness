@@ -9,6 +9,8 @@ Start here when reviewing, installing, operating, or productizing the harness.
   skill should run.
 - [First 20 Minutes](first-20-minutes.md): starter setup with the Brain Owner.
 - [First Week](first-week.md): teammate contribution and review loop.
+- [Install And Runtime Flow](install-and-runtime-flow.md): what the plugin
+  downloads, where scripts live, and how first use works.
 - [Productized Setup Plan](productized-setup.md): how the role-based setup
   becomes a customer-facing product.
 - [Quickstart](quickstart.md): install, scaffold, verify, and use skills.

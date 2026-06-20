@@ -16,6 +16,14 @@ Create the reusable Company Brain structure. Do not populate strategy, customer,
 5. Run `source-registry-check.py`, `brain-health.py`, and `brain-lint.py` after setup.
 6. End with the population checklist for team members, not with invented content.
 
+## Package Boundary
+
+Setup writes the brain root. It does not copy the harness code into the brain.
+The installed plugin already contains the skills, scripts, and references.
+
+The created brain root should contain customer-owned files such as `CLAUDE.md`,
+`company-brain.yml`, `brain/`, and `system/`.
+
 ## Command Pattern
 
 Preview:

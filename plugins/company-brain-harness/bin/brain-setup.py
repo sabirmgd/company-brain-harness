@@ -692,8 +692,11 @@ def start_here_md(company: str) -> str:
 
 Welcome to the {company} company brain.
 
-You do not need to know the harness commands. Open Claude Code or Codex in this
-folder and say:
+Install the Company Brain Harness plugin once in Claude Code or Codex. The
+plugin includes the skills and helper scripts; this brain folder stores company
+knowledge and system state, not the harness code.
+
+After the plugin is installed, open Claude Code or Codex in this folder and say:
 
 ```text
 I want to set up my company brain.

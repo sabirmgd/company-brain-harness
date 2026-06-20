@@ -31,6 +31,19 @@ I review the next action.
 6. Run lower-level skills or CLIs internally as needed.
 7. End with one clear next action.
 
+## Runtime Assumption
+
+This skill is normally loaded from an installed plugin bundle. The bundle
+already includes `skills/`, `bin/`, and `references/`.
+
+- Do not tell a normal user to download individual skills.
+- Do not tell a normal user to clone the harness repo unless they are doing
+  local development or auditing the package.
+- When a script is needed, resolve it from the installed plugin root's `bin/`
+  directory.
+- Treat the company brain root as customer data, separate from the installed
+  harness plugin.
+
 ## Role Names
 
 Use these public names:

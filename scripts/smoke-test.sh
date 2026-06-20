@@ -167,6 +167,7 @@ python3 "$BIN_DIR/brain-setup.py" \
 
 test -f "$SCAFFOLD_ROOT/CLAUDE.md"
 test -f "$SCAFFOLD_ROOT/start-here.md"
+grep -q "plugin includes the skills and helper scripts" "$SCAFFOLD_ROOT/start-here.md"
 test -f "$SCAFFOLD_ROOT/owner-guide.md"
 test -f "$SCAFFOLD_ROOT/operator-guide.md"
 test -f "$SCAFFOLD_ROOT/team-member-guide.md"

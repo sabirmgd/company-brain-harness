@@ -6,6 +6,9 @@ You do not need to know the CLIs. Claude or Codex can run them internally.
 
 ## Install
 
+Install the plugin bundle once. This downloads the skills plus the helper
+scripts they use; you do not separately download scripts into each brain.
+
 ```bash
 claude plugin marketplace add sabirmgd/company-brain-harness
 claude plugin install company-brain-harness@company-brain
@@ -62,6 +65,10 @@ The agent may run harness tools internally:
 - staging and approval
 
 You should see plain-language status and next actions, not command output.
+
+The company brain itself is a separate folder or repository. The plugin stays
+installed in Claude/Codex; the brain root stores company knowledge plus
+`company-brain.yml`, `CLAUDE.md`, `brain/`, and `system/`.
 
 ## What The Harness Will Not Do Automatically
 

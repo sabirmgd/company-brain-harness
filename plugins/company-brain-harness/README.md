@@ -9,6 +9,10 @@ any filesystem-backed root.
 
 ## Install
 
+Install this as one plugin bundle. The bundle includes the `skills/` routing
+surfaces, `bin/` helper CLIs, and `references/` contract. Users should not
+download isolated skills and then look for scripts separately.
+
 From GitHub:
 
 ```bash

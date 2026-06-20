@@ -13,6 +13,10 @@ For the reasoning behind each layer, read
 
 ## 1. Install
 
+Install the plugin bundle. This installs the skill routing files and the
+supporting `bin/` scripts together. A normal customer does not need to clone the
+repo after installing the plugin.
+
 From GitHub:
 
 ```bash
@@ -37,6 +41,10 @@ codex plugin add company-brain-harness@company-brain
 ```
 
 ## 2. Create Or Point At A Brain Root
+
+The brain root is separate from the installed plugin. It is the customer-owned
+folder or repo where `CLAUDE.md`, `company-brain.yml`, `brain/`, and `system/`
+live.
 
 For the simplest path, open Claude Code or Codex and say:
 
