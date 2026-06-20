@@ -9,7 +9,7 @@ Convert approved meeting material into staged knowledge. Never bulk-ingest perso
 
 ## Workflow
 
-1. Read `CAPTURE_POLICY.md` and `source-registry.yml` before using any meeting source.
+1. Read `capture-policy.md` and `source-registry.yml` before using any meeting source.
 2. Verify the exact meeting source instance with `source-registry-check.py --source-id <id> --for-capture`.
 3. If it is a personal Fireflies, Calendar, Gmail, Zoom, or meeting recorder account, stop unless it is explicitly delegated, scoped, approved, and registered.
 4. Extract only useful company knowledge:

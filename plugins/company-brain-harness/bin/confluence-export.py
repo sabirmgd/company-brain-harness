@@ -52,6 +52,98 @@ class TextExtractor(HTMLParser):
         return value.strip()
 
 
+class MarkdownExtractor(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.parts: list[str] = []
+        self.skip_depth = 0
+        self.ignore_depth = 0
+        self.code_depth = 0
+
+    def append(self, value: str) -> None:
+        self.parts.append(value)
+
+    def newline(self, count: int = 1) -> None:
+        self.append("\n" * count)
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        tag = tag.lower()
+        ignored_tags = {"ac:parameter", "ac:adf-attribute", "ac:adf-fallback"}
+        if self.ignore_depth:
+            self.ignore_depth += 1
+            return
+        if tag in ignored_tags:
+            self.ignore_depth = 1
+            return
+        if tag in {"script", "style"}:
+            self.skip_depth += 1
+            return
+        if tag in {"h1", "h2", "h3", "h4", "h5", "h6"}:
+            level = int(tag[1])
+            self.newline(2)
+            self.append("#" * level + " ")
+        elif tag in {"p", "div", "tr"}:
+            self.newline(2)
+        elif tag == "br":
+            self.newline()
+        elif tag == "li":
+            self.newline()
+            self.append("- ")
+        elif tag in {"th", "td"}:
+            self.newline()
+            self.append("- ")
+        elif tag in {"strong", "b"}:
+            self.append("**")
+        elif tag in {"em", "i"}:
+            self.append("*")
+        elif tag == "code":
+            self.append("`")
+        elif tag == "ac:plain-text-body":
+            self.code_depth += 1
+            self.newline(2)
+            self.append("```text\n")
+
+    def handle_endtag(self, tag: str) -> None:
+        tag = tag.lower()
+        if self.ignore_depth:
+            self.ignore_depth -= 1
+            return
+        if tag in {"script", "style"} and self.skip_depth:
+            self.skip_depth -= 1
+            return
+        if tag in {"strong", "b"}:
+            self.append("**")
+        elif tag in {"em", "i"}:
+            self.append("*")
+        elif tag == "code":
+            self.append("`")
+        elif tag == "ac:plain-text-body" and self.code_depth:
+            self.append("\n```")
+            self.newline(2)
+            self.code_depth -= 1
+        elif tag in {"h1", "h2", "h3", "h4", "h5", "h6", "p", "div", "li", "tr", "table", "th", "td"}:
+            self.newline(2)
+
+    def handle_data(self, data: str) -> None:
+        if self.skip_depth or self.ignore_depth:
+            return
+        if self.code_depth:
+            self.append(data)
+            return
+        text = re.sub(r"\s+", " ", data)
+        if text.strip():
+            self.append(text)
+
+    def text(self) -> str:
+        value = "".join(self.parts)
+        value = re.sub(r"[ \t]+\n", "\n", value)
+        value = re.sub(r"\n[ \t]+", "\n", value)
+        value = re.sub(r"\n-\s*(?=\n)", "\n", value)
+        value = re.sub(r"\n{3,}", "\n\n", value)
+        value = re.sub(r" +", " ", value)
+        return value.strip()
+
+
 def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-") or "page"
 
@@ -60,6 +152,75 @@ def html_to_text(value: str) -> str:
     parser = TextExtractor()
     parser.feed(value or "")
     return parser.text()
+
+
+def storage_to_markdown(value: str) -> str:
+    parser = MarkdownExtractor()
+    parser.feed(expand_status_macros(value or ""))
+    return parser.text()
+
+
+def expand_status_macros(value: str) -> str:
+    status_pattern = re.compile(
+        r'<ac:structured-macro\b[^>]*ac:name="status"[^>]*>.*?'
+        r'<ac:parameter\b[^>]*ac:name="title"[^>]*>(.*?)</ac:parameter>.*?'
+        r'</ac:structured-macro>',
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    return status_pattern.sub(lambda match: f"<strong>{html.escape(html.unescape(match.group(1)).upper())}</strong>", value)
+
+
+def pretty_storage(value: str) -> str:
+    value = str(value or "").strip()
+    if not value:
+        return ""
+    value = re.sub(r">\s*<", ">\n<", value)
+    value = re.sub(r"(\]\]>)\s*(<)", r"\1\n\2", value)
+    return value.strip()
+
+
+def raw_confluence_page(page: dict[str, Any], args: argparse.Namespace, storage_value: str, readable_text: str) -> str:
+    title = str(page.get("title") or page.get("id") or "Untitled Confluence Page").strip()
+    page_id = str(page.get("id") or "").strip()
+    space = page.get("space") if isinstance(page.get("space"), dict) else {}
+    version = page.get("version") if isinstance(page.get("version"), dict) else {}
+    by = version.get("by") if isinstance(version.get("by"), dict) else {}
+    readable = storage_to_markdown(storage_value) or readable_text or title
+    storage = pretty_storage(storage_value)
+    return "\n".join([
+        f"# Raw Confluence Page: {title}",
+        "",
+        "Private raw evidence. Use this for audit and deeper extraction; do not treat the raw page body as shared brain knowledge until a curated note is reviewed.",
+        "",
+        "## Page Metadata",
+        "",
+        "| Field | Value |",
+        "|---|---|",
+        f"| Page ID | {table_value(page_id)} |",
+        f"| Space | {table_value(space.get('key') or args.space_key)} |",
+        f"| Version | {table_value(version.get('number'))} |",
+        f"| Updated | {table_value(version.get('when'))} |",
+        f"| Author | {table_value(by.get('displayName') or space.get('name'))} |",
+        f"| Source URL | {table_value(page_url(args.base_url, page))} |",
+        "",
+        "## Readable Extract",
+        "",
+        readable.strip() or "No readable text was extracted from this page.",
+        "",
+        "## Original Storage Body",
+        "",
+        "```html",
+        storage,
+        "```",
+        "",
+    ]).strip() + "\n"
+
+
+def table_value(value: Any) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return "-"
+    return re.sub(r"\s+", " ", text).replace("|", "\\|")
 
 
 def clip(value: str, limit: int) -> str:
@@ -224,8 +385,8 @@ def normalize_page(page: dict[str, Any], args: argparse.Namespace) -> dict[str, 
         "cursor": version.get("when") or page_id,
     }
     if args.include_raw:
-        record["raw_body"] = str(storage.get("value") or "")
-        record["raw_format"] = "html"
+        record["raw_body"] = raw_confluence_page(page, args, str(storage.get("value") or ""), text)
+        record["raw_format"] = "md"
     return record
 
 
@@ -250,7 +411,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--modified-since", default=None, help="CQL date, for example 2026-06-01")
     parser.add_argument("--limit", type=int, default=50)
     parser.add_argument("--page-size", type=int, default=25)
-    parser.add_argument("--target-prefix", default="Resources/confluence")
+    parser.add_argument("--target-prefix", default="brain/sources/confluence")
     parser.add_argument("--artifact-type", default="curated_note")
     parser.add_argument("--visibility", default="team")
     parser.add_argument("--summary-chars", type=int, default=1800)

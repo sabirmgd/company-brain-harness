@@ -33,9 +33,9 @@ sources:
       retention_days: 0
     routing:
       default_destination: "."
-      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      staging_destination: system/staging
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - curated_note
@@ -77,10 +77,10 @@ sources:
       store_raw: private_only
       retention_days: 14
     routing:
-      default_destination: Intelligence/meetings
-      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      default_destination: brain/intelligence/meetings
+      staging_destination: system/staging
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - curated_summary
@@ -128,10 +128,10 @@ sources:
       store_raw: private_only
       retention_days: 14
     routing:
-      default_destination: Resources/confluence
-      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      default_destination: brain/sources/confluence
+      staging_destination: system/staging
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - canonical_summary
@@ -180,10 +180,10 @@ sources:
       store_raw: private_only
       retention_days: 7
     routing:
-      default_destination: Intelligence/accounts
-      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      default_destination: brain/customers/accounts
+      staging_destination: system/staging
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - customer_fact
@@ -230,10 +230,10 @@ sources:
       store_raw: private_only
       retention_days: 14
     routing:
-      default_destination: Intelligence/gtm
-      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      default_destination: brain/go-to-market/accounts
+      staging_destination: system/staging
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - account_summary
@@ -275,9 +275,9 @@ sources:
       retention_days: 0
     routing:
       default_destination: null
-      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      staging_destination: system/staging
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed: []
       not_allowed:

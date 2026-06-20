@@ -11,7 +11,7 @@ from collections import defaultdict
 from datetime import date, datetime
 from pathlib import Path
 
-from harness_common import conventions_dir, resolve_root, restricted_prefixes
+from harness_common import conventions_dir, path_has_prefix, resolve_root, restricted_prefixes
 
 
 DEFAULT_ROOT = (
@@ -26,15 +26,22 @@ WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)")
 META_FILES = {
     "CLAUDE.md",
     "README.md",
-    "00_INDEX.md",
+    "README.md",
     "index.md",
-    "START_HERE.md",
-    "OWNER_GUIDE.md",
-    "OPERATOR_GUIDE.md",
-    "TEAM_MEMBER_GUIDE.md",
-    "INVITE_TEAM.md",
-    "TODAY.md",
-    "NEXT_ACTIONS.md",
+    "start-here.md",
+    "owner-guide.md",
+    "operator-guide.md",
+    "team-member-guide.md",
+    "invite-team.md",
+    "today.md",
+    "next-actions.md",
+    "start-here.md",
+    "owner-guide.md",
+    "operator-guide.md",
+    "team-member-guide.md",
+    "invite-team.md",
+    "today.md",
+    "next-actions.md",
 }
 
 
@@ -50,7 +57,9 @@ def _excluded_tops(root: Path) -> set[str]:
 
 
 def _is_excluded(rel: Path, root: Path) -> bool:
-    return bool(rel.parts) and rel.parts[0] in _excluded_tops(root)
+    if not rel.parts:
+        return False
+    return any(path_has_prefix(rel, prefix) for prefix in _excluded_tops(root))
 
 
 def walk_md(root: Path):
@@ -109,7 +118,7 @@ def has_contradiction_marker(text: str, frontmatter: dict[str, str]) -> bool:
 
 
 def is_content_note(rel: Path) -> bool:
-    return rel.name not in META_FILES and not rel.parts[-2:-1] == ("90_Staging",)
+    return rel.name not in META_FILES and "staging" not in rel.parts and "system/staging" not in rel.parts
 
 
 def lint(root: Path, *, stale_days: int) -> dict:

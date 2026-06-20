@@ -7,11 +7,11 @@ final destination. By default it previews the proposed staging write. Use
 target path and provenance metadata.
 
 Default staging directory:
-  <brain root>/00_Company_Brain_Conventions/90_Staging/proposed
+  <brain root>/system/staging/proposed
 
 Usage:
     echo '# Note\n\nBody' | bin/stage-brain-note.py \
-      --target Context/category-and-positioning.md \
+      --target brain/company/category-and-positioning.md \
       --tag strategy --tag positioning \
       --source-type interview --source-ref owner-interview --author brain-operator
 
@@ -31,7 +31,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from harness_common import resolve_root, restricted_prefixes, staging_dir
+from harness_common import path_has_prefix, resolve_root, restricted_prefixes, staging_dir
 
 
 DEFAULT_ROOT = (
@@ -65,7 +65,7 @@ def parse_tags(values: list[str]) -> list[str]:
     return out
 
 
-def safe_target(target: str, *, restricted: set[str]) -> Path:
+def safe_target(target: str, *, restricted: list[str]) -> Path:
     rel = Path(target)
     if rel.is_absolute():
         raise StageError("--target must be relative to the brain root")
@@ -75,8 +75,9 @@ def safe_target(target: str, *, restricted: set[str]) -> Path:
         raise StageError("--target must live under a folder; root-level writes are refused")
     if rel.suffix.lower() != ".md":
         raise StageError("--target must end in .md")
-    if rel.parts[0] in restricted:
-        raise StageError(f"target is under restricted prefix {rel.parts[0]!r}")
+    matched = next((prefix for prefix in restricted if path_has_prefix(rel, prefix)), None)
+    if matched:
+        raise StageError(f"target is under restricted prefix {matched!r}")
     return rel
 
 
@@ -131,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     try:
-        target = safe_target(args.target, restricted=set(restricted_prefixes(root)))
+        target = safe_target(args.target, restricted=restricted_prefixes(root))
         if args.source:
             if not args.source.is_file():
                 raise StageError(f"source not found: {args.source}")

@@ -18,27 +18,28 @@ Google Drive is a backend, not the product. Resolve the root in this order:
 Defaults:
 
 - `CLAUDE.md` or equivalent root routing instructions.
-- `00_Company_Brain_Conventions/README.md` or equivalent conventions doc.
-- `00_Company_Brain_Conventions/CAPTURE_POLICY.md`.
-- `00_Company_Brain_Conventions/source-registry.yml`.
-- `00_Company_Brain_Conventions/source-sync-state.json`.
-- `00_Company_Brain_Conventions/HARNESS_FLOWS.md`.
-- `00_Company_Brain_Conventions/HARNESS_STATUS.md`.
-- `00_Company_Brain_Conventions/90_Staging/`.
-- `00_Company_Brain_Conventions/90_Staging/evidence/`.
+- `system/README.md` or equivalent conventions doc.
+- `system/capture-policy.md`.
+- `system/source-registry.yml`.
+- `system/source-sync-state.json`.
+- `system/flows.md`.
+- `system/status.md`.
+- `system/staging/`.
+- `system/staging/evidence/`.
 
 The defaults can be overridden by `company-brain.yml` or `company-os.yml`:
 
 ```yaml
 brain:
   routing_file: CLAUDE.md
-  conventions_dir: 00_Company_Brain_Conventions
-  staging_dir: 00_Company_Brain_Conventions/90_Staging
+  conventions_dir: system
+  staging_dir: system/staging
   restricted_prefixes:
-    - Restricted
+    - brain/restricted
 ```
 
-Existing deployments may use the legacy `00_README_Drive_Conventions` path.
+Existing deployments may use legacy `00_Company_Brain_Conventions` or
+`00_README_Drive_Conventions` paths.
 Future customers may rename this layer, but the staging, capture-policy, and
 routing concepts remain the same.
 

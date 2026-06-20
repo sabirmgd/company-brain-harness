@@ -11,33 +11,33 @@ cleanup() {
 }
 trap cleanup EXIT
 
-mkdir -p "$TMP_ROOT/Brain_Conventions" "$TMP_ROOT/Strategy" "$TMP_ROOT/Operations" "$TMP_ROOT/Restricted"
+mkdir -p "$TMP_ROOT/system" "$TMP_ROOT/brain/company" "$TMP_ROOT/brain/operations/daily" "$TMP_ROOT/brain/restricted"
 
 cat > "$TMP_ROOT/CLAUDE.md" <<'EOF'
 # Smoke Brain Routing
 
-Route strategy notes to Strategy/ and operational notes to Operations/.
+Route strategy notes to brain/company/ and operational notes to brain/operations/daily/.
 EOF
 
-cat > "$TMP_ROOT/Brain_Conventions/README.md" <<'EOF'
+cat > "$TMP_ROOT/system/README.md" <<'EOF'
 # Smoke Brain Conventions
 
 This is a synthetic brain root used by the Company Brain Harness smoke test.
 EOF
 
-cat > "$TMP_ROOT/Brain_Conventions/CAPTURE_POLICY.md" <<'EOF'
+cat > "$TMP_ROOT/system/capture-policy.md" <<'EOF'
 # Capture Policy
 
 Only company-controlled sources may enter this smoke brain.
 EOF
 
-cat > "$TMP_ROOT/Brain_Conventions/HARNESS_FLOWS.md" <<'EOF'
+cat > "$TMP_ROOT/system/flows.md" <<'EOF'
 # Harness Flows
 
 Stage, approve, then promote.
 EOF
 
-cat > "$TMP_ROOT/Brain_Conventions/HARNESS_STATUS.md" <<'EOF'
+cat > "$TMP_ROOT/system/status.md" <<'EOF'
 # Harness Status
 
 Smoke test fixture.
@@ -48,16 +48,17 @@ schema_version: "1.0"
 kind: company_brain_config
 brain:
   routing_file: CLAUDE.md
-  conventions_dir: Brain_Conventions
-  staging_dir: Brain_Conventions/Staging
+  conventions_dir: system
+  staging_dir: system/staging
   restricted_prefixes:
-    - Restricted
+    - brain/restricted
 health:
   priority_folders:
-    - Strategy
+    - brain/company
+    - brain/operations/daily
 EOF
 
-cat > "$TMP_ROOT/Strategy/00_INDEX.md" <<'EOF'
+cat > "$TMP_ROOT/brain/company/README.md" <<'EOF'
 ---
 status: active
 tags:
@@ -66,10 +67,10 @@ tags:
 last_verified: 2026-06-18
 ---
 
-# Strategy Index
+# brain/company Index
 EOF
 
-cat > "$TMP_ROOT/Operations/00_INDEX.md" <<'EOF'
+cat > "$TMP_ROOT/brain/operations/daily/README.md" <<'EOF'
 ---
 status: active
 tags:
@@ -78,7 +79,7 @@ tags:
 last_verified: 2026-06-18
 ---
 
-# Operations Index
+# brain/operations/daily Index
 EOF
 
 python3 "$BIN_DIR/connections-check.py" --root "$TMP_ROOT" --json >/tmp/company-brain-connections.json
@@ -108,7 +109,7 @@ PY
 printf '# Smoke Note\n\nThis note proves staging and approval work. It may mention stale source handling without becoming a contradiction marker.\n' |
   python3 "$BIN_DIR/stage-brain-note.py" \
     --root "$TMP_ROOT" \
-    --target Strategy/smoke-note.md \
+    --target brain/company/smoke-note.md \
     --title "Smoke Note" \
     --tag strategy --tag smoke \
     --source-type smoke \
@@ -124,14 +125,14 @@ python3 "$BIN_DIR/approve-staged-note.py" \
   --reviewer smoke-reviewer \
   --write >/tmp/company-brain-approve.json
 
-test -f "$TMP_ROOT/Strategy/smoke-note.md"
-test -f "$TMP_ROOT/Brain_Conventions/Staging/approval-ledger.jsonl"
+test -f "$TMP_ROOT/brain/company/smoke-note.md"
+test -f "$TMP_ROOT/system/staging/approval-ledger.jsonl"
 
 set +e
-printf '# Restricted\n\nNope.\n' |
+printf '# brain/restricted\n\nNope.\n' |
   python3 "$BIN_DIR/promote-to-brain.py" \
     --root "$TMP_ROOT" \
-    --target Restricted/nope.md \
+    --target brain/restricted/nope.md \
     --tag restricted --tag smoke \
     --source-type smoke \
     --source-ref smoke-test \
@@ -165,20 +166,20 @@ python3 "$BIN_DIR/brain-setup.py" \
   --write >/tmp/company-brain-setup-write.txt
 
 test -f "$SCAFFOLD_ROOT/CLAUDE.md"
-test -f "$SCAFFOLD_ROOT/START_HERE.md"
-test -f "$SCAFFOLD_ROOT/OWNER_GUIDE.md"
-test -f "$SCAFFOLD_ROOT/OPERATOR_GUIDE.md"
-test -f "$SCAFFOLD_ROOT/TEAM_MEMBER_GUIDE.md"
-test -f "$SCAFFOLD_ROOT/INVITE_TEAM.md"
-test -f "$SCAFFOLD_ROOT/TODAY.md"
-test -f "$SCAFFOLD_ROOT/NEXT_ACTIONS.md"
+test -f "$SCAFFOLD_ROOT/start-here.md"
+test -f "$SCAFFOLD_ROOT/owner-guide.md"
+test -f "$SCAFFOLD_ROOT/operator-guide.md"
+test -f "$SCAFFOLD_ROOT/team-member-guide.md"
+test -f "$SCAFFOLD_ROOT/invite-team.md"
+test -f "$SCAFFOLD_ROOT/today.md"
+test -f "$SCAFFOLD_ROOT/next-actions.md"
 test -f "$SCAFFOLD_ROOT/company-brain.yml"
-test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/source-registry.yml"
-test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/source-sync-state.json"
-test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/CONNECTIONS.md"
-test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/approval-ledger.jsonl"
-test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/evidence/README.md"
-test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/raw/README.md"
+test -f "$SCAFFOLD_ROOT/system/source-registry.yml"
+test -f "$SCAFFOLD_ROOT/system/source-sync-state.json"
+test -f "$SCAFFOLD_ROOT/system/connections.md"
+test -f "$SCAFFOLD_ROOT/system/staging/approval-ledger.jsonl"
+test -f "$SCAFFOLD_ROOT/system/staging/evidence/README.md"
+test -f "$SCAFFOLD_ROOT/system/staging/raw/README.md"
 
 python3 "$BIN_DIR/source-registry-check.py" \
   --root "$SCAFFOLD_ROOT" \
@@ -203,6 +204,7 @@ EOF
 python3 "$BIN_DIR/confluence-export.py" \
   --input-json /tmp/company-brain-confluence-fixture.json \
   --space-key DOCS \
+  --include-raw \
   --output-jsonl /tmp/company-brain-confluence-records.jsonl >/tmp/company-brain-confluence-export.json
 
 python3 - <<'PY'
@@ -218,6 +220,12 @@ if record["external_id"] != "12345" or record["artifact_type"] != "curated_note"
     raise SystemExit(f"unexpected normalized Confluence record: {record}")
 if "This page should normalize" not in record["summary"]:
     raise SystemExit(f"Confluence body text was not normalized: {record}")
+if record.get("raw_format") != "md":
+    raise SystemExit(f"Confluence raw evidence should be markdown: {record}")
+raw_body = record.get("raw_body", "")
+for expected in ("# Raw Confluence Page: Confluence Smoke Page", "## Readable Extract", "## Original Storage Body", "This page should normalize"):
+    if expected not in raw_body:
+        raise SystemExit(f"Confluence raw evidence is not readable: missing {expected!r}")
 PY
 
 cat >/tmp/company-brain-fireflies-fixture.json <<'EOF'
@@ -233,6 +241,10 @@ cat >/tmp/company-brain-fireflies-fixture.json <<'EOF'
         "participants": ["operator@example.com", "teammate@example.com"],
         "privacy": "link",
         "transcript_url": "https://app.fireflies.ai/view/meeting-123",
+        "sentences": [
+          {"index": 0, "speaker_name": "Operator", "start_time": 3.2, "end_time": 4.5, "text": "We need the launch checklist ready."},
+          {"index": 1, "speaker_name": "Teammate", "start_time": 65.0, "end_time": 66.4, "text": "I will confirm the owner."}
+        ],
         "summary": {
           "short_summary": "The team agreed on the launch checklist.",
           "topics_discussed": ["Launch", "Risks"],
@@ -248,6 +260,7 @@ EOF
 python3 "$BIN_DIR/fireflies-export.py" \
   --input-json /tmp/company-brain-fireflies-fixture.json \
   --search Project \
+  --include-raw-transcript \
   --output-jsonl /tmp/company-brain-fireflies-records.jsonl >/tmp/company-brain-fireflies-export.json
 
 python3 - <<'PY'
@@ -263,6 +276,12 @@ if record["external_id"] != "meeting-123" or record["artifact_type"] != "meeting
     raise SystemExit(f"unexpected normalized Fireflies record: {record}")
 if "Prepare checklist" not in record["summary"]:
     raise SystemExit(f"Fireflies summary fields were not normalized: {record}")
+if record.get("raw_format") != "md":
+    raise SystemExit(f"Fireflies raw evidence should be markdown: {record}")
+raw_body = record.get("raw_body", "")
+for expected in ("# Raw Fireflies Transcript: Project Weekly Sync", "## Meeting Metadata", "## Transcript", "### 00:00", "**Operator:** We need the launch checklist ready."):
+    if expected not in raw_body:
+        raise SystemExit(f"Fireflies raw transcript is not readable: missing {expected!r}")
 PY
 
 REPO_FIXTURE="$TMP_ROOT/repo-fixture"
@@ -295,8 +314,8 @@ if "nestjs" not in record["tags"] or "react" not in record["tags"]:
 PY
 
 cat >/tmp/company-brain-source-records.jsonl <<'EOF'
-{"external_id":"source-doc-1","title":"Source Sync Smoke","summary":"This normalized source record should stage into the brain review queue.","target_path":"Resources/source-sync-smoke.md","tags":["source","smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"smoke-cursor-1"}
-{"external_id":"private-source-1","title":"Private Source","summary":"This private record should be skipped.","target_path":"Resources/private.md","tags":["source","private"],"artifact_type":"curated_note","visibility":"personal","author":"Smoke Source"}
+{"external_id":"source-doc-1","title":"Source Sync Smoke","summary":"This normalized source record should stage into the brain review queue.","target_path":"brain/sources/source-sync-smoke.md","tags":["source","smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"smoke-cursor-1"}
+{"external_id":"private-source-1","title":"Private Source","summary":"This private record should be skipped.","target_path":"brain/sources/private.md","tags":["source","private"],"artifact_type":"curated_note","visibility":"personal","author":"Smoke Source"}
 EOF
 
 python3 "$BIN_DIR/source-pull.py" \
@@ -330,20 +349,20 @@ from pathlib import Path
 result = json.loads(Path("/tmp/company-brain-source-extract.json").read_text())
 if len(result["staged"]) != 1:
     raise SystemExit(f"expected one staged source proposal: {result}")
-state = json.loads(Path(os.environ["SCAFFOLD_ROOT"], "00_Company_Brain_Conventions", "source-sync-state.json").read_text())
+state = json.loads(Path(os.environ["SCAFFOLD_ROOT"], "system", "source-sync-state.json").read_text())
 cursor = state["sources"]["acme-co-brain-root"].get("cursor")
 if cursor != "smoke-cursor-1":
     raise SystemExit(f"expected cursor smoke-cursor-1, got {cursor!r}")
 PY
 
-test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/evidence/acme-co-brain-root.jsonl"
-test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/proposed/acme-co-brain-root-source-doc-1.md"
+test -f "$SCAFFOLD_ROOT/system/staging/evidence/acme-co-brain-root.jsonl"
+test -f "$SCAFFOLD_ROOT/system/staging/proposed/acme-co-brain-root-source-doc-1.md"
 
 SCAFFOLD_ROOT="$SCAFFOLD_ROOT" python3 - <<'PY'
 from pathlib import Path
 import os
 
-path = Path(os.environ["SCAFFOLD_ROOT"], "00_Company_Brain_Conventions", "source-registry.yml")
+path = Path(os.environ["SCAFFOLD_ROOT"], "system", "source-registry.yml")
 source = """
   - id: raw-smoke-source
     connector: manual
@@ -368,10 +387,10 @@ source = """
       store_raw: private_only
       retention_days: 14
     routing:
-      default_destination: Resources/raw-smoke
-      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      default_destination: brain/sources/raw-smoke
+      staging_destination: system/staging
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - curated_note
@@ -393,7 +412,7 @@ path.write_text(text.replace("\nrules:\n", source + "\nrules:\n"))
 PY
 
 cat >/tmp/company-brain-raw-source-records.jsonl <<'EOF'
-{"external_id":"raw-doc-1","title":"Raw Smoke Doc","summary":"Normalized summary for extraction.","raw_body":"# Raw Smoke Doc\n\nThis raw material is private evidence only.","raw_format":"md","target_path":"Resources/raw-smoke/raw-doc-1.md","tags":["source","raw-smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"raw-cursor-1"}
+{"external_id":"raw-doc-1","title":"Raw Smoke Doc","summary":"Normalized summary for extraction.","raw_body":"# Raw Smoke Doc\n\nThis raw material is private evidence only.","raw_format":"md","target_path":"brain/sources/raw-smoke/raw-doc-1.md","tags":["source","raw-smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"raw-cursor-1"}
 EOF
 
 python3 "$BIN_DIR/source-registry-check.py" \
@@ -422,19 +441,19 @@ root = Path(os.environ["SCAFFOLD_ROOT"])
 pull = json.loads(Path("/tmp/company-brain-raw-source-pull.json").read_text())
 if pull["accepted"] != 1 or pull["raw_stored"] != 1:
     raise SystemExit(f"expected one raw sidecar: {pull}")
-raw_path = root / "00_Company_Brain_Conventions" / "90_Staging" / "raw" / "raw-smoke-source" / "raw-doc-1.md"
+raw_path = root / "system" / "staging" / "raw" / "raw-smoke-source" / "raw-doc-1.md"
 if not raw_path.is_file():
     raise SystemExit(f"missing raw sidecar: {raw_path}")
-evidence = [json.loads(line) for line in (root / "00_Company_Brain_Conventions" / "90_Staging" / "evidence" / "raw-smoke-source.jsonl").read_text().splitlines()]
-if evidence[0].get("raw_evidence_path") != "00_Company_Brain_Conventions/90_Staging/raw/raw-smoke-source/raw-doc-1.md":
+evidence = [json.loads(line) for line in (root / "system" / "staging" / "evidence" / "raw-smoke-source.jsonl").read_text().splitlines()]
+if evidence[0].get("raw_evidence_path") != "system/staging/raw/raw-smoke-source/raw-doc-1.md":
     raise SystemExit(f"raw evidence path missing from normalized evidence: {evidence}")
-proposal = (root / "00_Company_Brain_Conventions" / "90_Staging" / "proposed" / "raw-smoke-source-raw-doc-1.md").read_text()
+proposal = (root / "system" / "staging" / "proposed" / "raw-smoke-source-raw-doc-1.md").read_text()
 if "Private raw evidence:" not in proposal:
     raise SystemExit("staged proposal did not reference private raw evidence")
 PY
 
 cat >/tmp/company-brain-source-records-update.jsonl <<'EOF'
-{"external_id":"source-doc-1","title":"Source Sync Smoke","summary":"This is the latest normalized source record and should replace the older staged proposal.","target_path":"Resources/source-sync-smoke.md","tags":["source","smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"smoke-cursor-2"}
+{"external_id":"source-doc-1","title":"Source Sync Smoke","summary":"This is the latest normalized source record and should replace the older staged proposal.","target_path":"brain/sources/source-sync-smoke.md","tags":["source","smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"smoke-cursor-2"}
 EOF
 
 python3 "$BIN_DIR/source-pull.py" \
@@ -460,14 +479,14 @@ if len(result["staged"]) != 1:
     raise SystemExit(f"expected latest evidence to stage once: {result}")
 proposal = Path(
     os.environ["SCAFFOLD_ROOT"],
-    "00_Company_Brain_Conventions",
-    "90_Staging",
+    "system",
+    "staging",
     "proposed",
     "acme-co-brain-root-source-doc-1.md",
 ).read_text()
 if "latest normalized source record" not in proposal:
     raise SystemExit("latest source evidence did not replace the staged proposal")
-state = json.loads(Path(os.environ["SCAFFOLD_ROOT"], "00_Company_Brain_Conventions", "source-sync-state.json").read_text())
+state = json.loads(Path(os.environ["SCAFFOLD_ROOT"], "system", "source-sync-state.json").read_text())
 cursor = state["sources"]["acme-co-brain-root"].get("cursor")
 if cursor != "smoke-cursor-2":
     raise SystemExit(f"expected cursor smoke-cursor-2, got {cursor!r}")
@@ -497,6 +516,8 @@ python3 "$BIN_DIR/brain-schedule.py" \
   --champion "Alex" \
   --operator "Ops Bot" \
   --write >/tmp/company-brain-schedule-write.md
+
+test -f "$SCAFFOLD_ROOT/system/schedule.md"
 
 python3 "$BIN_DIR/brain-lint.py" --root "$SCAFFOLD_ROOT" >/tmp/company-brain-lint.txt
 

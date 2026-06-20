@@ -58,4 +58,4 @@ Ask only what is needed to scaffold safely:
 - Teammates populate actual company knowledge later.
 - Personal Gmail, Calendar, Fireflies, Apollo, or other personal accounts are excluded by default.
 - Shared Apollo/CRM/workspace accounts can be registered as company sources, but only after source review.
-- `Restricted/` exists as a routing destination, not as permission proof. The owner must still set filesystem permissions.
+- `brain/restricted/` exists as a routing destination, not as permission proof. The owner must still set filesystem permissions.

@@ -11,7 +11,7 @@ Generate the operating schedule. The schedule is about checks, staging, review, 
 
 1. Resolve the brain root.
 2. Choose `human` mode for the first two weeks unless the user explicitly asks for autonomous mode.
-3. Preview `SCHEDULE.md`.
+3. Preview `schedule.md`.
 4. Write only with explicit permission or when the user asked to update the schedule.
 5. Include daily checks: connections, sources, health, lint, staged queue, and punch list.
 6. State what can run unattended and what always needs human approval.

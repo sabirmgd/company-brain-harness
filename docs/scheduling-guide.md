@@ -78,7 +78,7 @@ Use a wrapper script that exports:
 export BRAIN_ROOT="/path/to/company-brain-root"
 ```
 
-Then run the daily commands from the generated `SCHEDULE.md`.
+Then run the daily commands from the generated `schedule.md`.
 
 Connector adapters should produce normalized JSONL before calling
 `source-pull.py`; the harness owns privacy filtering, dedupe state, extraction,

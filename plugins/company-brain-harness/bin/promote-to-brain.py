@@ -10,7 +10,7 @@ Default behavior is preview-only. Use --write for side effects.
 Usage:
     bin/promote-to-brain.py \
       --source /tmp/proposed-note.md \
-      --target Context/category-and-positioning.md \
+      --target brain/company/category-and-positioning.md \
       --tag strategy --tag positioning \
       --source-type interview --source-ref owner-interview-2026-06-17 \
       --author brain-operator
@@ -33,7 +33,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from harness_common import resolve_root, restricted_prefixes
+from harness_common import path_has_prefix, resolve_root, restricted_prefixes
 
 
 DEFAULT_ROOT = (
@@ -188,10 +188,10 @@ def safe_target(root: Path, target: str, *, allow_root_target: bool) -> Path:
 def validate_restricted(target_rel: Path, prefixes: list[str], *, allow_restricted: bool) -> None:
     if allow_restricted:
         return
-    first = target_rel.parts[0] if target_rel.parts else ""
-    if first in set(prefixes):
+    matched = next((prefix for prefix in prefixes if path_has_prefix(target_rel, prefix)), None)
+    if matched:
         raise PromoteError(
-            f"target is under restricted prefix {first!r}; use a restricted workflow instead"
+            f"target is under restricted prefix {matched!r}; use a restricted workflow instead"
         )
 
 

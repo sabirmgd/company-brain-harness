@@ -48,6 +48,13 @@ DEFAULT_ORG = (
 )
 GOOGLE_DRIVE_APP = Path("/Applications/Google Drive.app")
 
+HARNESS_DOC_CANDIDATES = {
+    "capture policy": ("capture-policy.md", "CAPTURE_POLICY.md"),
+    "connections": ("connections.md", "CONNECTIONS.md"),
+    "flows": ("flows.md", "HARNESS_FLOWS.md"),
+    "status": ("status.md", "HARNESS_STATUS.md"),
+}
+
 
 @dataclass
 class Check:
@@ -89,6 +96,14 @@ def run(cmd: list[str], *, timeout: int = 12) -> tuple[int, str, str]:
         return 127, "", str(e)
     except subprocess.TimeoutExpired as e:
         return 124, e.stdout or "", e.stderr or "command timed out"
+
+
+def first_existing(base: Path, names: tuple[str, ...]) -> Path:
+    for name in names:
+        candidate = base / name
+        if candidate.exists():
+            return candidate
+    return base / names[0]
 
 
 def check_drive(report: Report, root: Path) -> None:
@@ -140,11 +155,8 @@ def check_drive(report: Report, root: Path) -> None:
         unlocks="Lets Claude route work to the correct folder.",
     ))
 
-    policy = conventions / "CAPTURE_POLICY.md"
-    connections = conventions / "CONNECTIONS.md"
-    flows = conventions / "HARNESS_FLOWS.md"
-    status = conventions / "HARNESS_STATUS.md"
-    missing_docs = [str(p.relative_to(root)) for p in (policy, connections, flows, status) if not p.exists()]
+    expected_docs = [first_existing(conventions, names) for names in HARNESS_DOC_CANDIDATES.values()]
+    missing_docs = [str(p.relative_to(root)) for p in expected_docs if not p.exists()]
     report.add(Check(
         key="harness_docs",
         label="Harness docs",
@@ -286,7 +298,7 @@ def check_fireflies(report: Report, live: bool) -> None:
             status="missing",
             required=False,
             detail="FIREFLIES_API_KEY is not set in the environment.",
-            next_step="After CAPTURE_POLICY.md is approved, set a company Fireflies key and COMPANY_BRAIN_FIREFLIES_SOURCE=company.",
+            next_step="After capture-policy.md is approved, set a company Fireflies key and COMPANY_BRAIN_FIREFLIES_SOURCE=company.",
             unlocks="Company meeting capture into private evidence and staged proposals.",
         ))
         return

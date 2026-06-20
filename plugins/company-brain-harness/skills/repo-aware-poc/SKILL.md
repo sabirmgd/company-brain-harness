@@ -11,9 +11,9 @@ Before building a prototype, ground the work in the company repo map and stack c
 
 1. Resolve the brain root.
 2. Read the repository index and stack conventions when present. Common generic destinations are:
-   - `Departments/Engineering/`
-   - `Projects/`
-   - `Context/`
+   - `brain/operations/departments/engineering/`
+   - `brain/product/`
+   - `brain/company/`
    - a deployment-specific repo map folder named in `CLAUDE.md`
 3. If those docs are stale or missing and GitHub access is configured, validate the approved GitHub source instance before refreshing the repo map.
 4. Decide where the POC belongs:

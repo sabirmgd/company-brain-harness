@@ -40,7 +40,7 @@ Ask each teammate:
 - What source-derived notes would help the team if curated?
 - Who should review notes from your area?
 - What current brain knowledge is stale, wrong, or risky?
-- What must route to `Restricted/` or stay out entirely?
+- What must route to `brain/restricted/` or stay out entirely?
 
 ## Source Promotion
 

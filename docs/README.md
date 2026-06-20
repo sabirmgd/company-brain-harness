@@ -13,6 +13,8 @@ Start here when reviewing, installing, operating, or productizing the harness.
   becomes a customer-facing product.
 - [Quickstart](quickstart.md): install, scaffold, verify, and use skills.
 - [Harness Architecture](harness-architecture.md): how the layers fit together.
+- [Naming Conventions](naming-conventions.md): canonical brain/system taxonomy
+  and path naming rules.
 - [Decision Log](decision-log.md): why each major layer exists.
 
 ## Operating The Brain

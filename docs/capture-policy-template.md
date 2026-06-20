@@ -1,6 +1,6 @@
 # Capture Policy Template
 
-Use this as `CAPTURE_POLICY.md` inside a company brain root. The policy must be
+Use this as `capture-policy.md` inside a company brain root. The policy must be
 approved by the brain owner before scheduled capture runs.
 
 ## Default Posture
@@ -94,7 +94,7 @@ Restricted folders must be declared in `company-brain.yml`:
 ```yaml
 brain:
   restricted_prefixes:
-    - Restricted
+    - brain/restricted
 ```
 
 ## Approval Checklist

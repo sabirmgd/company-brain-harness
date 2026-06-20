@@ -6,7 +6,7 @@ remains centralized. This script writes an append-only JSONL approval ledger and
 moves staged proposals to approved/rejected/revise folders.
 
 Default staging directory:
-  <brain root>/00_Company_Brain_Conventions/90_Staging
+  <brain root>/system/staging
 
 Usage:
     bin/approve-staged-note.py --id 2026-06-17-example --decision approve --reviewer brain-owner --write

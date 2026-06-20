@@ -82,7 +82,8 @@ flow should be role-based and guided.
 | Productization | Policy and source registry are customer-facing primitives | Trust and governance must be part of onboarding |
 | User experience | Role-based front door | Users say what they want; agents run the harness internally |
 
-Full details: [docs/harness-architecture.md](docs/harness-architecture.md) and
+Full details: [docs/harness-architecture.md](docs/harness-architecture.md),
+[docs/naming-conventions.md](docs/naming-conventions.md), and
 [docs/decision-log.md](docs/decision-log.md).
 
 ## Repository Layout
@@ -304,7 +305,7 @@ They also read `company-brain.yml` / `company-os.yml` when present.
 | `source-sync-state.py` | Inspect or update source cursor/dedupe state | Only with `--write` for cursor updates |
 | `brain-health.py` | Score readiness and folder health | No |
 | `brain-lint.py` | Check stale notes, provenance, links, duplicates | No |
-| `brain-schedule.py` | Generate `SCHEDULE.md` | Only with `--write` |
+| `brain-schedule.py` | Generate `schedule.md` | Only with `--write` |
 | `stage-brain-note.py` | Create staged proposal | Only with `--write` |
 | `approve-staged-note.py` | Approve/reject/revise proposals | Only with `--write` |
 | `promote-to-brain.py` | Promote approved note to final folder | Only with `--write` |
@@ -321,7 +322,7 @@ The harness defaults to no-surprise behavior:
 - secrets must be referenced, never stored
 - personal connectors are excluded by default
 - raw transcripts/emails/exports are not shared knowledge by default
-- raw sidecars, when allowed by source policy, live under `90_Staging/raw/`
+- raw sidecars, when allowed by source policy, live under `system/staging/raw/`
 - staged proposals require provenance and at least two tags
 - final promotion requires explicit approval
 

@@ -53,13 +53,13 @@ Agent flow:
 
 `brain-setup.py` should create:
 
-- `START_HERE.md`
-- `OWNER_GUIDE.md`
-- `OPERATOR_GUIDE.md`
-- `TEAM_MEMBER_GUIDE.md`
-- `INVITE_TEAM.md`
-- `TODAY.md`
-- `NEXT_ACTIONS.md`
+- `start-here.md`
+- `owner-guide.md`
+- `operator-guide.md`
+- `team-member-guide.md`
+- `invite-team.md`
+- `today.md`
+- `next-actions.md`
 - routing/config/policy/source registry/staging/indexes
 
 These files turn the brain root itself into an onboarding product.

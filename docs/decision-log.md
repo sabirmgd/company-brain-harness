@@ -178,7 +178,7 @@ Decision: restricted prefixes are never broad-scanned or written by default.
 Accepted:
 
 - Configurable `restricted_prefixes`.
-- Default scaffolded prefix `Restricted`.
+- Default scaffolded prefix `brain/restricted`.
 - Legacy prefix `14_Owner_Vault` remains recognized for existing deployments.
 
 Rejected:
@@ -208,7 +208,7 @@ Rejected:
 
 Implication:
 
-- Daily/weekly operations include lint.
+- brain/operations/daily/weekly operations include lint.
 - Teammates are asked what is stale or risky.
 
 ## D011: First Pilot Is Human-Gated

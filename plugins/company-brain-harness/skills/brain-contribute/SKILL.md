@@ -37,7 +37,7 @@ Ask one at a time:
 - Which source systems do you use?
 - Which sources are company/shared and which are personal?
 - Who should review notes from your area?
-- What should stay out or go to `Restricted/`?
+- What should stay out or go to `brain/restricted/`?
 
 ## Output Shape
 

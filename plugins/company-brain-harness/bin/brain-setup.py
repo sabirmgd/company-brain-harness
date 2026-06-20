@@ -17,19 +17,29 @@ DEFAULT_ROOT = (
     or os.environ.get("COMPANY_OS_ROOT")
     or os.getcwd()
 )
-CONVENTIONS_DIR = "00_Company_Brain_Conventions"
-STAGING_DIR = f"{CONVENTIONS_DIR}/90_Staging"
+CONVENTIONS_DIR = "system"
+STAGING_DIR = f"{CONVENTIONS_DIR}/staging"
 FOLDERS = {
-    "Context": "Stable company context: strategy, ICP, voice, goals, operating principles.",
-    "Daily": "Company-wide daily log: decisions, ships, incidents, blockers.",
-    "Projects": "Active and completed projects with owners, specs, notes, and outcomes.",
-    "Departments": "Department SOPs, role-specific guidance, and operating workflows.",
-    "Intelligence": "Meetings, customer voice, market notes, competitors, decisions.",
-    "Resources": "Reusable templates, prompts, frameworks, and external references.",
-    "Team": "One folder per teammate: profile, daily notes, tasks, and preferences.",
-    "Skills": "Company skills that reference this brain instead of duplicating context.",
-    "Restricted": "Sensitive material. Excluded from default agent scans and broad team access.",
-    "Archive": "Deprecated or superseded knowledge retained for auditability.",
+    "brain": "Curated company knowledge. Harness state lives under system/.",
+    "brain/company": "Stable company context, operating model, strategy, history, and principles.",
+    "brain/product": "Product state, launch readiness, roadmap, decisions, and active product work.",
+    "brain/engineering": "Engineering routes, repo maps, architecture notes, and implementation evidence.",
+    "brain/engineering/repos": "Repository maps and implementation source routes.",
+    "brain/go-to-market": "Positioning, pricing, launch motion, sales assets, and growth experiments.",
+    "brain/go-to-market/accounts": "Approved account and prospect intelligence for go-to-market work.",
+    "brain/customers": "Customer onboarding, support, success, feedback, and customer evidence.",
+    "brain/customers/accounts": "Approved customer account context, commitments, feedback, and follow-up notes.",
+    "brain/operations": "Daily loops, departments, team profiles, and reusable workflows.",
+    "brain/operations/daily": "Morning checks, daily decisions, ships, incidents, blockers, and follow-ups.",
+    "brain/operations/departments": "Department SOPs, role-specific workflows, ownership, and review expectations.",
+    "brain/operations/team": "Teammate profiles, owned workflows, preferences, and contribution notes.",
+    "brain/operations/skills": "Company-specific prompts, skills, and reusable operating procedures.",
+    "brain/intelligence": "Meetings, market notes, customer voice, and decision history.",
+    "brain/intelligence/meetings": "Curated meeting intelligence, timelines, and meeting summaries.",
+    "brain/sources": "Curated source-derived notes and source reference maps.",
+    "brain/sources/confluence": "Curated Confluence-derived notes.",
+    "brain/restricted": "Sensitive material. Excluded from default agent scans and broad team access.",
+    "brain/archive": "Deprecated or superseded knowledge retained for auditability.",
 }
 
 
@@ -49,30 +59,35 @@ def frontmatter(tags: list[str]) -> str:
 def root_claude(company: str, champion: str) -> str:
     return f"""# {company} Company Brain
 
-This folder is the company's shared brain: routed markdown knowledge plus source references.
-Claude Code, Claude Cowork, Codex, and other agents should treat this file as the root routing contract.
+This repo is the company's shared brain: curated operating knowledge, source
+references, and private harness state. Claude Code, Claude Cowork, Codex, and
+other agents should treat this file as the root routing contract.
 
 ## Session Startup
 
 1. Read this file first.
 2. Identify the active teammate or role.
-3. Read that person's `Team/<name>/profile.md` when present.
-4. Read the target folder's `00_INDEX.md` before writing there.
+3. Read that person's `brain/operations/team/<name>/profile.md` when present.
+4. Read the target folder's `README.md` before writing there.
 5. Use source registry and capture policy before touching external data.
 
 ## Knowledge Routing
 
 | Type | Route to |
 |---|---|
-| Strategy, ICP, brand, goals, org context | `Context/` |
-| Company daily log, ships, blockers, decisions | `Daily/` |
-| Project briefs, specs, drafts, feedback | `Projects/` |
-| Department SOPs and workflows | `Departments/` |
-| Meetings, competitors, customer voice, decisions | `Intelligence/` |
-| Reusable templates and frameworks | `Resources/` |
-| Teammate profiles, preferences, tasks | `Team/<name>/` |
-| Shared skills and prompt workflows | `Skills/` |
-| Sensitive HR, legal, finance, owner-only material | `Restricted/` |
+| Strategy, company context, operating model | `brain/company/` |
+| Product state, launch readiness, roadmap, decisions | `brain/product/` |
+| Engineering repo maps and implementation routes | `brain/engineering/` |
+| GTM, positioning, pricing, launch motion | `brain/go-to-market/` |
+| Customer onboarding, support, success material | `brain/customers/` |
+| Daily operations, departments, team, reusable workflows | `brain/operations/` |
+| Meetings, market notes, customer voice, decisions | `brain/intelligence/` |
+| Source-derived notes and source maps | `brain/sources/` |
+| Teammate profiles, preferences, tasks | `brain/operations/team/<name>/` |
+| Shared skills and prompt workflows | `brain/operations/skills/` |
+| Sensitive HR, legal, finance, owner-only material | `brain/restricted/` |
+| Superseded or retained history | `brain/archive/` |
+| Harness configuration, staging, evidence, raw source capture | `system/` |
 
 ## Rules
 
@@ -82,7 +97,7 @@ Claude Code, Claude Cowork, Codex, and other agents should treat this file as th
 4. Source-derived notes need provenance: `<!-- src: <source-id>/<item-id> @ YYYY-MM-DD -->`.
 5. Every content note needs frontmatter with `status`, `tags`, and `last_verified`.
 6. Never create files at the root except routing, config, and setup guide files.
-7. Never read, index, summarize, or write `Restricted/` unless the owner explicitly grants access.
+7. Never read, index, summarize, or write `brain/restricted/` unless the owner explicitly grants access.
 8. Prefer updating existing notes over creating duplicate versions.
 9. If a newer source contradicts an older claim, edit the old claim in place with a dated warning.
 10. If unsure where something belongs, suggest two destinations and ask the Brain Owner.
@@ -113,9 +128,9 @@ brain:
   conventions_dir: {CONVENTIONS_DIR}
   staging_dir: {STAGING_DIR}
   restricted_prefixes:
-    - Restricted
+    - brain/restricted
 policy:
-  capture_policy: {CONVENTIONS_DIR}/CAPTURE_POLICY.md
+  capture_policy: {CONVENTIONS_DIR}/capture-policy.md
   require_human_approval_for_shared_writes: true
   personal_connectors_are_company_sources: false
 promotion:
@@ -130,11 +145,12 @@ evidence:
   raw_requires_source_policy: true
 health:
   priority_folders:
-    - Context
-    - Daily
-    - Projects
-    - Intelligence
-    - Team
+    - brain/company
+    - brain/product
+    - brain/engineering
+    - brain/operations
+    - brain/intelligence
+    - brain/sources
 """
 
 
@@ -178,7 +194,7 @@ sources:
       default_destination: "."
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - curated_note
@@ -220,10 +236,10 @@ sources:
       store_raw: private_only
       retention_days: 14
     routing:
-      default_destination: Intelligence/meetings
+      default_destination: brain/intelligence/meetings
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - curated_summary
@@ -269,10 +285,10 @@ sources:
       store_raw: private_only
       retention_days: 14
     routing:
-      default_destination: Intelligence/gtm
+      default_destination: brain/go-to-market/accounts
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - account_summary
@@ -318,10 +334,10 @@ sources:
       store_raw: private_only
       retention_days: 14
     routing:
-      default_destination: Resources/confluence
+      default_destination: brain/sources/confluence
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - canonical_summary
@@ -370,10 +386,10 @@ sources:
       store_raw: private_only
       retention_days: 7
     routing:
-      default_destination: Intelligence/accounts
+      default_destination: brain/customers/accounts
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed:
         - customer_fact
@@ -419,7 +435,7 @@ sources:
       default_destination: null
       staging_destination: {STAGING_DIR}
       restricted_prefixes:
-        - Restricted
+        - brain/restricted
     artifact_policy:
       allowed: []
       not_allowed:
@@ -508,7 +524,7 @@ Do not connect "everyone's personal account" as a shortcut.
 
 ## Sensitive Routing
 
-HR, legal, finance, fundraising, compensation, private customer data, and owner-only strategy route to `Restricted/` or stay out.
+HR, legal, finance, fundraising, compensation, private customer data, and owner-only strategy route to `brain/restricted/` or stay out.
 
 ## Approval Checklist
 
@@ -556,7 +572,7 @@ approved source -> scoped pull -> private evidence -> extraction -> staged propo
 Use `source-pull.py` for normalized connector records. If the source policy
 allows raw retention and the connector emits `raw_body`, `raw_text`,
 `raw_content`, `raw_payload`, or `raw`, raw material is written under
-`90_Staging/raw/` and the normalized evidence receives a private pointer.
+`system/staging/raw/` and the normalized evidence receives a private pointer.
 Then use `source-extract.py` to create staged proposals. Cursor and dedupe state
 lives in `source-sync-state.json`.
 
@@ -596,6 +612,29 @@ The company owner and teammates still need to add real strategy, customer, proje
 - Brain Owner assigned
 - first teammate onboarded
 - no personal connector used as a company source
+"""
+
+
+def naming_conventions_md() -> str:
+    return frontmatter(["naming", "taxonomy", "harness"]) + """# Naming Conventions
+
+This brain uses product-grade repository naming, not drive-folder numbering.
+
+## Rules
+
+- Use lowercase kebab-case for non-conventional paths.
+- Use domain nouns, not numbers, to organize knowledge.
+- Keep curated knowledge under `brain/`.
+- Keep harness state, staging, evidence, and raw captures under `system/`.
+- Use `README.md` as the folder entry point.
+- Keep raw source files private under `system/staging/raw/`.
+- Do not encode sort order in folder names. Use README files for navigation.
+
+## Reserved Conventional Names
+
+- `README.md` is the repo and folder entry point.
+- `CLAUDE.md` is the Claude/Codex routing contract.
+- `company-brain.yml` is the harness config.
 """
 
 
@@ -685,12 +724,12 @@ interview -> staged proposal -> review -> approved note
 
 ## Next Files
 
-- `OWNER_GUIDE.md`
-- `OPERATOR_GUIDE.md`
-- `TEAM_MEMBER_GUIDE.md`
-- `INVITE_TEAM.md`
-- `TODAY.md`
-- `NEXT_ACTIONS.md`
+- `owner-guide.md`
+- `operator-guide.md`
+- `team-member-guide.md`
+- `invite-team.md`
+- `today.md`
+- `next-actions.md`
 """
 
 
@@ -705,8 +744,8 @@ You are accountable for trust.
 
 1. Confirm this brain root is in the right shared location.
 2. Confirm restricted folder permissions.
-3. Approve or edit `00_Company_Brain_Conventions/CAPTURE_POLICY.md`.
-4. Review `00_Company_Brain_Conventions/source-registry.yml`.
+3. Approve or edit `system/capture-policy.md`.
+4. Review `system/source-registry.yml`.
 5. Choose the first Brain Operator.
 6. Keep the first two weeks human-gated unless you have a reason not to.
 
@@ -720,7 +759,7 @@ I am the Brain Owner. Help me review the setup.
 
 - Do not connect personal accounts as company sources.
 - Do not auto-promote meeting, legal, HR, finance, or strategy-changing notes.
-- Do not treat the `Restricted/` folder as secure until permissions are checked.
+- Do not treat the `brain/restricted/` folder as secure until permissions are checked.
 """
 
 
@@ -836,7 +875,7 @@ Use this as the daily operator scratchpad.
 
 ## End Of Day
 
-- [ ] next actions copied to `NEXT_ACTIONS.md`
+- [ ] next actions copied to `next-actions.md`
 - [ ] owner decisions flagged
 """
 
@@ -900,23 +939,24 @@ def source_sync_state() -> str:
 def planned_files(company: str, champion: str, operator: str) -> dict[str, str]:
     files: dict[str, str] = {
         "CLAUDE.md": root_claude(company, champion),
-        "START_HERE.md": start_here_md(company),
-        "OWNER_GUIDE.md": owner_guide_md(champion),
-        "OPERATOR_GUIDE.md": operator_guide_md(operator),
-        "TEAM_MEMBER_GUIDE.md": team_member_guide_md(),
-        "INVITE_TEAM.md": invite_team_md(company),
-        "TODAY.md": today_md(),
-        "NEXT_ACTIONS.md": next_actions_md(),
+        "start-here.md": start_here_md(company),
+        "owner-guide.md": owner_guide_md(champion),
+        "operator-guide.md": operator_guide_md(operator),
+        "team-member-guide.md": team_member_guide_md(),
+        "invite-team.md": invite_team_md(company),
+        "today.md": today_md(),
+        "next-actions.md": next_actions_md(),
         "company-brain.yml": company_brain_yml(company),
         f"{CONVENTIONS_DIR}/README.md": index_md(CONVENTIONS_DIR, "Operating manual for this company brain."),
-        f"{CONVENTIONS_DIR}/CAPTURE_POLICY.md": capture_policy(company),
-        f"{CONVENTIONS_DIR}/CONNECTIONS.md": connections_doc(),
-        f"{CONVENTIONS_DIR}/HARNESS_FLOWS.md": harness_flows(),
-        f"{CONVENTIONS_DIR}/HARNESS_STATUS.md": harness_status(),
+        f"{CONVENTIONS_DIR}/capture-policy.md": capture_policy(company),
+        f"{CONVENTIONS_DIR}/connections.md": connections_doc(),
+        f"{CONVENTIONS_DIR}/flows.md": harness_flows(),
+        f"{CONVENTIONS_DIR}/status.md": harness_status(),
+        f"{CONVENTIONS_DIR}/naming-conventions.md": naming_conventions_md(),
         f"{CONVENTIONS_DIR}/source-registry.yml": source_registry(company, champion),
         f"{CONVENTIONS_DIR}/source-sync-state.json": source_sync_state(),
         f"{CONVENTIONS_DIR}/team.yml": team_yml(champion, operator),
-        f"{CONVENTIONS_DIR}/SCHEDULE.md": schedule_md(champion, operator),
+        f"{CONVENTIONS_DIR}/schedule.md": schedule_md(champion, operator),
         f"{STAGING_DIR}/README.md": staging_readme(),
         f"{STAGING_DIR}/approval-ledger.jsonl": json.dumps({
             "event": "ledger_initialized",
@@ -925,7 +965,7 @@ def planned_files(company: str, champion: str, operator: str) -> dict[str, str]:
         }) + "\n",
     }
     for folder, description in FOLDERS.items():
-        files[f"{folder}/00_INDEX.md"] = index_md(folder, description)
+        files[f"{folder}/README.md"] = index_md(folder, description)
     for sub in ("proposed", "approved", "rejected", "revise"):
         files[f"{STAGING_DIR}/{sub}/README.md"] = index_md(sub, f"Staging queue folder for {sub} notes.")
     files[f"{STAGING_DIR}/evidence/README.md"] = index_md(

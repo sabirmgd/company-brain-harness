@@ -197,7 +197,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Export local git repo maps to normalized Company Brain JSONL.")
     parser.add_argument("--repo", action="append", required=True, help="local git repo path; repeatable")
     parser.add_argument("--id-prefix", default="")
-    parser.add_argument("--target-prefix", default="Resources/repos")
+    parser.add_argument("--target-prefix", default="brain/engineering/repos")
     parser.add_argument("--artifact-type", default="repo_map")
     parser.add_argument("--visibility", default="team")
     parser.add_argument("--docs-limit", type=int, default=30)

@@ -112,10 +112,10 @@ raw_policy:
   store_raw: private_only
   retention_days: 14
 routing:
-  default_destination: Intelligence/meetings
-  staging_destination: 00_Company_Brain_Conventions/90_Staging
+  default_destination: brain/intelligence/meetings
+  staging_destination: system/staging
   restricted_prefixes:
-    - Restricted
+    - brain/restricted
 artifact_policy:
   allowed:
     - curated_summary
@@ -148,7 +148,7 @@ approved source -> scoped pull -> private evidence -> extraction -> staged propo
 The harness stores sync state separately from source policy:
 
 ```text
-00_Company_Brain_Conventions/source-sync-state.json
+system/source-sync-state.json
 ```
 
 Each source keeps:
@@ -186,7 +186,7 @@ same email thread, Slack message, Confluence page, CRM record, or meeting recap.
 
 - Company spaces can be source instances.
 - User/personal spaces are excluded by default.
-- Restricted spaces route to restricted staging or stay out.
+- brain/restricted spaces route to restricted staging or stay out.
 - Brain artifacts should be canonical summaries, source references, and changed
   decisions, not page dumps.
 

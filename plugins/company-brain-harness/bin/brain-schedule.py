@@ -110,7 +110,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--timezone", default="local")
     parser.add_argument("--champion", default="brain-owner", help="Brain Owner name")
     parser.add_argument("--operator", default="brain-operator", help="Brain Operator name")
-    parser.add_argument("--write", action="store_true", help="write SCHEDULE.md under conventions dir")
+    parser.add_argument("--write", action="store_true", help="write schedule.md under conventions dir")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
 
@@ -126,7 +126,7 @@ def main(argv: list[str] | None = None) -> int:
         champion=args.champion,
         operator=args.operator,
     )
-    target = conventions_dir(root) / "SCHEDULE.md"
+    target = conventions_dir(root) / "schedule.md"
     if args.write:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(body, encoding="utf-8")

@@ -171,37 +171,37 @@ Generated scaffold:
 
 ```text
 CLAUDE.md
-START_HERE.md
-OWNER_GUIDE.md
-OPERATOR_GUIDE.md
-TEAM_MEMBER_GUIDE.md
-INVITE_TEAM.md
-TODAY.md
-NEXT_ACTIONS.md
+start-here.md
+owner-guide.md
+operator-guide.md
+team-member-guide.md
+invite-team.md
+today.md
+next-actions.md
 company-brain.yml
-00_Company_Brain_Conventions/
+system/
   README.md
-  CAPTURE_POLICY.md
-  CONNECTIONS.md
-  HARNESS_FLOWS.md
-  HARNESS_STATUS.md
-  SCHEDULE.md
+  capture-policy.md
+  connections.md
+  flows.md
+  status.md
+  schedule.md
   source-registry.yml
   source-sync-state.json
   team.yml
-  90_Staging/
+  staging/
     evidence/
     raw/
-Context/
-Daily/
-Projects/
-Departments/
-Intelligence/
-Resources/
-Team/
-Skills/
-Restricted/
-Archive/
+brain/company/
+brain/operations/daily/
+brain/product/
+brain/operations/departments/
+brain/intelligence/
+brain/sources/
+brain/operations/team/
+brain/operations/skills/
+brain/restricted/
+brain/archive/
 ```
 
 Reasoning:
@@ -284,7 +284,7 @@ Reasoning:
 Consequence:
 
 - `source-pull.py` stores only scoped, non-private normalized evidence.
-- `source-pull.py` stores raw sidecars only under `90_Staging/raw/` when
+- `source-pull.py` stores raw sidecars only under `system/staging/raw/` when
   `raw_policy.store_raw` allows it.
 - `source-extract.py` stages only allowed artifact types.
 - `stage-brain-note.py` previews by default.

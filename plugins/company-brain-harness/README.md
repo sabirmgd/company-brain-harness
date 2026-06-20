@@ -81,12 +81,12 @@ The bundled `bin/` CLIs are preview-first and generic:
 `source-pull.py` keeps an append-only evidence log. `source-extract.py` stages
 the latest eligible record per external item so updated pulls do not create
 stale duplicate proposals.
-Optional raw source material is stored only under `90_Staging/raw/` when the
+Optional raw source material is stored only under `system/staging/raw/` when the
 registered source policy allows raw retention; it is never promoted directly as
 shared knowledge.
 
 No CLI should ingest personal connectors into a shared company brain. Company capture
-requires an approved `CAPTURE_POLICY.md` and a registered source instance in
+requires an approved `capture-policy.md` and a registered source instance in
 `source-registry.yml`.
 
 ## Verify

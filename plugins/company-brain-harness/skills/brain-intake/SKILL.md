@@ -10,7 +10,7 @@ Turn raw material into a staged proposal. Do not write directly to final knowled
 ## Workflow
 
 1. Resolve the brain root.
-2. Read the configured routing file, folder indexes, `CAPTURE_POLICY.md`, `HARNESS_FLOWS.md`, and `source-registry.yml` if present.
+2. Read the configured routing file, folder indexes, `capture-policy.md`, `flows.md`, and `source-registry.yml` if present.
 3. Classify the input:
    - company knowledge
    - personal/private
@@ -52,4 +52,4 @@ When a teammate provides source material, ask:
 - What exact account/workspace/channel/folder/item is the source?
 - Who owns this source?
 - Who should review the staged note?
-- Should any part route to `Restricted/` or stay out?
+- Should any part route to `brain/restricted/` or stay out?

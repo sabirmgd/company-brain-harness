@@ -19,8 +19,8 @@ Private evidence has two lanes:
 
 | Lane | Location | Purpose |
 |---|---|---|
-| Normalized evidence | `00_Company_Brain_Conventions/90_Staging/evidence/` | JSONL records used for dedupe, extraction, review, and promotion. |
-| Raw evidence | `00_Company_Brain_Conventions/90_Staging/raw/` | Optional raw source material retained by policy for audit or deeper review. |
+| Normalized evidence | `system/staging/evidence/` | JSONL records used for dedupe, extraction, review, and promotion. |
+| Raw evidence | `system/staging/raw/` | Optional raw source material retained by policy for audit or deeper review. |
 
 Raw evidence is not shared brain knowledge. A staged or approved note may point
 to a private raw evidence file, but it should not copy raw transcripts, emails,
@@ -189,7 +189,7 @@ Connector adapters should produce normalized JSONL records:
   "external_id": "thread-123",
   "title": "Client renewal thread",
   "summary": "Client confirmed renewal timing and asked for implementation checklist.",
-  "target_path": "Intelligence/accounts/client-renewal.md",
+  "target_path": "brain/customers/accounts/client-renewal.md",
   "tags": ["email", "client"],
   "artifact_type": "customer_fact",
   "visibility": "team",
@@ -212,7 +212,7 @@ Adapters may also provide raw material for private storage:
 }
 ```
 
-`source-pull.py` writes raw fields to `90_Staging/raw/<source-id>/...` only
+`source-pull.py` writes raw fields to `system/staging/raw/<source-id>/...` only
 when the source has `raw_policy.store_raw: private_only` or `temporary`.
 Sources with `raw_policy.store_raw: false` keep only normalized evidence.
 
@@ -254,7 +254,7 @@ python3 plugins/company-brain-harness/bin/source-extract.py \
 The harness tracks state in:
 
 ```text
-00_Company_Brain_Conventions/source-sync-state.json
+system/source-sync-state.json
 ```
 
 This records cursors, last successful pull/extract, per-item hashes, and staged

@@ -55,5 +55,5 @@ Common examples:
 
 - Who approves staged notes from your area?
 - What would make a note unsafe to promote?
-- What should route to `Restricted/`?
+- What should route to `brain/restricted/`?
 - What should stay out of the brain entirely?

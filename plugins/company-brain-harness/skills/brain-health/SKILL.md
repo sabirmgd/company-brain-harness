@@ -12,8 +12,8 @@ Run a read-only readiness pass over the current company brain. Do not inspect re
 1. Resolve the brain root from `--root`, `BRAIN_ROOT`, `COMPANY_BRAIN_ROOT`, `COMPANY_OS_ROOT`, or the current working directory.
 2. Read the configured routing file and harness docs when present. Defaults are:
    - `CLAUDE.md`
-   - `00_Company_Brain_Conventions/HARNESS_STATUS.md`
-   - `00_Company_Brain_Conventions/CAPTURE_POLICY.md`
+   - `system/status.md`
+   - `system/capture-policy.md`
    Use `company-brain.yml` / `company-os.yml` if the deployment renamed these paths.
 3. Run the bundled checks:
    - `connections-check.py --root <brain-root> --live`

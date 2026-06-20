@@ -259,25 +259,79 @@ def meeting_summary(transcript: dict[str, Any], *, limit: int) -> str:
     return clip("\n".join(parts).strip(), limit)
 
 
+def format_seconds(value: Any) -> str:
+    try:
+        total = max(0, int(float(value)))
+    except (TypeError, ValueError):
+        return "unknown"
+    hours, remainder = divmod(total, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    if hours:
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    return f"{minutes:02d}:{seconds:02d}"
+
+
+def table_value(value: Any) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return "-"
+    return re.sub(r"\s+", " ", text).replace("|", "\\|")
+
+
+def sentence_start(row: dict[str, Any]) -> float:
+    try:
+        return float(row.get("start_time") or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def raw_transcript(transcript: dict[str, Any]) -> str:
     rows = transcript.get("sentences") if isinstance(transcript.get("sentences"), list) else []
-    lines = [f"# Raw Transcript: {transcript.get('title') or transcript.get('id') or 'Fireflies Meeting'}", ""]
-    for row in rows:
+    title = transcript.get("title") or transcript.get("id") or "Fireflies Meeting"
+    participants = [str(value).strip() for value in transcript.get("participants") or [] if str(value).strip()]
+    lines = [
+        f"# Raw Fireflies Transcript: {title}",
+        "",
+        "Private raw evidence. Use this for audit and deeper extraction; do not treat the raw transcript as shared brain knowledge until a curated note is reviewed.",
+        "",
+        "## Meeting Metadata",
+        "",
+        "| Field | Value |",
+        "|---|---|",
+        f"| Transcript ID | {table_value(transcript.get('id'))} |",
+        f"| Date | {table_value(transcript.get('dateString') or transcript.get('date'))} |",
+        f"| Duration Minutes | {table_value(transcript.get('duration'))} |",
+        f"| Organizer | {table_value(transcript.get('organizer_email'))} |",
+        f"| Host | {table_value(transcript.get('host_email'))} |",
+        f"| Privacy | {table_value(transcript.get('privacy'))} |",
+        f"| Participants | {table_value(', '.join(participants))} |",
+        f"| Source URL | {table_value(transcript.get('transcript_url'))} |",
+        "",
+        "## Transcript",
+        "",
+    ]
+    current_bucket: int | None = None
+    for row in sorted((item for item in rows if isinstance(item, dict)), key=sentence_start):
         if not isinstance(row, dict):
             continue
-        text = str(row.get("text") or row.get("raw_text") or "").strip()
+        text = re.sub(r"\s+", " ", str(row.get("text") or row.get("raw_text") or "").strip())
         if not text:
             continue
         speaker = str(row.get("speaker_name") or row.get("speaker_id") or "Unknown speaker").strip()
         start = row.get("start_time")
         end = row.get("end_time")
-        timing = ""
+        bucket = int(sentence_start(row) // 600) * 600
+        if bucket != current_bucket:
+            current_bucket = bucket
+            lines.extend([f"### {format_seconds(bucket)}", ""])
         if start is not None and end is not None:
-            timing = f" [{start}-{end}]"
+            timing = f"{format_seconds(start)}-{format_seconds(end)}"
         elif start is not None:
-            timing = f" [{start}]"
-        lines.append(f"{speaker}{timing}: {text}")
-    if len(lines) <= 2:
+            timing = format_seconds(start)
+        else:
+            timing = "unknown"
+        lines.append(f"- [{timing}] **{speaker}:** {text}")
+    if not rows:
         lines.append("No sentence-level transcript content was available.")
     return "\n".join(lines).strip() + "\n"
 
@@ -341,7 +395,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--mine", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--limit", type=int, default=50)
     parser.add_argument("--page-size", type=int, default=25)
-    parser.add_argument("--target-prefix", default="Intelligence/meetings/fireflies")
+    parser.add_argument("--target-prefix", default="brain/intelligence/meetings/fireflies")
     parser.add_argument("--artifact-type", default="meeting_summary")
     parser.add_argument("--visibility", default="team")
     parser.add_argument("--summary-chars", type=int, default=6000)

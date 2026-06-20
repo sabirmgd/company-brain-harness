@@ -10,19 +10,21 @@ import os
 from pathlib import Path
 
 
-DEFAULT_CONVENTIONS_DIR = "00_Company_Brain_Conventions"
-LEGACY_CONVENTIONS_DIR = "00_README_Drive_Conventions"
-DEFAULT_STAGING_DIR = f"{DEFAULT_CONVENTIONS_DIR}/90_Staging"
+DEFAULT_CONVENTIONS_DIR = "system"
+LEGACY_CONVENTIONS_DIRS = ("system", "system")
+DEFAULT_STAGING_DIR = f"{DEFAULT_CONVENTIONS_DIR}/staging"
 DEFAULT_ROUTING_FILE = "CLAUDE.md"
-DEFAULT_RESTRICTED_PREFIXES = ("Restricted", "14_Owner_Vault")
+DEFAULT_RESTRICTED_PREFIXES = ("brain/restricted", "restricted", "Restricted", "14_Owner_Vault")
 
 CONFIG_CANDIDATES = (
     "company-brain.yml",
     "company-os.yml",
     f"{DEFAULT_CONVENTIONS_DIR}/company-brain.yml",
     f"{DEFAULT_CONVENTIONS_DIR}/company-os.yml",
-    f"{LEGACY_CONVENTIONS_DIR}/company-brain.yml",
-    f"{LEGACY_CONVENTIONS_DIR}/company-os.yml",
+    "system/company-brain.yml",
+    "system/company-os.yml",
+    "system/company-brain.yml",
+    "system/company-os.yml",
 )
 
 
@@ -134,8 +136,11 @@ def routing_file(root: Path) -> Path:
 
 def conventions_dir(root: Path) -> Path:
     default = DEFAULT_CONVENTIONS_DIR
-    if not (root / DEFAULT_CONVENTIONS_DIR).exists() and (root / LEGACY_CONVENTIONS_DIR).exists():
-        default = LEGACY_CONVENTIONS_DIR
+    if not (root / DEFAULT_CONVENTIONS_DIR).exists():
+        for legacy in LEGACY_CONVENTIONS_DIRS:
+            if (root / legacy).exists():
+                default = legacy
+                break
     rel = os.environ.get("BRAIN_CONVENTIONS_DIR") or config_scalar(
         root, "brain", "conventions_dir", default
     )
@@ -143,7 +148,10 @@ def conventions_dir(root: Path) -> Path:
 
 
 def staging_dir(root: Path, override: str | None = None) -> Path:
-    default_staging = f"{conventions_dir(root).relative_to(root).as_posix()}/90_Staging"
+    conv = conventions_dir(root).relative_to(root).as_posix()
+    default_staging = f"{conv}/staging"
+    if (root / conv / "system/staging").exists() and not (root / conv / "staging").exists():
+        default_staging = f"{conv}/system/staging"
     rel = (
         override
         or os.environ.get("BRAIN_STAGING_DIR")
@@ -169,3 +177,12 @@ def safe_relative_path(value: str | Path, *, name: str) -> Path:
     if any(part in {"", ".", ".."} for part in rel.parts):
         raise ValueError(f"{name} must not contain empty, '.', or '..' path parts")
     return rel
+
+
+def path_has_prefix(rel: Path, prefix: str | Path) -> bool:
+    prefix_path = Path(prefix)
+    if prefix_path.is_absolute() or any(part in {"", ".", ".."} for part in prefix_path.parts):
+        return False
+    if len(rel.parts) < len(prefix_path.parts):
+        return False
+    return rel.parts[: len(prefix_path.parts)] == prefix_path.parts

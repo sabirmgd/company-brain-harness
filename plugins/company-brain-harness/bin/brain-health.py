@@ -36,6 +36,7 @@ from pathlib import Path
 from harness_common import (
     config_list,
     conventions_dir,
+    path_has_prefix,
     resolve_root,
     restricted_prefixes,
     routing_file,
@@ -48,8 +49,8 @@ DEFAULT_ROOT = (
     or os.getcwd()
 )
 
-INDEX_NAME = "00_INDEX.md"
-META_MD = {INDEX_NAME, "README.md", "CLAUDE.md"}
+INDEX_NAMES = ("README.md", "index.md", "00_INDEX.md")
+META_MD = {*INDEX_NAMES, "CLAUDE.md"}
 ACTIVATION_TARGET = 40  # content notes for a "healthy early" brain
 
 MD_LINK_RE = re.compile(r"\[[^\]]+\]\((?!https?:|mailto:|#)([^)]+)\)")
@@ -74,22 +75,43 @@ def _content_excluded_top(root: Path) -> set[str]:
     return {
         _conventions_top(root),
         *restricted_prefixes(root),
-        *(name for name in _top_names(root) if _archive_like(name)),
     }
-
-
-def _index_required_top(root: Path) -> list[str]:
-    excluded = {_conventions_top(root), *restricted_prefixes(root)}
-    return [name for name in _top_names(root) if name not in excluded]
 
 
 def _priority_top(root: Path) -> set[str]:
     return set(config_list(root, "health", "priority_folders", ()))
 
 
+def _index_required_paths(root: Path) -> list[Path]:
+    configured = [Path(value) for value in config_list(root, "health", "priority_folders", ())]
+    if configured:
+        return configured
+
+    brain = root / "brain"
+    if brain.is_dir():
+        paths = [Path("brain")]
+        paths.extend(
+            Path("brain") / child.name
+            for child in sorted(brain.iterdir())
+            if child.is_dir() and not child.name.startswith(".")
+        )
+        return paths
+
+    excluded = {_conventions_top(root)}
+    return [Path(name) for name in _top_names(root) if name not in excluded]
+
+
 def _is_excluded(rel: Path, root: Path) -> bool:
     parts = rel.parts
-    return bool(parts) and parts[0] in _content_excluded_top(root)
+    if not parts:
+        return False
+    if any(path_has_prefix(rel, prefix) for prefix in _content_excluded_top(root)):
+        return True
+    return any(_archive_like(part) for part in parts)
+
+
+def _has_index(folder: Path) -> bool:
+    return any((folder / name).exists() for name in INDEX_NAMES)
 
 
 def walk_files(root: Path):
@@ -110,12 +132,17 @@ def walk_files(root: Path):
 
 def leaf_folders(root: Path):
     """Immediate subfolders (depth-2) of included top-levels = leaf knowledge folders."""
-    excluded = _content_excluded_top(root)
     leaves = []
     for top in sorted(p for p in root.iterdir() if p.is_dir()):
-        if top.name.startswith(".") or top.name in excluded:
+        top_rel = top.relative_to(root)
+        if top.name.startswith(".") or _is_excluded(top_rel, root):
             continue
-        subs = [s for s in top.iterdir() if s.is_dir() and not s.name.startswith(".")]
+        subs = [
+            s for s in top.iterdir()
+            if s.is_dir()
+            and not s.name.startswith(".")
+            and not _is_excluded(s.relative_to(root), root)
+        ]
         if subs:
             leaves.extend(subs)
         else:
@@ -124,13 +151,13 @@ def leaf_folders(root: Path):
 
 
 def has_content(folder: Path) -> bool:
-    """True if folder (recursively) holds any file that isn't a 00_INDEX.md."""
+    """True if folder recursively holds any file that is not just an index."""
     for dirpath, dirnames, filenames in os.walk(folder):
         dirnames[:] = [d for d in dirnames if not d.startswith(".")]
         for fn in filenames:
             if fn.startswith("."):
                 continue
-            if fn != INDEX_NAME:
+            if fn not in INDEX_NAMES:
                 return True
     return False
 
@@ -192,14 +219,12 @@ def score(root: Path, fresh_days: int) -> dict:
     conv = conventions_dir(root)
     checks.append((str(route.relative_to(root)), route.exists()))
     checks.append(("conventions README", (conv / "README.md").exists()))
-    index_required_top = _index_required_top(root)
-    idx_present = sum(
-        1 for t in index_required_top if (root / t / INDEX_NAME).exists()
-    )
+    index_required_paths = _index_required_paths(root)
+    idx_present = sum(1 for rel in index_required_paths if _has_index(root / rel))
     structural = sum(1 for _, ok in checks if ok)
-    index_score = (idx_present / len(index_required_top)) if index_required_top else 1.0
+    index_score = (idx_present / len(index_required_paths)) if index_required_paths else 1.0
     routing = (structural / 2) * 8 + index_score * 12
-    missing_idx = [t for t in index_required_top if not (root / t / INDEX_NAME).exists()]
+    missing_idx = [rel.as_posix() for rel in index_required_paths if not _has_index(root / rel)]
 
     # --- Integrity ---
     dead_links, no_fm = [], []

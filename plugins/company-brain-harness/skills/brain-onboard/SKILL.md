@@ -30,7 +30,7 @@ Use these prompts to build a team brain without treating personal accounts as co
 - What source-derived notes would help the team if curated?
 - Who should review notes from your area?
 - What knowledge is stale, wrong, or risky if agents rely on it?
-- What should route to `Restricted/` or stay out entirely?
+- What should route to `brain/restricted/` or stay out entirely?
 
 ## Guardrails
 
