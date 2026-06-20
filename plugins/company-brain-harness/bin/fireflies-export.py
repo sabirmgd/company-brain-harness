@@ -69,6 +69,67 @@ query Transcripts(
 """
 
 
+TRANSCRIPTS_WITH_SENTENCES_QUERY = """
+query Transcripts(
+  $title: String,
+  $keyword: String,
+  $fromDate: DateTime,
+  $toDate: DateTime,
+  $limit: Int,
+  $skip: Int,
+  $mine: Boolean,
+  $organizer_email: String,
+  $participant_email: String
+) {
+  transcripts(
+    title: $title,
+    keyword: $keyword,
+    fromDate: $fromDate,
+    toDate: $toDate,
+    limit: $limit,
+    skip: $skip,
+    mine: $mine,
+    organizer_email: $organizer_email,
+    participant_email: $participant_email
+  ) {
+    id
+    title
+    date
+    dateString
+    duration
+    organizer_email
+    host_email
+    participants
+    privacy
+    transcript_url
+    sentences {
+      index
+      speaker_name
+      speaker_id
+      raw_text
+      start_time
+      end_time
+      text
+    }
+    summary {
+      keywords
+      action_items
+      outline
+      overview
+      bullet_gist
+      notes
+      gist
+      short_summary
+      short_overview
+      meeting_type
+      topics_discussed
+      transcript_chapters
+    }
+  }
+}
+"""
+
+
 def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-") or "meeting"
 
@@ -146,7 +207,8 @@ def fetch_transcripts(args: argparse.Namespace) -> list[dict[str, Any]]:
                 "organizer_email": args.organizer_email,
                 "participant_email": args.participant_email,
             }
-            data = graphql(TRANSCRIPTS_QUERY, variables, token=args.api_token)
+            query = TRANSCRIPTS_WITH_SENTENCES_QUERY if args.include_raw_transcript else TRANSCRIPTS_QUERY
+            data = graphql(query, variables, token=args.api_token)
             rows = data.get("data", {}).get("transcripts") or []
             if not rows:
                 break
@@ -197,6 +259,29 @@ def meeting_summary(transcript: dict[str, Any], *, limit: int) -> str:
     return clip("\n".join(parts).strip(), limit)
 
 
+def raw_transcript(transcript: dict[str, Any]) -> str:
+    rows = transcript.get("sentences") if isinstance(transcript.get("sentences"), list) else []
+    lines = [f"# Raw Transcript: {transcript.get('title') or transcript.get('id') or 'Fireflies Meeting'}", ""]
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        text = str(row.get("text") or row.get("raw_text") or "").strip()
+        if not text:
+            continue
+        speaker = str(row.get("speaker_name") or row.get("speaker_id") or "Unknown speaker").strip()
+        start = row.get("start_time")
+        end = row.get("end_time")
+        timing = ""
+        if start is not None and end is not None:
+            timing = f" [{start}-{end}]"
+        elif start is not None:
+            timing = f" [{start}]"
+        lines.append(f"{speaker}{timing}: {text}")
+    if len(lines) <= 2:
+        lines.append("No sentence-level transcript content was available.")
+    return "\n".join(lines).strip() + "\n"
+
+
 def normalize_transcript(transcript: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
     transcript_id = str(transcript.get("id") or "").strip()
     title = str(transcript.get("title") or transcript_id or "Untitled Fireflies Meeting").strip()
@@ -211,7 +296,7 @@ def normalize_transcript(transcript: dict[str, Any], args: argparse.Namespace) -
     visibility = args.visibility
     if privacy in {"private", "only_me"}:
         visibility = "private"
-    return {
+    record = {
         "external_id": transcript_id,
         "title": title,
         "summary": meeting_summary(transcript, limit=args.summary_chars),
@@ -226,6 +311,10 @@ def normalize_transcript(transcript: dict[str, Any], args: argparse.Namespace) -
         "participants_count": len(participants),
         "duration_minutes": transcript.get("duration"),
     }
+    if args.include_raw_transcript:
+        record["raw_body"] = raw_transcript(transcript)
+        record["raw_format"] = "md"
+    return record
 
 
 def write_jsonl(records: list[dict[str, Any]], path: Path | None) -> None:
@@ -256,6 +345,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--artifact-type", default="meeting_summary")
     parser.add_argument("--visibility", default="team")
     parser.add_argument("--summary-chars", type=int, default=6000)
+    parser.add_argument("--include-raw-transcript", action="store_true", help="include sentence-level transcript text for private raw evidence storage")
     parser.add_argument("--input-json", type=Path, default=None, help="offline Fireflies transcript JSON fixture")
     parser.add_argument("--output-jsonl", type=Path, default=None)
     args = parser.parse_args(argv)

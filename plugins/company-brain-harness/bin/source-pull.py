@@ -16,6 +16,9 @@ from source_sync_common import (
     evidence_record,
     iter_jsonl,
     load_state,
+    raw_content,
+    raw_evidence_path,
+    raw_storage_allowed,
     save_state,
     source_state,
     utc_now,
@@ -69,6 +72,7 @@ def main(argv: list[str] | None = None) -> int:
     accepted = []
     skipped = []
     unchanged = 0
+    raw_stored = 0
 
     try:
         records = list(iter_jsonl(args.input_jsonl))
@@ -90,12 +94,21 @@ def main(argv: list[str] | None = None) -> int:
         if previous.get("hash") == normalized["hash"]:
             unchanged += 1
             continue
+        raw_text, raw_extension = raw_content(raw)
+        if raw_text and raw_storage_allowed(source):
+            raw_path = raw_evidence_path(root, source.id, external_id, raw_extension)
+            normalized["raw_evidence_path"] = str(raw_path.relative_to(root))
+            if args.write:
+                raw_path.parent.mkdir(parents=True, exist_ok=True)
+                raw_path.write_text(raw_text, encoding="utf-8")
+                raw_stored += 1
         accepted.append(normalized)
         if args.write:
             items[external_id] = {
                 "hash": normalized["hash"],
                 "last_seen_at": pulled_at,
                 "visibility": normalized["visibility"],
+                "raw_evidence_path": normalized.get("raw_evidence_path"),
             }
 
     target = evidence_path(root, source.id)
@@ -114,6 +127,7 @@ def main(argv: list[str] | None = None) -> int:
             "accepted": len(accepted),
             "skipped": len(skipped),
             "unchanged": unchanged,
+            "raw_stored": raw_stored,
         }
         save_state(root, state)
 
@@ -122,6 +136,7 @@ def main(argv: list[str] | None = None) -> int:
         "source_id": source.id,
         "evidence_path": str(target.relative_to(root)),
         "accepted": len(accepted),
+        "raw_stored": raw_stored,
         "skipped": skipped,
         "unchanged": unchanged,
         "note": None if args.write else "preview only; rerun with --write to persist",

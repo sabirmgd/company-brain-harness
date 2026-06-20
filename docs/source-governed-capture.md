@@ -15,6 +15,17 @@ Every connector follows the same path:
 approved source -> scoped pull -> private evidence -> extraction -> staged proposal -> review -> approved brain note
 ```
 
+Private evidence has two lanes:
+
+| Lane | Location | Purpose |
+|---|---|---|
+| Normalized evidence | `00_Company_Brain_Conventions/90_Staging/evidence/` | JSONL records used for dedupe, extraction, review, and promotion. |
+| Raw evidence | `00_Company_Brain_Conventions/90_Staging/raw/` | Optional raw source material retained by policy for audit or deeper review. |
+
+Raw evidence is not shared brain knowledge. A staged or approved note may point
+to a private raw evidence file, but it should not copy raw transcripts, emails,
+or code into the shared note.
+
 ## Role Responsibilities
 
 | Role | Responsibilities |
@@ -95,6 +106,10 @@ python3 plugins/company-brain-harness/bin/confluence-export.py \
 JSONL only; `source-pull.py` and `source-extract.py` still own evidence,
 dedupe, privacy checks, and staging.
 
+Use `--include-raw` only when the source registry allows raw retention. The raw
+Confluence storage body is stored privately by `source-pull.py`, not promoted to
+shared knowledge.
+
 ### CRM
 
 Allowed patterns:
@@ -129,9 +144,10 @@ python3 plugins/company-brain-harness/bin/fireflies-export.py \
   --output-jsonl records.jsonl
 ```
 
-`fireflies-export.py` exports Fireflies summary fields by default. It does not
-store raw transcript sentences unless a future adapter mode explicitly adds that
-behavior and the source policy allows it.
+`fireflies-export.py` exports Fireflies summary fields by default. Use
+`--include-raw-transcript` only when the source registry allows raw retention.
+Sentence-level transcript text is stored privately by `source-pull.py`, not
+promoted to shared knowledge.
 
 ### Code Repositories
 
@@ -182,6 +198,24 @@ Connector adapters should produce normalized JSONL records:
 }
 ```
 
+Adapters may also provide raw material for private storage:
+
+```json
+{
+  "external_id": "meeting-123",
+  "title": "Project weekly sync",
+  "summary": "The team agreed on the launch checklist.",
+  "raw_body": "Speaker A: ...",
+  "raw_format": "md",
+  "artifact_type": "meeting_summary",
+  "visibility": "team"
+}
+```
+
+`source-pull.py` writes raw fields to `90_Staging/raw/<source-id>/...` only
+when the source has `raw_policy.store_raw: private_only` or `temporary`.
+Sources with `raw_policy.store_raw: false` keep only normalized evidence.
+
 Then the operator runs:
 
 ```bash
@@ -204,6 +238,7 @@ python3 plugins/company-brain-harness/bin/source-extract.py \
 - refuses personal/private visibility by default
 - refuses records that look like secrets
 - writes normalized evidence under staging
+- writes optional raw sidecars only when source policy allows it
 - updates cursor and hash state
 
 `source-extract.py`:

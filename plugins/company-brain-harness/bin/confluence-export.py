@@ -210,7 +210,7 @@ def normalize_page(page: dict[str, Any], args: argparse.Namespace) -> dict[str, 
     storage = body.get("storage") if isinstance(body.get("storage"), dict) else {}
     text = html_to_text(str(storage.get("value") or ""))
     target_prefix = args.target_prefix.strip("/")
-    return {
+    record = {
         "external_id": page_id,
         "title": title,
         "summary": clip(text or title, args.summary_chars),
@@ -223,6 +223,10 @@ def normalize_page(page: dict[str, Any], args: argparse.Namespace) -> dict[str, 
         "url": page_url(args.base_url, page),
         "cursor": version.get("when") or page_id,
     }
+    if args.include_raw:
+        record["raw_body"] = str(storage.get("value") or "")
+        record["raw_format"] = "html"
+    return record
 
 
 def write_jsonl(records: list[dict[str, Any]], path: Path | None) -> None:
@@ -250,6 +254,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--artifact-type", default="curated_note")
     parser.add_argument("--visibility", default="team")
     parser.add_argument("--summary-chars", type=int, default=1800)
+    parser.add_argument("--include-raw", action="store_true", help="include raw Confluence storage body for private raw evidence storage")
     parser.add_argument("--input-json", type=Path, default=None, help="offline Confluence API JSON fixture")
     parser.add_argument("--output-jsonl", type=Path, default=None)
     args = parser.parse_args(argv)

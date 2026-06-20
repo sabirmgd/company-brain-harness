@@ -123,6 +123,11 @@ promotion:
   require_write_flag: true
   require_provenance: true
   require_two_tags: true
+evidence:
+  normalized_dir: {STAGING_DIR}/evidence
+  raw_dir: {STAGING_DIR}/raw
+  raw_is_shared_knowledge: false
+  raw_requires_source_policy: true
 health:
   priority_folders:
     - Context
@@ -483,7 +488,8 @@ This policy controls what may enter the {company} company brain.
 - Company-owned sources can feed the shared brain after approval.
 - Customer-owned sources can feed only that customer's brain after approval.
 - Personal sources are excluded by default.
-- Raw material is private evidence staging, not shared knowledge.
+- Raw material stays in private raw evidence staging unless source policy says otherwise.
+- Normalized evidence is used for extraction and review; raw evidence is retained for audit and deeper source review.
 - Curated notes enter the brain only after review or an explicitly approved automation rule.
 
 ## Team Source Rule
@@ -547,9 +553,12 @@ Approved sources follow this path:
 approved source -> scoped pull -> private evidence -> extraction -> staged proposal -> review -> approved brain note
 ```
 
-Use `source-pull.py` for normalized connector records, then `source-extract.py`
-to create staged proposals. Cursor and dedupe state lives in
-`source-sync-state.json`.
+Use `source-pull.py` for normalized connector records. If the source policy
+allows raw retention and the connector emits `raw_body`, `raw_text`,
+`raw_content`, `raw_payload`, or `raw`, raw material is written under
+`90_Staging/raw/` and the normalized evidence receives a private pointer.
+Then use `source-extract.py` to create staged proposals. Cursor and dedupe state
+lives in `source-sync-state.json`.
 
 ## Maintenance
 
@@ -874,8 +883,10 @@ Human approval buffer between raw material and shared knowledge.
 | `rejected/` | Notes rejected as personal, irrelevant, unsafe, or wrong |
 | `revise/` | Notes that need edits before approval |
 | `evidence/` | Normalized private source evidence before extraction |
+| `raw/` | Private raw source material retained by policy for audit or deeper review |
 
 No proposed note becomes shared knowledge until approved.
+Raw files are not shared knowledge and should not be indexed by default.
 """
 
 
@@ -919,7 +930,11 @@ def planned_files(company: str, champion: str, operator: str) -> dict[str, str]:
         files[f"{STAGING_DIR}/{sub}/README.md"] = index_md(sub, f"Staging queue folder for {sub} notes.")
     files[f"{STAGING_DIR}/evidence/README.md"] = index_md(
         "evidence",
-        "Private normalized source evidence. This is not final brain knowledge.",
+        "Private normalized source evidence for extraction. This is not final brain knowledge.",
+    )
+    files[f"{STAGING_DIR}/raw/README.md"] = index_md(
+        "raw",
+        "Private raw source evidence retained by source policy. This is not final brain knowledge and should not be broadly indexed.",
     )
     return files
 

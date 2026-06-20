@@ -191,6 +191,7 @@ company-brain.yml
   team.yml
   90_Staging/
     evidence/
+    raw/
 Context/
 Daily/
 Projects/
@@ -210,7 +211,8 @@ Reasoning:
 - Humans need a conventions folder.
 - Writes need a staging area.
 - Teams need a source registry and team map.
-- Source pulls need cursor/dedupe state and private evidence staging.
+- Source pulls need cursor/dedupe state, normalized evidence staging, and an
+  optional private raw evidence lane.
 - Sensitive material needs an explicit restricted route.
 
 ## Layer 7: Source Registry
@@ -259,7 +261,8 @@ Default flow:
 
 ```text
 approved source
-  -> private evidence
+  -> private normalized evidence
+  -> optional private raw evidence
   -> extracted staged proposal
   -> human or owner review
   -> approve/reject/revise
@@ -280,7 +283,9 @@ Reasoning:
 
 Consequence:
 
-- `source-pull.py` stores only scoped, non-private evidence.
+- `source-pull.py` stores only scoped, non-private normalized evidence.
+- `source-pull.py` stores raw sidecars only under `90_Staging/raw/` when
+  `raw_policy.store_raw` allows it.
 - `source-extract.py` stages only allowed artifact types.
 - `stage-brain-note.py` previews by default.
 - `--write` is required to create a staged proposal.

@@ -321,6 +321,7 @@ The harness defaults to no-surprise behavior:
 - secrets must be referenced, never stored
 - personal connectors are excluded by default
 - raw transcripts/emails/exports are not shared knowledge by default
+- raw sidecars, when allowed by source policy, live under `90_Staging/raw/`
 - staged proposals require provenance and at least two tags
 - final promotion requires explicit approval
 

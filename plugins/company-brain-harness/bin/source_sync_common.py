@@ -16,6 +16,7 @@ PRIVATE_VISIBILITIES = {"private", "personal", "personal_private", "dm", "user_s
 RESTRICTED_VISIBILITIES = {"restricted", "confidential"}
 SECRET_MARKERS = ("sk-", "Bearer ", "BEGIN ", "PRIVATE KEY", "password=", "token=")
 SYNC_STATE_FILE = "source-sync-state.json"
+RAW_KEYS = ("raw_body", "raw_text", "raw_content", "raw_payload", "raw")
 
 
 def utc_now() -> str:
@@ -32,6 +33,15 @@ def evidence_dir(root: Path) -> Path:
 
 def evidence_path(root: Path, source_id: str) -> Path:
     return evidence_dir(root) / f"{slugify(source_id)}.jsonl"
+
+
+def raw_evidence_dir(root: Path) -> Path:
+    return staging_dir(root) / "raw"
+
+
+def raw_evidence_path(root: Path, source_id: str, external_id: str, extension: str) -> Path:
+    safe_extension = re.sub(r"[^a-z0-9]+", "", extension.lower()).strip(".") or "txt"
+    return raw_evidence_dir(root) / slugify(source_id) / f"{slugify(external_id)}.{safe_extension}"
 
 
 def state_path(root: Path) -> Path:
@@ -80,7 +90,7 @@ def looks_like_secret(value: Any) -> bool:
 
 
 def record_has_secret(record: dict[str, Any]) -> bool:
-    for key in ("title", "summary", "body", "text", "raw_body", "url"):
+    for key in ("title", "summary", "body", "text", "url", *RAW_KEYS):
         if looks_like_secret(record.get(key)):
             return True
     return False
@@ -122,6 +132,33 @@ def raw_store_policy(source: Source) -> str:
     if value is False:
         return "false"
     return str(value)
+
+
+def raw_storage_allowed(source: Source) -> bool:
+    return raw_store_policy(source) in {"private_only", "temporary"}
+
+
+def raw_content(record: dict[str, Any]) -> tuple[str | None, str]:
+    for key in RAW_KEYS:
+        if key not in record:
+            continue
+        value = record.get(key)
+        if value is None or value == "":
+            continue
+        if isinstance(value, (dict, list)):
+            return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n", "json"
+        text = str(value)
+        raw_format = str(record.get("raw_format") or record.get("raw_type") or "").lower()
+        if raw_format in {"html", "md", "markdown", "json", "txt", "text"}:
+            extension = "md" if raw_format == "markdown" else raw_format
+            extension = "txt" if extension == "text" else extension
+            return text, extension
+        if text.lstrip().startswith(("{", "[")):
+            return text, "json"
+        if "<html" in text[:200].lower() or "<p" in text[:200].lower():
+            return text, "html"
+        return text, "txt"
+    return None, "txt"
 
 
 def visibility(record: dict[str, Any]) -> str:

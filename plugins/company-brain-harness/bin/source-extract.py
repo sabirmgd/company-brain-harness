@@ -51,6 +51,7 @@ def note_body(record: dict) -> str:
     summary = str(record.get("summary") or "").strip()
     url = record.get("url")
     occurred_at = record.get("occurred_at")
+    raw_evidence_path = record.get("raw_evidence_path")
     parts = [f"# {title}", ""]
     if summary:
         parts.extend([summary, ""])
@@ -58,6 +59,8 @@ def note_body(record: dict) -> str:
         parts.extend([f"Occurred at: {occurred_at}", ""])
     if url:
         parts.extend([f"Source link: {url}", ""])
+    if raw_evidence_path:
+        parts.extend([f"Private raw evidence: `{raw_evidence_path}`", ""])
     return "\n".join(parts).strip() + "\n"
 
 

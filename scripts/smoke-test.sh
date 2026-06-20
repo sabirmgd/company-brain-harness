@@ -178,6 +178,7 @@ test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/source-sync-state.json"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/CONNECTIONS.md"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/approval-ledger.jsonl"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/evidence/README.md"
+test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/raw/README.md"
 
 python3 "$BIN_DIR/source-registry-check.py" \
   --root "$SCAFFOLD_ROOT" \
@@ -337,6 +338,100 @@ PY
 
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/evidence/acme-co-brain-root.jsonl"
 test -f "$SCAFFOLD_ROOT/00_Company_Brain_Conventions/90_Staging/proposed/acme-co-brain-root-source-doc-1.md"
+
+SCAFFOLD_ROOT="$SCAFFOLD_ROOT" python3 - <<'PY'
+from pathlib import Path
+import os
+
+path = Path(os.environ["SCAFFOLD_ROOT"], "00_Company_Brain_Conventions", "source-registry.yml")
+source = """
+  - id: raw-smoke-source
+    connector: manual
+    display_name: Raw Smoke Source
+    control_tier: company_owned
+    status: approved_staging_only
+    credential_ref: manual:none
+    owner: smoke-reviewer
+    review_owner: smoke-reviewer
+    capture:
+      allowed: true
+      mode: manual
+      approval_required: true
+      raw_retention_days: 14
+    scope:
+      include:
+        - smoke raw fixture
+      exclude:
+        - secrets
+        - personal material
+    raw_policy:
+      store_raw: private_only
+      retention_days: 14
+    routing:
+      default_destination: Resources/raw-smoke
+      staging_destination: 00_Company_Brain_Conventions/90_Staging
+      restricted_prefixes:
+        - Restricted
+    artifact_policy:
+      allowed:
+        - curated_note
+      not_allowed:
+        - credential_value
+    dedupe:
+      external_id_field: external_id
+      strategy: source_id_plus_external_id
+    sync:
+      enabled: true
+      cursor: null
+      last_successful_pull: null
+    audit:
+      last_reviewed: 2026-06-18
+      approved_by: smoke-reviewer
+"""
+text = path.read_text()
+path.write_text(text.replace("\nrules:\n", source + "\nrules:\n"))
+PY
+
+cat >/tmp/company-brain-raw-source-records.jsonl <<'EOF'
+{"external_id":"raw-doc-1","title":"Raw Smoke Doc","summary":"Normalized summary for extraction.","raw_body":"# Raw Smoke Doc\n\nThis raw material is private evidence only.","raw_format":"md","target_path":"Resources/raw-smoke/raw-doc-1.md","tags":["source","raw-smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"raw-cursor-1"}
+EOF
+
+python3 "$BIN_DIR/source-registry-check.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --source-id raw-smoke-source \
+  --for-capture >/tmp/company-brain-raw-source-check.json
+
+python3 "$BIN_DIR/source-pull.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --source-id raw-smoke-source \
+  --input-jsonl /tmp/company-brain-raw-source-records.jsonl \
+  --cursor raw-cursor-1 \
+  --write >/tmp/company-brain-raw-source-pull.json
+
+python3 "$BIN_DIR/source-extract.py" \
+  --root "$SCAFFOLD_ROOT" \
+  --source-id raw-smoke-source \
+  --write >/tmp/company-brain-raw-source-extract.json
+
+SCAFFOLD_ROOT="$SCAFFOLD_ROOT" python3 - <<'PY'
+import json
+import os
+from pathlib import Path
+
+root = Path(os.environ["SCAFFOLD_ROOT"])
+pull = json.loads(Path("/tmp/company-brain-raw-source-pull.json").read_text())
+if pull["accepted"] != 1 or pull["raw_stored"] != 1:
+    raise SystemExit(f"expected one raw sidecar: {pull}")
+raw_path = root / "00_Company_Brain_Conventions" / "90_Staging" / "raw" / "raw-smoke-source" / "raw-doc-1.md"
+if not raw_path.is_file():
+    raise SystemExit(f"missing raw sidecar: {raw_path}")
+evidence = [json.loads(line) for line in (root / "00_Company_Brain_Conventions" / "90_Staging" / "evidence" / "raw-smoke-source.jsonl").read_text().splitlines()]
+if evidence[0].get("raw_evidence_path") != "00_Company_Brain_Conventions/90_Staging/raw/raw-smoke-source/raw-doc-1.md":
+    raise SystemExit(f"raw evidence path missing from normalized evidence: {evidence}")
+proposal = (root / "00_Company_Brain_Conventions" / "90_Staging" / "proposed" / "raw-smoke-source-raw-doc-1.md").read_text()
+if "Private raw evidence:" not in proposal:
+    raise SystemExit("staged proposal did not reference private raw evidence")
+PY
 
 cat >/tmp/company-brain-source-records-update.jsonl <<'EOF'
 {"external_id":"source-doc-1","title":"Source Sync Smoke","summary":"This is the latest normalized source record and should replace the older staged proposal.","target_path":"Resources/source-sync-smoke.md","tags":["source","smoke"],"artifact_type":"curated_note","visibility":"team","author":"Smoke Source","cursor":"smoke-cursor-2"}
