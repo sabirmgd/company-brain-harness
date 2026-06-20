@@ -1,6 +1,6 @@
 ---
 name: brain-setup
-description: Scaffold a new team-first Company Brain root without populating company data. Use when the user asks to create the brain files, generate the scaffold, initialize a brain root, create routing, create config, create policy, create source registry, or run the setup step after owner guidance.
+description: Scaffold a new team-first Company Brain root without populating company data. Use when the user asks to create the brain files, generate the scaffold, initialize a brain root, create routing, create config, create policy, create source registry, choose the simple automated team model, or run the setup step after owner guidance.
 ---
 
 # Brain Setup
@@ -11,10 +11,13 @@ Create the reusable Company Brain structure. Do not populate strategy, customer,
 
 1. Choose the filesystem-backed root: Google Drive, git repo, shared volume, or local folder.
 2. Identify the Brain Owner and Brain Operator.
-3. Preview the scaffold with `brain-setup.py` before writing.
-4. Write only when the user explicitly wants the scaffold created.
-5. Run `source-registry-check.py`, `brain-health.py`, and `brain-lint.py` after setup.
-6. End with the population checklist for team members, not with invented content.
+3. Choose the operating profile:
+   - `governed`: default staged review model.
+   - `simple-team`: shared `ADD_TO_BRAIN/` folder, operator digest, and low-risk manual contribution automation.
+4. Preview the scaffold with `brain-setup.py` before writing.
+5. Write only when the user explicitly wants the scaffold created.
+6. Run `source-registry-check.py`, `brain-health.py`, and `brain-lint.py` after setup.
+7. End with the population checklist for team members, not with invented content.
 
 ## Package Boundary
 
@@ -33,7 +36,8 @@ python3 <plugin-root>/bin/brain-setup.py \
   --root "$BRAIN_ROOT" \
   --company-name "<Company Name>" \
   --champion "<Brain Owner Name>" \
-  --operator "<Brain Operator Name>"
+  --operator "<Brain Operator Name>" \
+  --operating-profile simple-team
 ```
 
 Write:
@@ -44,6 +48,7 @@ python3 <plugin-root>/bin/brain-setup.py \
   --company-name "<Company Name>" \
   --champion "<Brain Owner Name>" \
   --operator "<Brain Operator Name>" \
+  --operating-profile simple-team \
   --write
 ```
 
@@ -58,11 +63,13 @@ Ask only what is needed to scaffold safely:
 - first teammates to onboard
 - which shared source systems exist
 - which systems are personal and excluded
-- whether the first two weeks should be human-gated or autonomous staging only
+- whether they want the governed review model or the simpler team drop-zone model
+- whether low-risk manual contributions can be processed automatically
 
 ## Guardrails
 
 - Setup creates structure, policy, registry, schedule, and staging.
+- `simple-team` adds `ADD_TO_BRAIN/` and digest docs; it does not relax connector governance.
 - Teammates populate actual company knowledge later.
 - Personal Gmail, Calendar, Fireflies, Apollo, or other personal accounts are excluded by default.
 - Shared Apollo/CRM/workspace accounts can be registered as company sources, but only after source review.

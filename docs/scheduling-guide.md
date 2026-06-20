@@ -18,6 +18,9 @@ python3 plugins/company-brain-harness/bin/brain-schedule.py \
   --write
 ```
 
+`brain-schedule.py` reads `operating_profile` from `company-brain.yml` by
+default and adds the `ADD_TO_BRAIN/` digest step for `simple-team` roots.
+
 Daily loop:
 
 1. `connections-check.py --live`
@@ -26,10 +29,13 @@ Daily loop:
 4. `source-extract.py` to create staged proposals from allowed artifacts
 5. `brain-health.py`
 6. `brain-lint.py --stale-days 30`
-7. review staged proposals
-8. publish a short punch list
+7. `add-to-brain-digest.py` when `ADD_TO_BRAIN/` exists
+8. review staged proposals and flagged drop-zone items
+9. publish a short punch list
 
-During this period, all promotions require human approve/reject/revise.
+During this period, governed-profile promotions require human
+approve/reject/revise. In `simple-team`, low-risk manual drop-zone contributions
+may be processed automatically only when the owner has chosen that policy.
 
 ## Autonomous Mode
 
@@ -56,6 +62,8 @@ Allowed unattended work:
 - extraction of allowed artifacts into staged proposals
 - staged proposals from approved source instances
 - daily digest generation
+- `ADD_TO_BRAIN/` digest and low-risk manual contribution processing when
+  `simple-team` policy allows it
 
 Keep these human-approved:
 
@@ -65,6 +73,7 @@ Keep these human-approved:
 - notes that change strategy or commitments
 - restricted-folder access
 - new source approvals
+- broad personal-source capture
 
 ## Cron Shape
 
@@ -84,6 +93,9 @@ Connector adapters should produce normalized JSONL before calling
 `source-pull.py`; the harness owns privacy filtering, dedupe state, extraction,
 and staging.
 
+The harness does not require a scheduler product. Claude/Codex scheduled tasks,
+cron, launchd, CI, or a local operator agent can run the same commands.
+
 ## Promotion Rule
 
 Auto-promotion should be explicit and narrow:
@@ -97,3 +109,7 @@ Auto-promotion should be explicit and narrow:
 - note has provenance and tags
 
 If any condition is missing, stage only.
+
+Manual drop-zone contributions in `simple-team` follow the same safety spirit:
+only clearly low-risk company material can bypass item-by-item approval, and
+anything sensitive or unclear is flagged.

@@ -22,6 +22,7 @@ $brain-operator
 - source registry check
 - health score
 - lint
+- `ADD_TO_BRAIN/` digest when using `simple-team`
 - staged proposal queue
 - punch list
 
@@ -35,7 +36,8 @@ $brain-operator
 
 ## What You Should Not Do
 
-- do not promote notes without approval
+- do not promote governed-profile notes without approval
+- do not process flagged drop-zone files without review
 - do not enable proposed sources by yourself
 - do not inspect restricted folders
 - do not treat warnings as facts without review

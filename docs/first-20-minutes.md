@@ -25,7 +25,8 @@ $brain-owner
 2. Where the brain should live.
 3. Who should be the Brain Operator.
 4. Whether to create a 20-minute starter setup or team pilot setup.
-5. Whether to write the scaffold after preview.
+5. Whether to use `governed` or `simple-team`.
+6. Whether to write the scaffold after preview.
 
 ## What Gets Created
 
@@ -38,12 +39,14 @@ $brain-owner
 - staging queue
 - operating schedule
 - starter folders and indexes
+- `ADD_TO_BRAIN/` and `system/digests/` if `simple-team` is selected
 
 ## What Does Not Happen Yet
 
 - no broad connector capture
 - no personal account capture
-- no automatic promotion
+- no automatic source connector capture
+- no automatic sensitive or unclear promotion
 - no restricted-folder inspection
 - no invented company strategy, customer, or team knowledge
 

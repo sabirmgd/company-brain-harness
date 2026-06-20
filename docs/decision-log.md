@@ -280,3 +280,31 @@ Implication:
 - Docs should start with what users say to Claude/Codex.
 - CLIs remain the engine and verification surface.
 - The website should mirror the same roles and progressive setup stages.
+
+## D014: Simple-Team Profile Supports Low-Friction Manual Contribution
+
+Decision: support an explicit `simple-team` operating profile alongside the
+default `governed` profile.
+
+Accepted:
+
+- `ADD_TO_BRAIN/` as a customer-facing manual contribution drop zone.
+- `add-to-brain-digest.py` as the deterministic operator digest.
+- Low-risk manual contributions may be processed automatically when policy
+  allows it.
+- Sensitive, private, credential-like, HR, legal, finance, or unclear material
+  remains review-gated.
+
+Rejected:
+
+- Making every customer start with strict item-by-item approval.
+- Treating the simple profile as permission to capture personal email, calendar,
+  meeting recorder, chat, CRM, or broad raw exports.
+
+Implication:
+
+- `brain-setup.py --operating-profile simple-team` generates the drop zone,
+  digest folder, profile docs, and matching config.
+- Source connectors remain governed by `source-registry.yml` in all profiles.
+- Docs and skill routing must include phrases like "I added something to the
+  company brain folder."

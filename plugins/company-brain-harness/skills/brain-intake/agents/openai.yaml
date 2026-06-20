@@ -1,6 +1,6 @@
 interface:
   display_name: "Brain Intake"
-  short_description: "Stage a doc, link, pasted text, or note."
-  default_prompt: "Use $brain-intake when I say add this to the brain, ingest this doc, file this note, or where should this go."
+  short_description: "Stage or process a doc, link, pasted text, or note."
+  default_prompt: "Use $brain-intake when I say add this to the brain, ingest this doc, file this note, where should this go, or add this document from ADD_TO_BRAIN."
 policy:
   allow_implicit_invocation: true

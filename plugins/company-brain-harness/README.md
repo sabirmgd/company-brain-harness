@@ -7,6 +7,10 @@ This plugin is intentionally generic. Set the target brain with `BRAIN_ROOT` or
 `COMPANY_BRAIN_ROOT`; the storage backend can be Drive, git, a shared volume, or
 any filesystem-backed root.
 
+The scaffold supports two profiles: `governed` for strict staged approval and
+`simple-team` for an `ADD_TO_BRAIN/` drop zone plus operator digest automation.
+Source connectors remain governed in both profiles.
+
 ## Install
 
 Install this as one plugin bundle. The bundle includes the `skills/` routing
@@ -67,6 +71,7 @@ add what I know", or "can Slack feed the brain" to the right skill.
 The bundled `bin/` CLIs are preview-first and generic:
 
 - `brain-setup.py`
+- `add-to-brain-digest.py`
 - `connections-check.py`
 - `source-registry-check.py`
 - `confluence-export.py`
@@ -88,6 +93,8 @@ stale duplicate proposals.
 Optional raw source material is stored only under `system/staging/raw/` when the
 registered source policy allows raw retention; it is never promoted directly as
 shared knowledge.
+`add-to-brain-digest.py` is for manual team drop-zone contributions; it does not
+replace source registry enforcement for connectors.
 
 No CLI should ingest personal connectors into a shared company brain. Company capture
 requires an approved `capture-policy.md` and a registered source instance in

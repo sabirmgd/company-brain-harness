@@ -13,7 +13,7 @@ Generate the operating schedule. The schedule is about checks, staging, review, 
 2. Choose `human` mode for the first two weeks unless the user explicitly asks for autonomous mode.
 3. Preview `schedule.md`.
 4. Write only with explicit permission or when the user asked to update the schedule.
-5. Include daily checks: connections, sources, health, lint, staged queue, and punch list.
+5. Include daily checks: connections, sources, health, lint, `ADD_TO_BRAIN/` digest when present, staged queue, and punch list.
 6. State what can run unattended and what always needs human approval.
 
 ## Command Pattern
@@ -47,6 +47,7 @@ python3 <plugin-root>/bin/brain-schedule.py \
 
 - `human`: checks and staging can run, promotion requires explicit human approve/reject/revise.
 - `autonomous`: approved sources may stage proposals unattended; auto-promotion is only for explicit low-risk categories.
+- `simple-team`: not a schedule mode, but the schedule should include drop-zone digest and low-risk manual contribution handling when the profile is active.
 
 ## Guardrails
 

@@ -70,7 +70,24 @@ python3 plugins/company-brain-harness/bin/brain-setup.py \
   --operator "Brain Operator"
 ```
 
-Then write the scaffold:
+Choose an operating profile:
+
+- `governed`: default. Every shared note goes through staged review.
+- `simple-team`: creates `ADD_TO_BRAIN/`, `system/digests/`, and a low-friction
+  manual contribution loop for small teams.
+
+For the simple team model:
+
+```bash
+python3 plugins/company-brain-harness/bin/brain-setup.py \
+  --root "$BRAIN_ROOT" \
+  --company-name "Acme Co" \
+  --champion "Brain Owner" \
+  --operator "Brain Operator" \
+  --operating-profile simple-team
+```
+
+Then write the scaffold. For the default governed model:
 
 ```bash
 python3 plugins/company-brain-harness/bin/brain-setup.py \
@@ -80,6 +97,8 @@ python3 plugins/company-brain-harness/bin/brain-setup.py \
   --operator "Brain Operator" \
   --write
 ```
+
+For the simple team model, add `--operating-profile simple-team`.
 
 This creates routing, policy, source registry, staging, schedule, folder
 indexes, and team scaffolding. It does not populate company data.
@@ -175,11 +194,16 @@ $repo-aware-poc
 ## 6. Team Operating Model
 
 Every teammate connects to the same brain root. Each person can use their own
-Claude/Codex session, but shared writes go through the same staged approval
-path:
+Claude/Codex session. The default governed path is:
 
 ```text
 source or interview -> staged proposal -> review -> approved note -> brain folder
+```
+
+The simpler team path is:
+
+```text
+teammate drops file in ADD_TO_BRAIN -> operator digest -> low-risk update or review flag
 ```
 
 The first two weeks should normally be human-gated:
@@ -192,3 +216,6 @@ The first two weeks should normally be human-gated:
 After trust is established, scheduled checks and approved-source staging can run
 unattended. Auto-promotion should stay limited to low-risk categories with an
 explicit policy rule.
+
+Source connectors stay governed in both profiles. The drop zone is for manual
+team contributions, not broad personal email/calendar/meeting/chat exports.

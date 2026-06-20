@@ -1,6 +1,6 @@
 interface:
   display_name: "Brain Contribute"
-  short_description: "Help a team member add what they know."
-  default_prompt: "Use $brain-contribute when I say I want to add what I know, document my role, share my process, or update stale facts."
+  short_description: "Help a team member add what they know or drop a file."
+  default_prompt: "Use $brain-contribute when I say I want to add what I know, document my role, share my process, update stale facts, or I added a file."
 policy:
   allow_implicit_invocation: true

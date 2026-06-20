@@ -51,6 +51,8 @@ internally, but it should not make the owner choose scripts.
 | "Is the brain ready?" | `brain-health` | Report readiness and blockers. |
 | "Schedule the daily check." | `brain-schedule` | Create human-gated or autonomous operating schedule. |
 | "Run this without a human." | `brain-schedule` | Define automation guardrails and what still requires approval. |
+| "I added something to the company brain folder." | `brain-operator` | Refresh the drop-zone digest and process or flag additions. |
+| "Process ADD_TO_BRAIN." | `brain-operator` | Scan the simple-team drop zone and produce next actions. |
 
 Operator workflows can be automated over time, but promotion and sensitive
 capture remain explicit decisions unless policy says otherwise.
@@ -63,6 +65,7 @@ capture remain explicit decisions unless policy says otherwise.
 | "Document my role." | `brain-contribute` | Capture role knowledge and reviewer. |
 | "Share my process." | `brain-contribute` | Turn workflow knowledge into staged notes. |
 | "Add this SOP." | `brain-contribute` or `brain-intake` | Use contribution for Q&A, intake for a provided artifact. |
+| "I added a file." | `brain-contribute` or `brain-operator` | If it is in `ADD_TO_BRAIN/`, digest it; otherwise guide contribution. |
 | "This fact is stale." | `brain-contribute` and `brain-lint` | Stage a correction and flag stale source. |
 | "Can my personal account feed the brain?" | `sources-check` | Default to no unless delegated, scoped, approved, and registered. |
 | "Where should this doc go?" | `brain-intake` | Classify and stage the artifact for review. |
@@ -95,6 +98,7 @@ reference.
 | User says | Skill | What the agent should do |
 |---|---|---|
 | "Add this doc to the brain." | `brain-intake` | Stage the artifact with provenance. |
+| "Add this document from ADD_TO_BRAIN." | `brain-intake` | Classify the dropped artifact and process or stage it according to profile. |
 | "Turn this into a brain note." | `brain-intake` | Create a proposed note, not a direct write. |
 | "Interview me to populate the brain." | `brain-onboard` | Ask structured questions and stage notes. |
 | "Build a POC." | `repo-aware-poc` | Read repo map and stack rules before implementation. |
@@ -105,6 +109,7 @@ reference.
 - Broad setup, unclear role, or first session: `brain-start`.
 - Owner/founder/admin/team lead decisions: `brain-owner`.
 - Daily checks, queue review, next actions: `brain-operator`.
+- Drop-zone digest and simple-team review flags: `brain-operator`.
 - A team member adding what they personally know: `brain-contribute`.
 - A structured interview to collect broader context: `brain-onboard`.
 - A provided artifact, doc, pasted text, or link: `brain-intake`.

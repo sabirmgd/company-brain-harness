@@ -18,8 +18,9 @@ The agent should run:
 4. extraction into staged proposals
 5. health check
 6. lint
-7. staged queue review
-8. punch list
+7. `ADD_TO_BRAIN/` digest when using `simple-team`
+8. staged queue and flagged item review
+9. punch list
 
 Output:
 
@@ -62,7 +63,9 @@ Automate checks before automating writes.
 Good first automation:
 
 - daily health/lint/source digest
+- `ADD_TO_BRAIN/` digest for simple-team manual contributions
 - staged proposals from approved low-risk sources
+- low-risk manual drop-zone processing when policy allows it
 
 Keep human-approved:
 
@@ -71,3 +74,4 @@ Keep human-approved:
 - strategy-changing notes
 - restricted access
 - new source approvals
+- broad personal-source connector capture

@@ -1,6 +1,6 @@
 ---
 name: brain-owner
-description: Guide the Brain Owner, founder, admin, or team lead through setup and approval decisions. Use when the user says I own this brain, I want to launch the company brain, approve policy, approve sources, choose the operator, invite the team, decide restricted access, or check pilot readiness.
+description: Guide the Brain Owner, founder, admin, or team lead through setup and approval decisions. Use when the user says I own this brain, I want to launch the company brain, approve policy, approve sources, choose the operator, choose simple-team or governed mode, invite the team, decide restricted access, or check pilot readiness.
 ---
 
 # Brain Owner
@@ -14,6 +14,7 @@ Help the person accountable for the company brain make the minimum decisions nee
 - approve or reject source instances
 - decide restricted folder access
 - name the operator
+- choose `governed` or `simple-team`
 - approve the first operating schedule
 - decide when the pilot is ready for teammates
 
@@ -22,14 +23,15 @@ Help the person accountable for the company brain make the minimum decisions nee
 1. Ask for the company name.
 2. Ask where the brain should live.
 3. Ask who should be the Brain Operator.
-4. Preview setup with `brain-setup.py`.
-5. If the user asks to proceed, run setup with `--write`.
-6. Run readiness checks.
-7. Walk the owner through the first three approvals:
+4. Ask whether they want strict governed review or simple-team drop-zone automation.
+5. Preview setup with `brain-setup.py`.
+6. If the user asks to proceed, run setup with `--write`.
+7. Run readiness checks.
+8. Walk the owner through the first three approvals:
    - capture policy
    - restricted folder access
    - source registry defaults
-8. Produce a short launch checklist.
+9. Produce a short launch checklist.
 
 ## Plain-Language Output
 
@@ -55,5 +57,6 @@ Do not ask for credentials in chat. Ask for credential references only.
 
 - Personal accounts are excluded by default.
 - Shared company accounts can be proposed, not silently activated.
+- In `simple-team`, low-risk manual drop-zone contributions can be processed when the owner allows it.
 - Meeting, HR, legal, finance, and strategy-changing notes stay human-approved during the pilot.
 - Restricted access is a permission decision, not just a folder name.

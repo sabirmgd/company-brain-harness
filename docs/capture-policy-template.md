@@ -22,6 +22,7 @@ review policy.
 | Source | Status | Notes |
 |---|---|---|
 | Company Drive / shared brain root | Allowed | Storage backend for curated knowledge |
+| `ADD_TO_BRAIN/` manual drop zone | Allowed when `simple-team` is chosen | Low-risk teammate contributions; sensitive/unclear files require review |
 | Company Fireflies workspace | Allowed after owner approval | Shared company meeting source |
 | Company Google Workspace account or service account | Allowed after admin approval | Gmail, Calendar, Docs, Sheets automation |
 | Company GitHub org | Allowed | Repo index and stack guardrails |
@@ -82,6 +83,16 @@ source -> private evidence -> proposal -> human review -> approved note
 ```
 
 Rejected or personal material is not promoted to the shared brain.
+
+In `simple-team`, manual files intentionally added to `ADD_TO_BRAIN/` can use a
+simpler path:
+
+```text
+manual teammate contribution -> digest -> low-risk update or review flag
+```
+
+This exception does not apply to connector exports, personal inboxes, personal
+calendars, personal meeting recorders, or broad raw dumps.
 
 ## Sensitive Routing
 

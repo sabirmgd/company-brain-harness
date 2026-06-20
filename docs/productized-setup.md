@@ -50,11 +50,24 @@ Agent flow:
 1. Route to `brain-start`.
 2. Ask whether the user is setting up, operating, or contributing.
 3. If setup, route to `brain-owner`.
-4. Ask for company name, brain root, Brain Operator, and starter/team mode.
+4. Ask for company name, brain root, Brain Operator, and operating profile.
 5. Preview scaffold.
 6. Write scaffold only after explicit approval.
 7. Run readiness checks.
 8. Give one next action.
+
+## Operating Profile Choice
+
+Keep this customer-facing:
+
+| User says | Profile | Meaning |
+|---|---|---|
+| "We want review before anything enters the brain." | `governed` | staged proposal -> review -> promotion |
+| "We just need the team to drop docs and keep moving." | `simple-team` | `ADD_TO_BRAIN/` -> operator digest -> low-risk update or review flag |
+
+The simple profile reduces team friction. It does not remove source governance:
+connectors, personal accounts, and raw exports still require source registry and
+capture policy checks.
 
 ## What Gets Baked Into The Scaffold
 
@@ -67,6 +80,7 @@ Agent flow:
 - `invite-team.md`
 - `today.md`
 - `next-actions.md`
+- `ADD_TO_BRAIN/` and `system/digests/` when the profile is `simple-team`
 - routing/config/policy/source registry/staging/indexes
 
 These files turn the brain root itself into an onboarding product.
@@ -84,6 +98,7 @@ These files turn the brain root itself into an onboarding product.
 ### 2. First Week
 
 - Team Members run `brain-contribute`.
+- In `simple-team`, Team Members can also drop safe files into `ADD_TO_BRAIN/`.
 - Operator runs daily check.
 - Owner reviews staged notes and source proposals.
 - Personal sources stay excluded.

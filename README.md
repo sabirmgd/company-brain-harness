@@ -15,7 +15,7 @@ provides:
 - Agent Skills for setup, intake, onboarding, meeting capture, approval,
   scheduling, health, lint, sources, and repo-aware POCs
 - preview-first CLIs for setup, validation, staging, approval, promotion, lint,
-  and scheduling
+  digesting, and scheduling
 - templates for capture policy, source registry, team onboarding, and operating
   cadence
 - a testable release gate that proves the harness works against a generic brain
@@ -40,6 +40,19 @@ curated notes, and keep the brain fresh over time.
 The harness does not populate company knowledge by itself. Each company's team
 members supply the real context through onboarding, intake, approved source
 capture, and review.
+
+## Operating Profiles
+
+The harness supports two generic operating profiles:
+
+| Profile | Best for | User experience |
+|---|---|---|
+| `governed` | Teams that want every shared note reviewed before promotion | Source/interview material becomes staged proposals, then a reviewer approves |
+| `simple-team` | Small teams that want low-friction contribution and light automation | Team members drop material in `ADD_TO_BRAIN/`; the operator digest processes low-risk manual contributions and flags sensitive/unclear items |
+
+Source connectors stay governed in both profiles. The simple profile makes
+manual team contribution easier; it does not turn personal email, calendar,
+meeting, CRM, or chat accounts into automatic company sources.
 
 ## Simple User Experience
 
@@ -73,7 +86,8 @@ flow should be role-based and guided.
 | Skills | Shared `SKILL.md` surfaces | Same workflows work in Claude and Codex |
 | CLIs | Stdlib Python, preview-first | Portable, easy to validate, no dependency setup |
 | Writes | `--write` required for side effects | Prevents accidental shared-brain mutation |
-| Knowledge flow | source/interview -> staging -> approval -> brain | Raw material is not automatically shared knowledge |
+| Operating profiles | `governed` and `simple-team` | Customers can choose strict review or simpler manual-contribution automation |
+| Knowledge flow | source/interview -> staging -> approval or approved automation rule -> brain | Raw material is not automatically shared knowledge |
 | Source model | Source instance, not connector type | "Fireflies" or "Apollo" is too broad; exact workspace/account must be approved |
 | Team model | Brain Owner, Brain Operator, Team Member | A company brain is not one person's private second brain |
 | Safety | Restricted prefixes skipped and refused by default | Sensitive HR/legal/finance/owner material must not be broadly indexed |
@@ -209,6 +223,17 @@ python3 plugins/company-brain-harness/bin/brain-setup.py \
   --operator "Brain Operator"
 ```
 
+For the simpler team drop-zone model:
+
+```bash
+python3 plugins/company-brain-harness/bin/brain-setup.py \
+  --root "$BRAIN_ROOT" \
+  --company-name "Acme Co" \
+  --champion "Brain Owner" \
+  --operator "Brain Operator" \
+  --operating-profile simple-team
+```
+
 Write the scaffold:
 
 ```bash
@@ -307,6 +332,7 @@ They also read `company-brain.yml` / `company-os.yml` when present.
 | CLI | Purpose | Writes? |
 |---|---|---|
 | `brain-setup.py` | Scaffold a new team brain | Only with `--write` |
+| `add-to-brain-digest.py` | Scan `ADD_TO_BRAIN/` and generate an operator digest | Only with `--write` |
 | `connections-check.py` | Check root, routing, optional connectors | No |
 | `source-registry-check.py` | Validate source instances and capture eligibility | No |
 | `confluence-export.py` | Export scoped Confluence pages to normalized JSONL | No brain writes |
@@ -336,7 +362,7 @@ The harness defaults to no-surprise behavior:
 - raw transcripts/emails/exports are not shared knowledge by default
 - raw sidecars, when allowed by source policy, live under `system/staging/raw/`
 - staged proposals require provenance and at least two tags
-- final promotion requires explicit approval
+- final promotion requires explicit approval or an explicit low-risk manual automation rule
 
 ## Source Registry
 
@@ -379,6 +405,15 @@ Keep the first pilot human-gated. After the staging queue is trusted, scheduled
 checks and approved-source staging can run without constant supervision.
 Auto-promotion should stay narrow and explicitly approved.
 
+For `simple-team`, the first habit is even simpler:
+
+```text
+teammate drops file in ADD_TO_BRAIN -> operator digest -> low-risk update or review flag
+```
+
+This path is for manual team contributions only. Connector capture still needs
+an approved source instance.
+
 ## Validation
 
 Run the release gate:
@@ -400,6 +435,7 @@ The smoke test proves:
 - generic root support
 - setup preview does not write
 - setup write creates the scaffold
+- simple-team setup creates `ADD_TO_BRAIN/` and a digest flow
 - source registry enforcement allows active root source
 - proposed Apollo source is refused for capture
 - schedule preview/write works
@@ -416,6 +452,7 @@ The smoke test proves:
 - [First Week](docs/first-week.md)
 - [Operating Rhythm](docs/operating-rhythm.md)
 - [Productized Setup Plan](docs/productized-setup.md)
+- [Simple Team Profile](docs/simple-team-profile.md)
 - [Quickstart](docs/quickstart.md)
 - [Harness Architecture](docs/harness-architecture.md)
 - [Decision Log](docs/decision-log.md)

@@ -26,6 +26,7 @@ new company, founder, or team lead.
   - `repo-aware-poc`
 - Generic preview-first CLIs:
   - `brain-setup.py`
+  - `add-to-brain-digest.py`
   - `connections-check.py`
   - `source-registry-check.py`
   - `source-pull.py`
@@ -52,6 +53,7 @@ new company, founder, or team lead.
 - Whether the engine identity is a dedicated company account.
 - Workspace admin approval for Google Workspace or equivalent service-account access.
 - Restricted folder permissions, especially owner/legal/finance/HR material.
+- Operating profile: `governed` or `simple-team`.
 - Who reviews the morning staging queue for the first 2-3 weeks.
 
 ## What To Demo
@@ -62,10 +64,11 @@ new company, founder, or team lead.
 4. Run the Brain Operator daily check.
 5. Configure one safe source in preview with `source-setup`.
 6. Stage a small safe contribution with `brain-contribute`.
-7. Approve it with `approve-brain-notes`.
-8. Show the final note in the correct folder with provenance.
-9. Show that a restricted-folder write is refused by default.
-10. Show `repo-aware-poc` reading repo/stack guardrails before a prototype.
+7. If using `simple-team`, drop a safe file into `ADD_TO_BRAIN/` and run the digest.
+8. Approve it with `approve-brain-notes` when using the governed path.
+9. Show the final note in the correct folder with provenance.
+10. Show that a restricted-folder write is refused by default.
+11. Show `repo-aware-poc` reading repo/stack guardrails before a prototype.
 
 ## What Not To Demo Yet
 
@@ -80,8 +83,9 @@ new company, founder, or team lead.
 For the first two weeks:
 
 - Capture nothing automatically except explicitly approved company sources.
-- Stage every note before promotion.
-- Require human approval for every promoted note.
+- In governed mode, stage every note before promotion and require human approval.
+- In simple-team mode, only low-risk manual drop-zone contributions may bypass
+  item-by-item approval.
 - Review `connections-check`, `sources-check`, `brain-health`, and `brain-lint`
   daily.
 - Track missing docs as a punch list, not as failure.

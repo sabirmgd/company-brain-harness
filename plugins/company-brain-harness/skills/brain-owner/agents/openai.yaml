@@ -1,6 +1,6 @@
 interface:
   display_name: "Brain Owner"
-  short_description: "Guide owner setup, approvals, and launch readiness."
-  default_prompt: "Use $brain-owner when I say I own this brain, launch the company brain, approve policy, approve sources, or invite the team."
+  short_description: "Guide owner setup, profile choice, approvals, and launch readiness."
+  default_prompt: "Use $brain-owner when I say I own this brain, launch the company brain, approve policy, approve sources, choose simple-team or governed mode, or invite the team."
 policy:
   allow_implicit_invocation: true

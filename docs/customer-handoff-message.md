@@ -55,6 +55,7 @@ Run today's company brain check.
   - approved source pulling
   - source extraction into staged proposals
   - source cursor/dedupe state inspection
+  - add-to-brain digest generation
   - brain health scoring
   - freshness/provenance lint
   - schedule generation
@@ -95,10 +96,13 @@ filled through the staged workflow.
 - Approve Google Workspace or equivalent service-account access.
 - Lock restricted folders, especially owner/legal/finance/HR material.
 - Pick who reviews the morning staging queue during the first 2-3 week pilot.
+- Choose the operating profile:
+  - governed review for strict approval
+  - simple-team for `ADD_TO_BRAIN/` drop-zone contribution and digest automation
 
 ## How Information Gets Added
 
-Nothing should go straight from raw source to shared brain.
+Raw source material should not go straight to the shared brain.
 
 The approved path is:
 
@@ -111,6 +115,10 @@ People can add knowledge in three ways:
 1. Drop/paste a document and run the intake skill.
 2. Answer a guided onboarding interview.
 3. Use an approved company source after the capture policy is approved.
+
+If the brain uses `simple-team`, teammates can also put safe files in
+`ADD_TO_BRAIN/`. The operator digest can process low-risk manual contributions
+and flag anything sensitive or unclear.
 
 Personal accounts are excluded by default. A teammate can delegate a narrow
 client/project scope, but the company owner must approve the scope, privacy
@@ -129,7 +137,9 @@ Morning:
   extract allowed source artifacts into staged proposals
   run brain health
   run brain lint
+  run ADD_TO_BRAIN digest if simple-team is enabled
   review staged notes
+  review flagged drop-zone files
   approve/reject/revise proposed notes
 
 During the day:
@@ -141,8 +151,9 @@ Evening:
 ```
 
 After the queue is clean for a week, low-risk categories can be considered for
-auto-promotion. Meeting-derived, sensitive, HR/legal/finance, and strategy notes
-should stay human-approved.
+auto-promotion. In `simple-team`, low-risk manual drop-zone contributions can be
+processed earlier if the owner chooses that policy. Meeting-derived, sensitive,
+HR/legal/finance, and strategy notes should stay human-approved.
 
 ## What This Becomes
 

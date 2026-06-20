@@ -30,7 +30,8 @@ $brain-owner
 2. Brain root location.
 3. Brain Operator.
 4. Restricted folder policy.
-5. Human-gated or autonomous schedule.
+5. Operating profile: `governed` or `simple-team`.
+6. Human-gated or autonomous schedule.
 
 Start with human-gated mode unless the team already trusts the workflow.
 
@@ -41,3 +42,5 @@ Start with human-gated mode unless the team already trusts the workflow.
 - Raw transcripts and emails are not shared knowledge by default.
 - Sensitive material stays restricted or out.
 - Final promotion requires review during the pilot.
+- In `simple-team`, low-risk manual files in `ADD_TO_BRAIN/` may be processed
+  when policy allows it.

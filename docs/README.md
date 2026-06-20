@@ -13,6 +13,8 @@ Start here when reviewing, installing, operating, or productizing the harness.
   downloads, where scripts live, and how first use works.
 - [Productized Setup Plan](productized-setup.md): how the role-based setup
   becomes a customer-facing product.
+- [Simple Team Profile](simple-team-profile.md): drop-zone contribution and
+  operator digest model.
 - [Quickstart](quickstart.md): install, scaffold, verify, and use skills.
 - [Harness Architecture](harness-architecture.md): how the layers fit together.
 - [Naming Conventions](naming-conventions.md): canonical brain/system taxonomy

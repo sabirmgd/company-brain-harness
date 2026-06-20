@@ -23,6 +23,8 @@ filesystem-backed brain root
         +-- conventions/
         +-- source-registry.yml
         +-- staging/
+        +-- digests/      optional simple-team operator digests
+        +-- ADD_TO_BRAIN/ optional simple-team contribution drop zone
         +-- routed knowledge folders
 ```
 
@@ -148,6 +150,7 @@ CLI responsibilities:
 | CLI | Responsibility |
 |---|---|
 | `brain-setup.py` | Create the portable scaffold |
+| `add-to-brain-digest.py` | Scan the simple-team drop zone and write an operator digest |
 | `connections-check.py` | Check root, routing, and optional connector readiness |
 | `source-registry-check.py` | Enforce source-instance capture eligibility |
 | `confluence-export.py` | Export scoped Confluence pages into normalized JSONL |
@@ -202,6 +205,13 @@ brain/operations/team/
 brain/operations/skills/
 brain/restricted/
 brain/archive/
+
+# simple-team profile only
+ADD_TO_BRAIN/
+  team-contributions/
+  meeting-notes/
+  source-documents/
+system/digests/
 ```
 
 Reasoning:
@@ -214,6 +224,8 @@ Reasoning:
 - Source pulls need cursor/dedupe state, normalized evidence staging, and an
   optional private raw evidence lane.
 - Sensitive material needs an explicit restricted route.
+- Small teams may need a simpler manual contribution surface before connector
+  automation is ready.
 
 ## Layer 7: Source Registry
 
@@ -273,6 +285,12 @@ interview/document
   -> human or owner review
   -> approve/reject/revise
   -> final brain note
+
+simple-team manual contribution
+  -> ADD_TO_BRAIN
+  -> operator digest
+  -> low-risk automation or review flag
+  -> final brain note or staged proposal
 ```
 
 Reasoning:
@@ -290,6 +308,10 @@ Consequence:
 - `stage-brain-note.py` previews by default.
 - `--write` is required to create a staged proposal.
 - Final promotion goes through the approval ledger.
+- `simple-team` relaxes manual contribution friction, not source connector
+  governance.
+- `add-to-brain-digest.py` records metadata and risk flags without copying full
+  document contents into the digest.
 
 ## Layer 9: Safety
 
@@ -328,6 +350,12 @@ First two-week cadence:
 
 ```text
 connections -> sources -> pull/extract -> health -> lint -> staged queue -> punch list
+```
+
+Simple-team cadence:
+
+```text
+connections -> sources -> health -> lint -> ADD_TO_BRAIN digest -> low-risk updates -> flagged review list
 ```
 
 Reasoning:

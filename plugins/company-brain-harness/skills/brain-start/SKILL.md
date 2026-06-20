@@ -62,6 +62,7 @@ Ask these progressively, one at a time:
 2. "Where should the brain live?"
 3. "Are you the Brain Owner, Brain Operator, or a Team Member?"
 4. "Do you want the 20-minute starter setup or the team pilot setup?"
+5. For setup: "Do you want the governed review model or the simpler team drop-zone model?"
 
 ## Background Actions
 
@@ -74,6 +75,7 @@ python3 <plugin-root>/bin/source-registry-check.py ...
 python3 <plugin-root>/bin/brain-health.py ...
 python3 <plugin-root>/bin/brain-lint.py ...
 python3 <plugin-root>/bin/brain-schedule.py ...
+python3 <plugin-root>/bin/add-to-brain-digest.py ...
 ```
 
 Show results as plain-language status:
@@ -87,6 +89,7 @@ Show results as plain-language status:
 
 - Setup and schedule commands preview first unless the user explicitly asks to create/update files.
 - Do not populate company facts during setup.
+- Use `--operating-profile simple-team` only when the owner wants a shared drop zone and digest automation.
 - Do not connect personal accounts as company sources.
-- Do not promote notes without approval.
+- Do not promote governed-profile, sensitive, or unclear notes without approval.
 - Do not inspect restricted folders.

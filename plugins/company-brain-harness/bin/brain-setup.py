@@ -19,6 +19,11 @@ DEFAULT_ROOT = (
 )
 CONVENTIONS_DIR = "system"
 STAGING_DIR = f"{CONVENTIONS_DIR}/staging"
+DIGESTS_DIR = f"{CONVENTIONS_DIR}/digests"
+DROP_ZONE_DIR = "ADD_TO_BRAIN"
+PROFILE_GOVERNED = "governed"
+PROFILE_SIMPLE_TEAM = "simple-team"
+OPERATING_PROFILES = (PROFILE_GOVERNED, PROFILE_SIMPLE_TEAM)
 FOLDERS = {
     "brain": "Curated company knowledge. Harness state lives under system/.",
     "brain/company": "Stable company context, operating model, strategy, history, and principles.",
@@ -43,6 +48,10 @@ FOLDERS = {
 }
 
 
+def is_simple_team(operating_profile: str) -> bool:
+    return operating_profile == PROFILE_SIMPLE_TEAM
+
+
 def slugify(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-") or "company"
 
@@ -56,12 +65,33 @@ def frontmatter(tags: list[str]) -> str:
     return "\n".join(lines)
 
 
-def root_claude(company: str, champion: str) -> str:
+def root_claude(company: str, champion: str, operating_profile: str = PROFILE_GOVERNED) -> str:
+    simple = is_simple_team(operating_profile)
+    drop_zone_route = f"| Team drop-zone contributions | `{DROP_ZONE_DIR}/` |\n" if simple else ""
+    shared_write_rule = (
+        f"Team contributions in `{DROP_ZONE_DIR}/` may be digested and processed automatically when low-risk; "
+        "sensitive, unclear, private, or restricted material still requires owner/operator review."
+        if simple else
+        "Shared writes go through staging unless the Brain Owner explicitly approves direct admin edits."
+    )
+    simple_profile_section = f"""
+## Simple Team Profile
+
+This brain uses the `simple-team` operating profile. Nontechnical teammates can
+drop material into `{DROP_ZONE_DIR}/` or ask the agent to add it. The operator
+loop should scan the drop zone, produce a digest, process low-risk manual
+contributions into curated notes, and flag anything sensitive or unclear.
+
+Source connectors remain governed. Do not use this profile as permission to
+capture broad personal email, calendar, meeting, CRM, or chat data.
+""" if simple else ""
     return f"""# {company} Company Brain
 
 This repo is the company's shared brain: curated operating knowledge, source
 references, and private harness state. Claude Code, Claude Cowork, Codex, and
 other agents should treat this file as the root routing contract.
+
+Operating profile: `{operating_profile}`
 
 ## Session Startup
 
@@ -88,10 +118,12 @@ other agents should treat this file as the root routing contract.
 | Sensitive HR, legal, finance, owner-only material | `brain/restricted/` |
 | Superseded or retained history | `brain/archive/` |
 | Harness configuration, staging, evidence, raw source capture | `system/` |
+{drop_zone_route}
+{simple_profile_section}
 
 ## Rules
 
-1. Shared writes go through staging unless the Brain Owner explicitly approves direct admin edits.
+1. {shared_write_rule}
 2. Personal connectors are excluded by default unless narrowly delegated, scoped, approved, and registered.
 3. Every org-wide source instance must exist in `{CONVENTIONS_DIR}/source-registry.yml`.
 4. Source-derived notes need provenance: `<!-- src: <source-id>/<item-id> @ YYYY-MM-DD -->`.
@@ -117,9 +149,16 @@ other agents should treat this file as the root routing contract.
 """
 
 
-def company_brain_yml(company: str) -> str:
+def company_brain_yml(company: str, operating_profile: str = PROFILE_GOVERNED) -> str:
+    simple = is_simple_team(operating_profile)
+    human_required = "false" if simple else "true"
+    drop_zone_value = DROP_ZONE_DIR if simple else "null"
+    manual_default = "auto_digest_and_process_low_risk" if simple else "staged_review"
+    auto_promote_manual = "true" if simple else "false"
+    daily_digest = "true" if simple else "false"
     return f"""schema_version: "1.0"
 kind: company_brain_config
+operating_profile: {operating_profile}
 company:
   name: "{company}"
   implementation_status: setup
@@ -131,18 +170,31 @@ brain:
     - brain/restricted
 policy:
   capture_policy: {CONVENTIONS_DIR}/capture-policy.md
-  require_human_approval_for_shared_writes: true
+  require_human_approval_for_shared_writes: {human_required}
+  human_review_required_for_sensitive_or_unclear: true
   personal_connectors_are_company_sources: false
+intake:
+  profile: {operating_profile}
+  drop_zone: {drop_zone_value}
+  manual_contribution_default: {manual_default}
+  team_members_need_source_registry: false
+  flag_sensitive_for_review: true
 promotion:
   preview_by_default: true
   require_write_flag: true
   require_provenance: true
   require_two_tags: true
+  auto_promote_manual_drop_zone_low_risk: {auto_promote_manual}
+  never_auto_promote_restricted_or_sensitive: true
 evidence:
   normalized_dir: {STAGING_DIR}/evidence
   raw_dir: {STAGING_DIR}/raw
   raw_is_shared_knowledge: false
   raw_requires_source_policy: true
+automation:
+  daily_digest: {daily_digest}
+  add_to_brain_digest: {DIGESTS_DIR}/latest.md
+  source_connectors_still_require_registry: true
 health:
   priority_folders:
     - brain/company
@@ -154,8 +206,64 @@ health:
 """
 
 
-def source_registry(company: str, champion: str) -> str:
+def source_registry(company: str, champion: str, operating_profile: str = PROFILE_GOVERNED) -> str:
     source_id = slugify(company)
+    drop_zone_source = f"""
+
+  - id: {source_id}-add-to-brain-drop-zone
+    connector: filesystem
+    display_name: Manual team contribution drop zone
+    control_tier: company_owned
+    status: active
+    credential_ref: manual:none
+    owner: {champion}
+    review_owner: {champion}
+    capture:
+      allowed: true
+      mode: mounted_folder
+      approval_required: false
+      raw_retention_days: 0
+    scope:
+      include:
+        - low-risk manual team contributions under {DROP_ZONE_DIR}
+        - source documents intentionally added by teammates
+        - meeting notes intentionally added by teammates
+      exclude:
+        - credentials
+        - personal/private material
+        - HR/legal/finance unless routed restricted and reviewed
+        - broad connector exports
+        - personal inbox/calendar/meeting recorder dumps
+    raw_policy:
+      store_raw: false
+      retention_days: 0
+    routing:
+      default_destination: brain/sources
+      staging_destination: {STAGING_DIR}
+      restricted_prefixes:
+        - brain/restricted
+    artifact_policy:
+      allowed:
+        - curated_note
+        - source_reference
+        - decision
+        - action_item
+        - reusable_fact
+      not_allowed:
+        - credential_value
+        - raw_export_by_default
+        - personal_message
+    dedupe:
+      external_id_field: path
+      strategy: path_plus_hash
+    sync:
+      enabled: true
+      cursor: null
+      last_successful_pull: null
+    audit:
+      last_reviewed: {date.today().isoformat()}
+      approved_by: {champion}
+""" if is_simple_team(operating_profile) else ""
     return f"""schema_version: "1.0"
 kind: company_brain_source_registry
 
@@ -211,6 +319,7 @@ sources:
     audit:
       last_reviewed: {date.today().isoformat()}
       approved_by: {champion}
+{drop_zone_source}
 
   - id: example-company-meetings
     connector: fireflies
@@ -460,7 +569,11 @@ rules:
 """
 
 
-def connections_doc() -> str:
+def connections_doc(operating_profile: str = PROFILE_GOVERNED) -> str:
+    simple_row = (
+        f"| Manual team drop zone | Active | `{DROP_ZONE_DIR}/`; low-risk manual contributions can be digested and processed |\n"
+        if is_simple_team(operating_profile) else ""
+    )
     return frontmatter(["connections", "sources", "team"]) + """# Connections
 
 Connection inventory for this company brain. This is a human-readable companion to `source-registry.yml`.
@@ -477,6 +590,7 @@ Connection inventory for this company brain. This is a human-readable companion 
 | Category | Default Status | Notes |
 |---|---|---|
 | Brain root | Active | Curated markdown and approved source documents |
+""" + simple_row + """\
 | Company meeting workspace | Proposed | Can stage curated meeting notes after approval |
 | Company Google Workspace | Proposed | Scope Drive/Docs/Calendar/Gmail before any sync |
 | Company Confluence spaces | Proposed | Company spaces only; user spaces excluded by default |
@@ -494,7 +608,19 @@ Connection inventory for this company brain. This is a human-readable companion 
 """
 
 
-def capture_policy(company: str) -> str:
+def capture_policy(company: str, operating_profile: str = PROFILE_GOVERNED) -> str:
+    simple_section = f"""
+## Simple Team Manual Contribution Rule
+
+This brain uses the `simple-team` profile. Teammates may add low-risk material
+to `{DROP_ZONE_DIR}/` or ask an agent to add it. The operator may process those
+manual contributions into curated notes without item-by-item owner approval
+when the material is clearly company-owned, non-sensitive, and relevant.
+
+Anything private, personal, credential-like, HR, legal, finance,
+customer-confidential, strategy-changing, or unclear must be flagged for
+owner/operator review before promotion.
+""" if is_simple_team(operating_profile) else ""
     return frontmatter(["capture-policy", "privacy", "governance"]) + f"""# Capture Policy
 
 This policy controls what may enter the {company} company brain.
@@ -507,6 +633,7 @@ This policy controls what may enter the {company} company brain.
 - Raw material stays in private raw evidence staging unless source policy says otherwise.
 - Normalized evidence is used for extraction and review; raw evidence is retained for audit and deeper source review.
 - Curated notes enter the brain only after review or an explicitly approved automation rule.
+{simple_section}
 
 ## Team Source Rule
 
@@ -536,12 +663,27 @@ HR, legal, finance, fundraising, compensation, private customer data, and owner-
 """
 
 
-def harness_flows() -> str:
+def harness_flows(operating_profile: str = PROFILE_GOVERNED) -> str:
+    simple_section = f"""
+## Simple Team Drop-Zone Flow
+
+Use this profile when the company wants the easiest team adoption path.
+
+```text
+teammate drops file in {DROP_ZONE_DIR}/ -> operator digest -> low-risk note update
+                                      -> sensitive/unclear review queue
+```
+
+Run `add-to-brain-digest.py` during the operator loop. The digest is not shared
+knowledge by itself; it tells the operator or agent what changed and what needs
+review.
+""" if is_simple_team(operating_profile) else ""
     return frontmatter(["harness", "flows", "team"]) + """# Harness Flows
 
 ## Setup
 
 Run `brain-setup` once per company brain. Then run `brain-health`, `sources-check`, and `brain-lint`.
+""" + simple_section + """
 
 ## Intake
 
@@ -584,7 +726,12 @@ Monthly: permissions, retention, auto-promotion, and adoption review.
 """
 
 
-def harness_status() -> str:
+def harness_status(operating_profile: str = PROFILE_GOVERNED) -> str:
+    simple_built = (
+        f"- simple team drop zone at `{DROP_ZONE_DIR}/`\n"
+        f"- operator digest folder at `{DIGESTS_DIR}/`\n"
+        if is_simple_team(operating_profile) else ""
+    )
     return frontmatter(["harness", "status"]) + """# Harness Status
 
 This file prevents overclaiming.
@@ -599,6 +746,7 @@ This file prevents overclaiming.
 - staging folder
 - operating schedule
 - folder indexes
+""" + simple_built + """
 
 ## Not Populated Yet
 
@@ -662,35 +810,80 @@ rules:
 """
 
 
-def schedule_md(champion: str, operator: str) -> str:
-    return frontmatter(["schedule", "operator"]) + f"""# Operating Schedule
-
-Brain Owner: {champion}
-Brain Operator: {operator}
-
-## First Two Weeks
-
-- Run checks manually each morning.
+def schedule_md(champion: str, operator: str, operating_profile: str = PROFILE_GOVERNED) -> str:
+    if is_simple_team(operating_profile):
+        first_two_weeks = f"""- Run checks manually each morning or schedule them through Claude/Codex.
+- Scan `{DROP_ZONE_DIR}/` and write `{DIGESTS_DIR}/latest.md`.
+- Process clearly low-risk manual contributions into curated notes.
+- Flag sensitive, unclear, personal, HR, legal, finance, or restricted items for review.
+- Keep connector-based source pulls governed by `source-registry.yml`.
+- Ask teammates to mention what they added during the first week, then move toward automatic daily digests.
+"""
+        after_trust = """- Schedule daily checks and drop-zone digest generation.
+- Allow low-risk manual contributions to be processed without item-by-item owner review.
+- Let approved source connectors create staged proposals only after registry approval.
+- Keep source registry, lint, restricted permissions, and flagged digest items in the daily report.
+"""
+    else:
+        first_two_weeks = """- Run checks manually each morning.
 - Pull approved source records into private evidence.
 - Extract allowed artifacts into staged proposals.
 - Stage every proposed note.
 - Require human approval before promotion.
 - Keep meeting-derived and sensitive material human-approved.
-
-## After Trust Is Established
-
-- Schedule daily checks.
+"""
+        after_trust = """- Schedule daily checks.
 - Allow approved sources to create staged proposals.
 - Track source cursors and hashes in `source-sync-state.json`.
 - Consider autonomous promotion only for explicitly low-risk categories.
 - Keep source registry, lint, and restricted permissions in the daily report.
 """
+    return frontmatter(["schedule", "operator"]) + f"""# Operating Schedule
+
+Brain Owner: {champion}
+Brain Operator: {operator}
+Operating profile: `{operating_profile}`
+
+## First Two Weeks
+
+{first_two_weeks}
+
+## After Trust Is Established
+
+{after_trust}
+"""
 
 
-def start_here_md(company: str) -> str:
+def start_here_md(company: str, operating_profile: str = PROFILE_GOVERNED) -> str:
+    if is_simple_team(operating_profile):
+        safe_rule = f"""For normal team use, put material in `{DROP_ZONE_DIR}/` or ask the agent:
+
+```text
+Add this to the company brain.
+```
+
+The operator digest checks what changed, processes low-risk manual
+contributions, and flags anything sensitive or unclear.
+
+Connector sources still follow the governed path:
+
+```text
+approved source -> private evidence -> staged proposal -> review/automation rule -> approved note
+```
+"""
+    else:
+        safe_rule = """Nothing from raw sources becomes shared knowledge automatically. The default path is:
+
+```text
+source -> private evidence -> staged proposal -> review -> approved note
+interview -> staged proposal -> review -> approved note
+```
+"""
     return frontmatter(["start-here", "roles", "setup"]) + f"""# Start Here
 
 Welcome to the {company} company brain.
+
+Operating profile: `{operating_profile}`
 
 Install the Company Brain Harness plugin once in Claude Code or Codex. The
 plugin includes the skills and helper scripts; this brain folder stores company
@@ -718,12 +911,7 @@ Run today's company brain check.
 
 ## First Safe Rule
 
-Nothing from raw sources becomes shared knowledge automatically. The default path is:
-
-```text
-source -> private evidence -> staged proposal -> review -> approved note
-interview -> staged proposal -> review -> approved note
-```
+{safe_rule}
 
 ## Next Files
 
@@ -736,10 +924,17 @@ interview -> staged proposal -> review -> approved note
 """
 
 
-def owner_guide_md(champion: str) -> str:
+def owner_guide_md(champion: str, operating_profile: str = PROFILE_GOVERNED) -> str:
+    simple_decision = (
+        f"6. Confirm whether `{DROP_ZONE_DIR}/` can auto-process clearly low-risk manual contributions.\n"
+        "7. Decide what must always be flagged for review.\n"
+        if is_simple_team(operating_profile) else
+        "6. Keep the first two weeks human-gated unless you have a reason not to.\n"
+    )
     return frontmatter(["owner-guide", "approval"]) + f"""# Owner Guide
 
 Brain Owner: {champion}
+Operating profile: `{operating_profile}`
 
 You are accountable for trust.
 
@@ -750,7 +945,7 @@ You are accountable for trust.
 3. Approve or edit `system/capture-policy.md`.
 4. Review `system/source-registry.yml`.
 5. Choose the first Brain Operator.
-6. Keep the first two weeks human-gated unless you have a reason not to.
+{simple_decision}
 
 ## Say This
 
@@ -766,10 +961,21 @@ I am the Brain Owner. Help me review the setup.
 """
 
 
-def operator_guide_md(operator: str) -> str:
+def operator_guide_md(operator: str, operating_profile: str = PROFILE_GOVERNED) -> str:
+    digest_step = (
+        f"5. Scan `{DROP_ZONE_DIR}/` and refresh `{DIGESTS_DIR}/latest.md`.\n"
+        "6. Process low-risk manual contributions.\n"
+        "7. Review flagged sensitive or unclear items.\n"
+        "8. Next three actions."
+        if is_simple_team(operating_profile) else
+        "5. Staged proposal review.\n"
+        "6. Next three actions."
+    )
+    flagged_line = "- flagged drop-zone files:\n" if is_simple_team(operating_profile) else ""
     return frontmatter(["operator-guide", "daily-check"]) + f"""# Operator Guide
 
 Brain Operator: {operator}
+Operating profile: `{operating_profile}`
 
 You keep the brain useful and safe.
 
@@ -785,8 +991,7 @@ Run today's company brain check.
 2. Source registry check.
 3. Brain health.
 4. Brain lint.
-5. Staged proposal review.
-6. Next three actions.
+{digest_step}
 
 ## Output The Team Needs
 
@@ -798,6 +1003,7 @@ Needs review:
 - proposed sources
 - stale notes
 - broken links
+{flagged_line}
 
 Next three actions:
 1.
@@ -807,10 +1013,28 @@ Next three actions:
 """
 
 
-def team_member_guide_md() -> str:
+def team_member_guide_md(operating_profile: str = PROFILE_GOVERNED) -> str:
+    simple_path = f"""
+## Easiest Path
+
+Put the file, note, or exported document in `{DROP_ZONE_DIR}/` and say:
+
+```text
+I added something to the company brain folder.
+```
+
+Use the subfolders to make intent clear:
+
+- `{DROP_ZONE_DIR}/team-contributions/`
+- `{DROP_ZONE_DIR}/meeting-notes/`
+- `{DROP_ZONE_DIR}/source-documents/`
+
+Do not add personal, private, credential, HR, legal, or finance material.
+""" if is_simple_team(operating_profile) else ""
     return frontmatter(["team-member-guide", "contribution"]) + """# Team Member Guide
 
 You contribute what you know. You do not need to understand the harness.
+""" + simple_path + """
 
 ## Say This
 
@@ -831,12 +1055,25 @@ I want to add what I know to the company brain.
 
 ## Safety
 
-Your answers become staged proposals first. A reviewer approves, rejects, or
-asks for revisions before anything becomes shared knowledge.
+Your contributions are checked before they become trusted shared knowledge.
+Low-risk manual contributions may be processed automatically when the brain is
+configured for that model; sensitive or unclear material is flagged for review.
 """
 
 
-def invite_team_md(company: str) -> str:
+def invite_team_md(company: str, operating_profile: str = PROFILE_GOVERNED) -> str:
+    if is_simple_team(operating_profile):
+        contribution_path = f"""If you already have a document, put it in `{DROP_ZONE_DIR}/` and tell the agent:
+
+I added something to the company brain folder.
+
+The agent/operator will process normal company material and flag anything
+sensitive or unclear.
+"""
+    else:
+        contribution_path = """The agent will ask a few questions and stage a proposal for review. Nothing goes
+directly into shared knowledge without approval.
+"""
     return frontmatter(["invite", "team"]) + f"""# Invite Team
 
 Use this message to invite teammates into the {company} company brain.
@@ -849,9 +1086,8 @@ Please open Claude Code or Codex in the brain folder and say:
 
 I want to add what I know to the company brain.
 
-The agent will ask a few questions and stage a proposal for review. Nothing goes
-directly into shared knowledge without approval. Personal accounts and private
-material are excluded by default.
+{contribution_path}
+Personal accounts and private material are excluded by default.
 ```
 """
 
@@ -883,14 +1119,22 @@ Use this as the daily operator scratchpad.
 """
 
 
-def next_actions_md() -> str:
-    return frontmatter(["next-actions", "operator"]) + """# Next Actions
+def next_actions_md(operating_profile: str = PROFILE_GOVERNED) -> str:
+    actions = (
+        f"""1. Add the first safe company document to `{DROP_ZONE_DIR}/source-documents/`.
+2. Run the drop-zone digest.
+3. Review the flagged items and process low-risk notes.
+""" if is_simple_team(operating_profile) else
+        """1. Review capture policy.
+2. Confirm restricted folder permissions.
+3. Invite the first teammate to contribute.
+"""
+    )
+    return frontmatter(["next-actions", "operator"]) + f"""# Next Actions
 
 Keep this list short. The operator should update it after each daily check.
 
-1. Review capture policy.
-2. Confirm restricted folder permissions.
-3. Invite the first teammate to contribute.
+{actions}
 """
 
 
@@ -932,6 +1176,126 @@ Raw files are not shared knowledge and should not be indexed by default.
 """
 
 
+def add_to_brain_readme(company: str) -> str:
+    return frontmatter(["add-to-brain", "team", "intake"]) + f"""# Add To Brain
+
+Use this folder when a teammate wants the {company} company brain to consider a
+document, note, transcript excerpt, process, or source reference.
+
+## How To Use It
+
+1. Put the file in the clearest subfolder.
+2. Open Claude Code or Codex in the brain root.
+3. Say:
+
+```text
+I added something to the company brain folder.
+```
+
+The operator digest will list new material, process low-risk company knowledge,
+and flag sensitive or unclear items.
+
+## Subfolders
+
+| Folder | Use for |
+|---|---|
+| `team-contributions/` | Role knowledge, workflows, SOPs, stale-fact corrections |
+| `meeting-notes/` | Meeting notes or transcript excerpts intentionally added by a teammate |
+| `source-documents/` | Company documents, exports, decks, PDFs, customer-approved docs |
+
+## Do Not Add
+
+- credentials, API keys, tokens, passwords, or secrets
+- personal/private emails, messages, calendars, or meeting dumps
+- HR, legal, finance, payroll, compensation, or owner-only material
+- broad connector exports that should be governed by `system/source-registry.yml`
+
+If you are unsure, ask the agent before adding it.
+"""
+
+
+def drop_zone_subfolder_readme(name: str, description: str) -> str:
+    return frontmatter(["add-to-brain", slugify(name)]) + f"""# {name}
+
+{description}
+
+Keep file names descriptive and use lowercase kebab-case when you create new
+markdown files. Do not put personal, private, credential, HR, legal, finance, or
+restricted material here.
+"""
+
+
+def digest_readme() -> str:
+    return frontmatter(["digest", "operator"]) + f"""# Digests
+
+Operator digests summarize what changed in `{DROP_ZONE_DIR}/` and what needs
+review. They are operational status, not final shared knowledge.
+
+Run:
+
+```bash
+python3 <plugin-root>/bin/add-to-brain-digest.py --root "$BRAIN_ROOT" --write
+```
+
+The latest digest is written to `latest.md`.
+"""
+
+
+def latest_digest_md() -> str:
+    return frontmatter(["digest", "operator"]) + f"""# Latest Add-To-Brain Digest
+
+No digest has been generated yet.
+
+Run:
+
+```bash
+python3 <plugin-root>/bin/add-to-brain-digest.py --root "$BRAIN_ROOT" --write
+```
+"""
+
+
+def simple_team_profile_md() -> str:
+    return frontmatter(["operating-profile", "simple-team"]) + f"""# Simple Team Operating Profile
+
+This profile is for teams that want the company brain to be easy to operate
+before they have a formal knowledge-management process.
+
+## Promise
+
+Team members can use plain English or a shared folder:
+
+```text
+I added something to the company brain folder.
+```
+
+The agent/operator handles scanning, routing, digesting, and low-risk updates.
+
+## What Is Automated
+
+- scan `{DROP_ZONE_DIR}/`
+- write `{DIGESTS_DIR}/latest.md`
+- process clearly low-risk manual contributions
+- flag sensitive, private, or unclear items
+- keep source connectors behind `source-registry.yml`
+
+## What Is Not Automated By Default
+
+- personal inbox, calendar, meeting recorder, chat, or CRM capture
+- restricted-folder inspection
+- credential storage
+- legal, HR, finance, payroll, compensation, or owner-only promotion
+- broad raw transcript/email/export ingestion
+
+## Operating Loop
+
+1. Team member drops a file or asks the agent to add material.
+2. Operator runs the digest.
+3. Agent processes low-risk company material into curated notes.
+4. Sensitive or unclear items stay flagged for review.
+5. Owner reviews exceptions and adjusts policy over time.
+"""
+
+
 def source_sync_state() -> str:
     return json.dumps({
         "schema_version": "1.0",
@@ -939,27 +1303,32 @@ def source_sync_state() -> str:
     }, indent=2, sort_keys=True) + "\n"
 
 
-def planned_files(company: str, champion: str, operator: str) -> dict[str, str]:
+def planned_files(
+    company: str,
+    champion: str,
+    operator: str,
+    operating_profile: str = PROFILE_GOVERNED,
+) -> dict[str, str]:
     files: dict[str, str] = {
-        "CLAUDE.md": root_claude(company, champion),
-        "start-here.md": start_here_md(company),
-        "owner-guide.md": owner_guide_md(champion),
-        "operator-guide.md": operator_guide_md(operator),
-        "team-member-guide.md": team_member_guide_md(),
-        "invite-team.md": invite_team_md(company),
+        "CLAUDE.md": root_claude(company, champion, operating_profile),
+        "start-here.md": start_here_md(company, operating_profile),
+        "owner-guide.md": owner_guide_md(champion, operating_profile),
+        "operator-guide.md": operator_guide_md(operator, operating_profile),
+        "team-member-guide.md": team_member_guide_md(operating_profile),
+        "invite-team.md": invite_team_md(company, operating_profile),
         "today.md": today_md(),
-        "next-actions.md": next_actions_md(),
-        "company-brain.yml": company_brain_yml(company),
+        "next-actions.md": next_actions_md(operating_profile),
+        "company-brain.yml": company_brain_yml(company, operating_profile),
         f"{CONVENTIONS_DIR}/README.md": index_md(CONVENTIONS_DIR, "Operating manual for this company brain."),
-        f"{CONVENTIONS_DIR}/capture-policy.md": capture_policy(company),
-        f"{CONVENTIONS_DIR}/connections.md": connections_doc(),
-        f"{CONVENTIONS_DIR}/flows.md": harness_flows(),
-        f"{CONVENTIONS_DIR}/status.md": harness_status(),
+        f"{CONVENTIONS_DIR}/capture-policy.md": capture_policy(company, operating_profile),
+        f"{CONVENTIONS_DIR}/connections.md": connections_doc(operating_profile),
+        f"{CONVENTIONS_DIR}/flows.md": harness_flows(operating_profile),
+        f"{CONVENTIONS_DIR}/status.md": harness_status(operating_profile),
         f"{CONVENTIONS_DIR}/naming-conventions.md": naming_conventions_md(),
-        f"{CONVENTIONS_DIR}/source-registry.yml": source_registry(company, champion),
+        f"{CONVENTIONS_DIR}/source-registry.yml": source_registry(company, champion, operating_profile),
         f"{CONVENTIONS_DIR}/source-sync-state.json": source_sync_state(),
         f"{CONVENTIONS_DIR}/team.yml": team_yml(champion, operator),
-        f"{CONVENTIONS_DIR}/schedule.md": schedule_md(champion, operator),
+        f"{CONVENTIONS_DIR}/schedule.md": schedule_md(champion, operator, operating_profile),
         f"{STAGING_DIR}/README.md": staging_readme(),
         f"{STAGING_DIR}/approval-ledger.jsonl": json.dumps({
             "event": "ledger_initialized",
@@ -979,6 +1348,23 @@ def planned_files(company: str, champion: str, operator: str) -> dict[str, str]:
         "raw",
         "Private raw source evidence retained by source policy. This is not final brain knowledge and should not be broadly indexed.",
     )
+    if is_simple_team(operating_profile):
+        files[f"{DROP_ZONE_DIR}/README.md"] = add_to_brain_readme(company)
+        files[f"{DROP_ZONE_DIR}/team-contributions/README.md"] = drop_zone_subfolder_readme(
+            "Team Contributions",
+            "Role knowledge, workflows, SOPs, corrections, and other teammate-authored contributions.",
+        )
+        files[f"{DROP_ZONE_DIR}/meeting-notes/README.md"] = drop_zone_subfolder_readme(
+            "Meeting Notes",
+            "Meeting notes or transcript excerpts that a teammate intentionally adds for company-brain use.",
+        )
+        files[f"{DROP_ZONE_DIR}/source-documents/README.md"] = drop_zone_subfolder_readme(
+            "Source Documents",
+            "Company documents, exports, PDFs, decks, and approved source material for operator review.",
+        )
+        files[f"{DIGESTS_DIR}/README.md"] = digest_readme()
+        files[f"{DIGESTS_DIR}/latest.md"] = latest_digest_md()
+        files[f"{CONVENTIONS_DIR}/simple-team-operating-profile.md"] = simple_team_profile_md()
     return files
 
 
@@ -988,13 +1374,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--company-name", required=True)
     parser.add_argument("--champion", default="brain-owner", help="Brain Owner name")
     parser.add_argument("--operator", default="brain-operator", help="Brain Operator name")
+    parser.add_argument(
+        "--operating-profile",
+        choices=OPERATING_PROFILES,
+        default=PROFILE_GOVERNED,
+        help="operating model to scaffold: governed approval flow or simple team drop-zone automation",
+    )
     parser.add_argument("--write", action="store_true", help="actually create files; default is preview-only")
     parser.add_argument("--force", action="store_true", help="overwrite existing generated files")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
 
     root = Path(args.root).expanduser().resolve()
-    files = planned_files(args.company_name, args.champion, args.operator)
+    files = planned_files(args.company_name, args.champion, args.operator, args.operating_profile)
     existing = [rel for rel in files if (root / rel).exists()]
     if args.write and existing and not args.force:
         print(json.dumps({"error": "target files already exist", "files": existing[:20]}), file=sys.stderr)
@@ -1010,6 +1402,7 @@ def main(argv: list[str] | None = None) -> int:
     result = {
         "action": "wrote" if args.write else "would-write",
         "root": str(root),
+        "operating_profile": args.operating_profile,
         "files": sorted(files),
         "file_count": len(files),
         "note": None if args.write else "preview only; rerun with --write to persist",

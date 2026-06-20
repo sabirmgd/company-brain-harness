@@ -27,12 +27,19 @@ $brain-contribute
 
 ## What Happens Next
 
-The agent drafts a staged proposal. A reviewer approves, rejects, or asks for a
-revision before anything becomes shared knowledge.
+In the governed profile, the agent drafts a staged proposal. A reviewer
+approves, rejects, or asks for a revision before anything becomes shared
+knowledge.
+
+In `simple-team`, you can also add safe files to `ADD_TO_BRAIN/`. The operator
+digest processes low-risk company material and flags anything sensitive or
+unclear.
 
 ## Guardrails
 
 - Do not add private personal material.
 - Do not paste secrets.
 - Do not assume personal app accounts are company sources.
+- Do not add personal, HR, legal, finance, or credential material to
+  `ADD_TO_BRAIN/`.
 - When unsure, mark the answer as an open question.

@@ -53,6 +53,18 @@ The agent will ask which role you are playing:
 
 If you are unsure, choose Brain Owner for the first setup session.
 
+## Choose The Operating Profile
+
+During setup, the Brain Owner chooses one of two profiles:
+
+| Profile | Use when |
+|---|---|
+| `governed` | You want every shared note reviewed before promotion |
+| `simple-team` | You want teammates to drop safe files into `ADD_TO_BRAIN/` and let the operator digest process low-risk contributions |
+
+The simple profile is easier for small teams, but source connectors still need
+source registry approval.
+
 ## What Happens In The Background
 
 The agent may run harness tools internally:
@@ -63,6 +75,7 @@ The agent may run harness tools internally:
 - lint
 - schedule generation
 - staging and approval
+- `ADD_TO_BRAIN/` digest when the simple-team profile is enabled
 
 You should see plain-language status and next actions, not command output.
 
@@ -74,6 +87,7 @@ installed in Claude/Codex; the brain root stores company knowledge plus
 
 - It will not populate company knowledge during setup.
 - It will not connect personal accounts as company sources.
-- It will not promote notes without approval.
+- It will not promote sensitive or unclear notes without review.
+- It will not treat `ADD_TO_BRAIN/` as permission to ingest personal accounts.
 - It will not inspect restricted folders.
 - It will not ask you to paste secrets into chat.

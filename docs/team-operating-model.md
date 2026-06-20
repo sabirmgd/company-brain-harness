@@ -20,6 +20,12 @@ the roles explicit.
 connections -> sources -> health -> lint -> staged queue -> punch list
 ```
 
+For `simple-team`:
+
+```text
+connections -> sources -> health -> lint -> ADD_TO_BRAIN digest -> low-risk updates -> review flags
+```
+
 The punch list should say:
 
 - blockers
@@ -41,6 +47,7 @@ Ask each teammate:
 - Who should review notes from your area?
 - What current brain knowledge is stale, wrong, or risky?
 - What must route to `brain/restricted/` or stay out entirely?
+- For simple-team, what safe docs or notes can you add to `ADD_TO_BRAIN/`?
 
 ## Source Promotion
 
@@ -79,4 +86,6 @@ A team pilot is ready when:
 - first two-week schedule is chosen
 - Brain Owner and Brain Operator are named
 - every teammate understands staging before promotion
+- or, in `simple-team`, every teammate understands `ADD_TO_BRAIN/` and what not
+  to put there
 - no personal connector is treated as a company source

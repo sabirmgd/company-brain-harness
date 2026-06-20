@@ -31,6 +31,8 @@ Required proof:
 - Generic source-governed capture scripts for normalized connector output:
   `source-pull.py`, `source-extract.py`, and `source-sync-state.py`.
 - Schedule generator for human-gated or autonomous operating loops.
+- `simple-team` scaffold profile with `ADD_TO_BRAIN/` and
+  `add-to-brain-digest.py` for low-friction manual contribution.
 - Read-only lint for stale, duplicate, broken-link, contradiction, and
   provenance review.
 
@@ -43,8 +45,8 @@ Required proof:
   - shared Apollo/CRM workspace
   - Slack later
 - Connector-specific normalizers that produce the generic JSONL record format.
-- Scheduled runner that executes the generated schedule and produces a morning
-  review digest.
+- Managed runner recipe for cron, launchd, Claude/Codex scheduled tasks,
+  Choreon-style jobs, or CI-based morning reviews.
 - Clean service-account guide for Google Workspace domain-wide delegation.
 - Example brain root fixtures for CI and docs.
 - Versioned release tags and changelog.

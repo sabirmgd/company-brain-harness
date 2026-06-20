@@ -182,6 +182,81 @@ test -f "$SCAFFOLD_ROOT/system/staging/approval-ledger.jsonl"
 test -f "$SCAFFOLD_ROOT/system/staging/evidence/README.md"
 test -f "$SCAFFOLD_ROOT/system/staging/raw/README.md"
 
+SIMPLE_ROOT="$TMP_ROOT/simple-team-company"
+
+python3 "$BIN_DIR/brain-setup.py" \
+  --root "$SIMPLE_ROOT" \
+  --company-name "Simple Co" \
+  --champion "Sam" \
+  --operator "Ops Bot" \
+  --operating-profile simple-team \
+  --write >/tmp/company-brain-simple-setup.txt
+
+test -f "$SIMPLE_ROOT/ADD_TO_BRAIN/README.md"
+test -f "$SIMPLE_ROOT/ADD_TO_BRAIN/team-contributions/README.md"
+test -f "$SIMPLE_ROOT/ADD_TO_BRAIN/meeting-notes/README.md"
+test -f "$SIMPLE_ROOT/ADD_TO_BRAIN/source-documents/README.md"
+test -f "$SIMPLE_ROOT/system/digests/latest.md"
+test -f "$SIMPLE_ROOT/system/simple-team-operating-profile.md"
+grep -q "operating_profile: simple-team" "$SIMPLE_ROOT/company-brain.yml"
+grep -q "ADD_TO_BRAIN" "$SIMPLE_ROOT/CLAUDE.md"
+
+python3 "$BIN_DIR/source-registry-check.py" \
+  --root "$SIMPLE_ROOT" \
+  --source-id simple-co-add-to-brain-drop-zone \
+  --for-capture >/tmp/company-brain-simple-source.txt
+
+cat >"$SIMPLE_ROOT/ADD_TO_BRAIN/team-contributions/launch-checklist.md" <<'EOF'
+# Launch Checklist
+
+This is a safe manual contribution for the simple-team smoke test.
+EOF
+
+cat >"$SIMPLE_ROOT/ADD_TO_BRAIN/source-documents/api-token-note.txt" <<'EOF'
+token=example
+EOF
+
+python3 "$BIN_DIR/add-to-brain-digest.py" \
+  --root "$SIMPLE_ROOT" \
+  --write \
+  --json >/tmp/company-brain-add-to-brain-digest.json
+
+SIMPLE_ROOT="$SIMPLE_ROOT" python3 - <<'PY'
+import json
+import os
+from pathlib import Path
+
+result = json.loads(Path("/tmp/company-brain-add-to-brain-digest.json").read_text())
+if result["ready"] != 1 or result["review"] != 1 or result["total"] != 2:
+    raise SystemExit(f"unexpected ADD_TO_BRAIN digest result: {result}")
+digest = Path(os.environ["SIMPLE_ROOT"], "system", "digests", "latest.md").read_text()
+for expected in ("launch-checklist.md", "api-token-note.txt", "needs review: 1"):
+    if expected not in digest:
+        raise SystemExit(f"simple-team digest missing {expected!r}: {digest}")
+PY
+
+set +e
+python3 "$BIN_DIR/add-to-brain-digest.py" \
+  --root "$SIMPLE_ROOT" \
+  --output brain/restricted/digest.md \
+  --write >/tmp/company-brain-add-to-brain-restricted.out 2>/tmp/company-brain-add-to-brain-restricted.err
+digest_restricted_status=$?
+set -e
+if [[ "$digest_restricted_status" -eq 0 ]]; then
+  echo "restricted digest output unexpectedly succeeded" >&2
+  exit 1
+fi
+
+python3 "$BIN_DIR/brain-schedule.py" \
+  --root "$SIMPLE_ROOT" \
+  --mode human \
+  --champion "Sam" \
+  --operator "Ops Bot" \
+  --write >/tmp/company-brain-simple-schedule.md
+
+grep -q "Operating profile: \`simple-team\`" "$SIMPLE_ROOT/system/schedule.md"
+grep -q "ADD_TO_BRAIN digest" "$SIMPLE_ROOT/system/schedule.md"
+
 python3 "$BIN_DIR/source-registry-check.py" \
   --root "$SCAFFOLD_ROOT" \
   --source-id acme-co-brain-root \

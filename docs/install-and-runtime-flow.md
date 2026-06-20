@@ -40,9 +40,10 @@ write path.
 3. Say: `I want to set up my company brain.`
 4. The agent routes to `brain-start`.
 5. The agent identifies the role: Brain Owner, Brain Operator, or Team Member.
-6. Setup previews the scaffold first.
-7. Setup writes only after explicit approval.
-8. Daily operation uses the same installed plugin to run checks, lint, source
+6. The Brain Owner chooses `governed` or `simple-team`.
+7. Setup previews the scaffold first.
+8. Setup writes only after explicit approval.
+9. Daily operation uses the same installed plugin to run checks, lint, source
    registry validation, staging, approval, and promotion.
 
 ## Where The Scripts Run From
@@ -52,6 +53,7 @@ root, for example:
 
 ```text
 <installed-plugin-root>/bin/brain-setup.py
+<installed-plugin-root>/bin/add-to-brain-digest.py
 <installed-plugin-root>/bin/brain-health.py
 <installed-plugin-root>/bin/source-registry-check.py
 ```
@@ -77,3 +79,7 @@ The harness and the brain are different things:
 
 The brain root stores `company-brain.yml`, `CLAUDE.md`, `brain/`, and
 `system/`. It should not copy the harness scripts into every brain.
+
+When `simple-team` is selected, the brain root also stores `ADD_TO_BRAIN/` and
+`system/digests/`. Those are customer data and operating state, not copied
+harness code.
